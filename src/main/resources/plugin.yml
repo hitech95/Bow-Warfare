@@ -1,0 +1,12 @@
+name: Bow Warfare - Reloaded
+version: ${project.version}.${BUILD_NUMBER}
+main: it.kytech.BowWarfare
+authors: [Double0negative]
+description: Fully Automated Hunger Games Plugin!
+
+commands:
+    survivalgames:
+        description: Bow Warfare Command
+        usage: /bw <command> <args>
+        aliases: [bowwarfare]
+
