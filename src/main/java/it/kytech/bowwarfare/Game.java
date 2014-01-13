@@ -18,7 +18,9 @@ import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
 import it.kytech.bowwarfare.util.Kit;
+import java.util.Date;
 import java.util.Random;
+import org.bukkit.block.Block;
 
 //Data container for a game
 public class Game {
@@ -34,9 +36,6 @@ public class Game {
     private ArrayList< String> spectators = new ArrayList< String>();
     HashMap< Player, Integer> nextspec = new HashMap< Player, Integer>();
     private ArrayList< Player> queue = new ArrayList< Player>();
-    public HashMap<Player, Integer> killStreak = new HashMap();
-    public HashMap<Player, Integer> kills = new HashMap();
-    public HashMap<Player, Integer> deaths = new HashMap();
     private HashMap< String, Object> settings = new HashMap< String, Object>();
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
     private Arena arena;
@@ -50,9 +49,11 @@ public class Game {
     private boolean disabled = false;
     private double rbpercent = 0;
     private String rbstatus = "";
+    private long startTime = 0;
     private StatsManager statMan = StatsManager.getInstance();
     private HashMap< String, String> hookvars = new HashMap< String, String>();
     private MessageManager msgmgr = MessageManager.getInstance();
+    private StatsManager sm = StatsManager.getInstance();
 
     public Game(int gameid) {
         gameID = gameid;
@@ -79,7 +80,6 @@ public class Game {
         int x = system.getInt("bw-system.arenas." + gameID + ".x1");
         int y = system.getInt("bw-system.arenas." + gameID + ".y1");
         int z = system.getInt("bw-system.arenas." + gameID + ".z1");
-        $(x + " " + y + " " + z);
         int x1 = system.getInt("bw-system.arenas." + gameID + ".x2");
         int y1 = system.getInt("bw-system.arenas." + gameID + ".y2");
         int z1 = system.getInt("bw-system.arenas." + gameID + ".z2");
@@ -211,7 +211,7 @@ public class Game {
         if (activePlayers.size() < 1) {
             setAnGamemode();
         }
-        
+
         Gamemode currentG = availableGameModes.get(gamemode);
 
         boolean hasAdded = false;
@@ -281,41 +281,32 @@ public class Game {
 
     }
 
-    public void removePlayer(Player p, boolean b) {
-
-        p.teleport(SettingsManager.getInstance().getLobbySpawn());
-
-        if (state == GameState.INGAME) {
-            killPlayer(p, b);
-        } else {
-            statMan.removePlayer(p, gameID);
-
-            restoreInv(p);
-
-            activePlayers.remove(p);
-            inactivePlayers.remove(p);
-
-            LobbyManager.getInstance().clearSigns(gameID);
-        }
-
-        HookManager.getInstance().runHook("PLAYER_REMOVED", "player-" + p.getName());
-
-        PlayerLeaveArenaEvent pl = new PlayerLeaveArenaEvent(p, this, b);
-
-        LobbyManager.getInstance().updateWall(gameID);
-    }
     /*
      * 
      * ################################################
      * 
-     * 				PLAYER LEAVE
+     * 				BREAK BLOCK
      * 
      * ################################################
      * 
      * 
      */
-    
-    public void playerLeave(Player p) {
+    public boolean blockBreak(Block block, Player p) {
+        return availableGameModes.get(gamemode).onBlockBreaked(block, p);
+    }
+
+    /*
+     * 
+     * ################################################
+     * 
+     * 				BREAK BLOCK
+     * 
+     * ################################################
+     * 
+     * 
+     */
+    public boolean blockPlace(Block block, Player p) {
+        return availableGameModes.get(gamemode).onBlockPlaced(block, p);
     }
 
     /*
@@ -328,21 +319,40 @@ public class Game {
      * 
      * 
      */
-    public void killPlayer(Player p, boolean left) {
+    public void killPlayer(Player p) {
+        availableGameModes.get(gamemode).onPlayerKilled(p, false);
     }
-
 
     /*
      * 
      * ################################################
      * 
-     * 				PLAYER WIN
+     * 				REMOVE PLAYER
      * 
      * ################################################
      * 
      * 
      */
-    public void playerWin(Player p) {
+    public void removePlayer(Player p) {
+        availableGameModes.get(gamemode).onPlayerRemove(p, false);
+    }
+
+    /*
+     * 
+     * ################################################
+     * 
+     * 				PLAYER LEAVE
+     * 
+     * ################################################
+     * 
+     * 
+     */
+    public void playerLeave(Player p) {
+        if (state == GameState.INGAME) {
+            availableGameModes.get(gamemode).onPlayerKilled(p, true);
+        } else {
+            availableGameModes.get(gamemode).onPlayerRemove(p, true);
+        }
     }
 
     /*
@@ -363,7 +373,7 @@ public class Game {
 
                 Player p = activePlayers.get(a);
                 msgmgr.sendMessage(PrefixType.WARNING, "Game disabled!", p);
-                removePlayer(p, false);
+                removePlayer(p);
             } catch (Exception e) {
             }
 
@@ -433,7 +443,7 @@ public class Game {
         saveInv(p);
         clearInv(p);
 
-        //TO FIX
+        //TO FIX: teleport over a player not on the same place
         p.teleport(activePlayers.get(0).getLocation());
 
         HookManager.getInstance().runHook("PLAYER_SPECTATE", "player-" + p.getName());
@@ -622,20 +632,20 @@ public class Game {
 
     public void setAnGamemode() {
         String strGamemode = "";
-        
+
         if (settings.get("GAMEMODE") != null) {
             strGamemode = (String) settings.get("GAMEMODE");
-            
-            for(int i= 0; i < availableGameModes.size(); i++){
-                if(availableGameModes.get(i).getGamemodeName().equals(strGamemode)){
-                   gamemode = i;
-                   break;
+
+            for (int i = 0; i < availableGameModes.size(); i++) {
+                if (availableGameModes.get(i).getGamemodeName().equals(strGamemode)) {
+                    gamemode = i;
+                    break;
                 }
             }
         } else {
             Random random = new Random();
             gamemode = random.nextInt(availableGameModes.size());
-        }        
+        }
     }
 
     public boolean isBlockInArena(Location v) {
@@ -652,6 +662,10 @@ public class Game {
 
     public int getInactivePlayers() {
         return inactivePlayers.size();
+    }
+
+    public int getMaxPlayer() {
+        return Integer.parseInt((String) settings.get("MAX_PLAYERS"));
     }
 
     public Player[][] getPlayers() {
@@ -683,6 +697,10 @@ public class Game {
         return inactivePlayers.contains(player);
     }
 
+    public boolean isFrozenSpawn() {
+        return availableGameModes.get(gamemode).isFrozenSpawn();
+    }
+
     public boolean hasPlayer(Player p) {
         return activePlayers.contains(p) || inactivePlayers.contains(p);
     }
@@ -690,13 +708,29 @@ public class Game {
     public GameState getState() {
         return state;
     }
-    
+
     public Gamemode getGameMode() {
         return availableGameModes.get(gamemode);
     }
 
+    public synchronized void setRBPercent(double d) {
+        rbpercent = d;
+    }
+
+    public double getRBPercent() {
+        return rbpercent;
+    }
+
+    public void setRBStatus(String s) {
+        rbstatus = s;
+    }
+
+    public String getRBStatus() {
+        return rbstatus;
+    }
+
     public String getName() {
-        return "Arena " + gameID;
+        return (String) settings.get("ARENA_NAME");
     }
 
     public void msgFall(PrefixType type, String msg, String... vars) {

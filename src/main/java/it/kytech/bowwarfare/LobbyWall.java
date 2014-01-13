@@ -88,24 +88,9 @@ public class LobbyWall {
         s0.setLine(1, "Click to join");
         s0.setLine(2, "Arena " + gameid);
 
-        //sign 1
-        s1.setLine(0, game.getName());
+        //sign 1 
+        game.getGameMode().updateSingInfo(s1);
         s1.setLine(1, game.getState() + "");
-        s1.setLine(2, game.getActivePlayers() + "/" + ChatColor.GRAY + game.getInactivePlayers() + ChatColor.BLACK + "/" + SettingsManager.getInstance().getSpawnCount(game.getID()));
-
-        //live update line s1
-        //TO DO
-        /*if (game.getMode() == Game.GameState.STARTING) {
-            s1.setLine(3, game.getCountdownTime() + "");
-        } else if (game.getMode() == Game.GameState.RESETING || game.getMode() == Game.GameState.FINISHING) {
-            s1.setLine(3, game.getRBStatus());
-            if (game.getRBPercent() > 100) {
-                s1.setLine(1, "Saving Queue");
-                s1.setLine(3, (int) game.getRBPercent() + " left");
-            } else s1.setLine(3, (int) game.getRBPercent() + "%");
-        } else {
-            s1.setLine(3, "");
-        }*/
 
         //live player data
         ArrayList < String > display = new ArrayList < String > ();
@@ -141,7 +126,6 @@ public class LobbyWall {
 
     public void addMsg(String s) {
         msgqueue.add(s);
-
     }
 
     int displaytid = 0;

@@ -28,6 +28,9 @@ check-for-updates: true
 auto-start-players: 2
 auto-start-time: 20
 
+#Set if weather is allowed
+weather-allowed: false
+
 #If the player queue is enabled then if a player
 #tries to join a game that is not joinable
 #(ie ingame) the player will be added to a
@@ -44,11 +47,7 @@ disallow-commands: true
 #the cmdwhitelist section below to whitelist certain
 #commands.
 cmdwhitelist: 
-- 'kit' 
-
-#Set how long the grace period for be after the start of 
-#the game in seconds.
-grace-period: 20
+- 'kit'
  
 block:
   place:
@@ -64,33 +63,6 @@ block:
 #lag
 rollback:
   per-tick: 100
- 
-
-#Settings for when the game nears end. This runs
-#when there are only x amount of players
-#remaining. If place chest is enabled then
-#when the player limit is reached, a chest
-#will be placed inside the radius of every 
-#remain player containing random items for 
-#that player. If fire-lighting is enabled
-#then a lighting strike will be fired at the
-#location of each player every x seconds to
-#notify the other players of their location
-endgame:
-  players: 3
-  fire-lighting:
-    enabled: true
-    interval: 20
-  
-  
-#If enabled, after x amount of time, each player
-#remaing will be teleported to the center of the
-#arena for a death match. If they have not been 
-#killed after killtime, the game will end.
-deathmatch:
-  enabled: false
-  time: 30
-  killtime: 5
   
   
 #Settings for connecting to and 

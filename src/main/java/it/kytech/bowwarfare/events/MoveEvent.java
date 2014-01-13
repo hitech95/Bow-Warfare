@@ -24,11 +24,20 @@ public class MoveEvent implements Listener {
             playerpos.remove(e.getPlayer());
             return;
         }
-        if (GameManager.getInstance().getGame(GameManager.getInstance().getPlayerGameId(e.getPlayer())).getState() == Game.GameState.INGAME) {
+        
+        int gameID = GameManager.getInstance().getPlayerGameId(e.getPlayer());
+        
+        if (!GameManager.getInstance().isFrozenSpawn(gameID)) {
             return;
         }
-        GameState mo3 = GameManager.getInstance().getGameState(GameManager.getInstance().getPlayerGameId(e.getPlayer()));
-        if (GameManager.getInstance().isPlayerActive(e.getPlayer()) && mo3 != Game.GameState.INGAME) {
+        
+        if (GameManager.getInstance().getGameState(gameID) == Game.GameState.INGAME) {
+            return;
+        }
+        
+        GameState state = GameManager.getInstance().getGameState(gameID);
+        
+        if (GameManager.getInstance().isPlayerActive(e.getPlayer()) && state != Game.GameState.INGAME) {
             if (playerpos.get(e.getPlayer()) == null) {
                 playerpos.put(e.getPlayer(), e.getPlayer().getLocation().toVector());
                 return;

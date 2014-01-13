@@ -188,12 +188,32 @@ public class GameManager {
         return null;
     }
 
-    public void removePlayer(Player p, boolean b) {
-        getGame(getPlayerGameId(p)).removePlayer(p, b);
+    public void removePlayer(Player p) {
+        getGame(getPlayerGameId(p)).removePlayer(p);
+    }
+    
+    public void leftPlayer(Player p) {
+        getGame(getPlayerGameId(p)).playerLeave(p);
+    }
+    
+    public void killPlayer(Player p) {
+        getGame(getPlayerGameId(p)).killPlayer(p);
+    }
+    
+    public boolean blockBreak(Block block, Player p) {
+        return getGame(getPlayerGameId(p)).blockBreak(block, p);
+    }
+    
+    public boolean blockPlace(Block block, Player p) {
+        return getGame(getPlayerGameId(p)).blockPlace(block, p);
     }
 
     public void removeSpectator(Player p) {
         getGame(getPlayerSpectateId(p)).removeSpectator(p);
+    }
+
+    public boolean isFrozenSpawn(int gameID) {
+        return getGame(gameID).isFrozenSpawn();
     }
 
     public void disableGame(int id) {
@@ -227,9 +247,9 @@ public class GameManager {
         return k;
     }
 
-    //TODO: Actually make this countdown correctly
+    //TODO: Fix (may be unused)
     public void startGame(int a) {
-        getGame(a).countdown(10);
+        getGame(a).startGame();
     }
 
     public void addPlayer(Player p, int g) {
@@ -244,7 +264,7 @@ public class GameManager {
     public void autoAddPlayer(Player pl) {
         ArrayList< Game> qg = new ArrayList< Game>(5);
         for (Game g : games) {
-            if (g.getMode() == Game.GameState.WAITING) {
+            if (g.getState() == Game.GameState.WAITING) {
                 qg.add(g);
             }
         }

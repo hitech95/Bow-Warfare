@@ -114,17 +114,5 @@ public class SpectatorEvents implements Listener {
             event.setCancelled(true);
         }
     }
-    
-   /* @EventHandler(priority = EventPriority.HIGHEST)
-    public void onEntityTarget(EntityTargetEvent event) {
-        Player player = null;
-        if (event.getTarget() instanceof Player) {
-            player = (Player)event.getTarget();
-        }
-        else return;
-        if (GameManager.getInstance().isSpectator(player)) {
-            event.setCancelled(true);
-        }
-    }*/
 }
 

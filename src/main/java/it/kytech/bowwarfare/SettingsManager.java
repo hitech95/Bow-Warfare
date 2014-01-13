@@ -235,6 +235,7 @@ public class SettingsManager {
         HashMap< String, Object> flags = new HashMap< String, Object>();
 
         flags.put("MAX_PLAYERS", system.getInt("bw-system.arenas." + gameid + ".flags.maxplayers"));
+        flags.put("ARENA_NAME", system.getInt("bw-system.arenas." + gameid + ".flags.arenaname"));
 
         return flags;
 
@@ -243,6 +244,7 @@ public class SettingsManager {
     public void saveGameSettings(HashMap< String, Object> flags, int gameid) {
 
         system.set("bw-system.arenas." + gameid + ".flags.maxplayers", flags.get("MAX_PLAYERS"));
+        system.set("bw-system.arenas." + gameid + ".flags.arenaname", flags.get("ARENA_NAME"));
 
         saveSystemConfig();
 
