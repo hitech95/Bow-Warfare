@@ -32,6 +32,7 @@ import it.kytech.bowwarfare.commands.SetSpawn;
 import it.kytech.bowwarfare.commands.Spectate;
 import it.kytech.bowwarfare.commands.SubCommand;
 import it.kytech.bowwarfare.commands.Teleport;
+import it.kytech.bowwarfare.commands.Zombie;
 
 public class CommandHandler implements CommandExecutor {
 
@@ -69,6 +70,7 @@ public class CommandHandler implements CommandExecutor {
         commands.put("list", new ListPlayers());
         commands.put("tp", new Teleport());
         commands.put("reload", new Reload());
+        commands.put("zombie", new Zombie());
     }
 
     private void loadHelpInfo() {
@@ -91,7 +93,8 @@ public class CommandHandler implements CommandExecutor {
         helpinfo.put("lq", 1);
         helpinfo.put("leavequeue", 1);
         helpinfo.put("list", 1);
-        commands.put("reload", new Reload());
+        helpinfo.put("reload", 3);
+        helpinfo.put("zombie", 1);
     }
 
     @Override
