@@ -3,13 +3,14 @@ package it.kytech.bowwarfare.events;
 import it.kytech.bowwarfare.GameManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 
 /**
  *
  * @author M2K
  */
-public class PickupItemEvent {
+public class PickupItemEvent implements Listener{
 
     @EventHandler
     public void onPlayerPickupItem(PlayerPickupItemEvent e) {

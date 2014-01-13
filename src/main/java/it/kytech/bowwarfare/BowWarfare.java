@@ -110,6 +110,12 @@ public class BowWarfare extends JavaPlugin {
 			pm.registerEvents(new SpectatorEvents(), p);
 			pm.registerEvents(new KitEvents(), p);
 			pm.registerEvents(new KeepLobbyLoadedEvent(), p);
+                        pm.registerEvents(new DropItemEvent(), p);
+                        pm.registerEvents(new EntityShootEvent(), p);
+                        pm.registerEvents(new FoodLevelEvent(), p);
+                        pm.registerEvents(new PickupItemEvent(), p);
+                        pm.registerEvents(new ProjectileEvent(), p);
+                        pm.registerEvents(new WeatherEvent(), p);
 
 
 			for (Player p: Bukkit.getOnlinePlayers()) {
@@ -123,9 +129,6 @@ public class BowWarfare extends JavaPlugin {
 	public void setCommands() {
 		getCommand("bowwarfare").setExecutor(new CommandHandler(p));
 	}
-
-
-
 
 	public static File getPluginDataFolder() {
 		return datafolder;

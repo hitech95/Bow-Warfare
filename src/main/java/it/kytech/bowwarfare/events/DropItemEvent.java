@@ -3,13 +3,14 @@ package it.kytech.bowwarfare.events;
 import it.kytech.bowwarfare.GameManager;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 /**
  *
  * @author M2K
  */
-public class DropItemEvent {
+public class DropItemEvent implements Listener{
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {
