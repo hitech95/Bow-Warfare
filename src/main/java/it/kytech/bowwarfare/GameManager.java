@@ -343,9 +343,9 @@ public class GameManager {
     public String getStringList(int gid) {
         //TODO
 
-        /*Game g = getGame(gid);
+        Game g = getGame(gid);
         StringBuilder sb = new StringBuilder();
-        Player[][] players = g.getPlayers();
+        /*Player[][] players = g.getPlayers();
 
         sb.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->\n" + ChatColor.GREEN + " ");
         for (Player p : players[0]) {
@@ -356,10 +356,8 @@ public class GameManager {
         for (Player p : players[1]) {
             sb.append(p.getName() + ",");
         }
-        sb.append("\n\n");
+        sb.append("\n\n");*/
 
-        return sb.toString();*/
-        
-        return "";
+        return sb.toString();
     }
 }

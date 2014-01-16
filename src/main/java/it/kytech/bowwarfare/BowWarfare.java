@@ -29,10 +29,10 @@ public class BowWarfare extends JavaPlugin {
 	private static boolean disabling = false;
 	public static boolean dbcon = false;
 	public static boolean config_todate = false;
-	public static int config_version = 3;
+	public static int config_version = 1;
 
 	public static List < String > auth = Arrays.asList(new String[] {
-			"Double0negative", "hitech95" //:) -Bryce
+			"Double0negative", "hitech95", "YoshiGenius" //:) -Bryce
 	});
 
 	BowWarfare p = this;

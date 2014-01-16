@@ -34,6 +34,11 @@ public class SettingsManager {
     private static final int SPAWN_VERSION = 0;
     private static final int SYSTEM_VERSION = 0;
 
+    public static enum OptionFlag {
+
+        MAX_PLAYERS, ARENA_NAME, GAMEMODE
+    }
+
     private SettingsManager() {
     }
 
@@ -224,27 +229,29 @@ public class SettingsManager {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }    
+    }
 
     public int getMaxPlayerCount(int gameid) {
         return system.getInt("bw-system.arenas." + gameid + ".flags.maxplayers");
     }
 
     //TODO: Implement per-arena settings aka flags
-    public HashMap< String, Object> getGameSettings(int gameid) {
-        HashMap< String, Object> flags = new HashMap< String, Object>();
+    public HashMap<OptionFlag, Object> getGameSettings(int gameid) {
+        HashMap<OptionFlag, Object> flags = new HashMap<OptionFlag, Object>();
 
-        flags.put("MAX_PLAYERS", system.getInt("bw-system.arenas." + gameid + ".flags.maxplayers"));
-        flags.put("ARENA_NAME", system.getInt("bw-system.arenas." + gameid + ".flags.arenaname"));
+        flags.put(OptionFlag.MAX_PLAYERS, system.getInt("bw-system.arenas." + gameid + ".flags.maxplayers"));
+        flags.put(OptionFlag.ARENA_NAME, system.getInt("bw-system.arenas." + gameid + ".flags.arenaname"));
+        flags.put(OptionFlag.GAMEMODE, system.getInt("bw-system.arenas." + gameid + ".flags.gamemode"));
 
         return flags;
 
     }
 
-    public void saveGameSettings(HashMap< String, Object> flags, int gameid) {
+    public void saveGameSettings(HashMap< OptionFlag, Object> flags, int gameid) {
 
-        system.set("bw-system.arenas." + gameid + ".flags.maxplayers", flags.get("MAX_PLAYERS"));
-        system.set("bw-system.arenas." + gameid + ".flags.arenaname", flags.get("ARENA_NAME"));
+        system.set("bw-system.arenas." + gameid + ".flags.maxplayers", flags.get(OptionFlag.MAX_PLAYERS));
+        system.set("bw-system.arenas." + gameid + ".flags.arenaname", flags.get(OptionFlag.ARENA_NAME));
+        system.set("bw-system.arenas." + gameid + ".flags.gamemode", flags.get(OptionFlag.GAMEMODE));
 
         saveSystemConfig();
 
@@ -271,7 +278,6 @@ public class SettingsManager {
      (float)spawns.getDouble("spawns." + gameid + "." + spawnid + ".yaw"),
      (float)spawns.getDouble("spawns." + gameid + "." + spawnid + ".pitch"));
      }*/
-    
     public void setLobbySpawn(Location l) {
         system.set("bw-system.lobby.spawn.world", l.getWorld().getName());
         system.set("bw-system.lobby.spawn.x", l.getBlockX());

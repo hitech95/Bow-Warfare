@@ -82,8 +82,9 @@ public class FreeForAll implements Gamemode {
         Game game = GameManager.getInstance().getGame(gameID);
 
         s.setLine(0, game.getName());
-        s.setLine(1, game.getState() + "");
-        s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
+        s.setLine(1, NAME);
+        s.setLine(2, game.getState() + "");
+        s.setLine(3, game.getActivePlayers() + "/" + game.getMaxPlayer());
 
         //live update
         if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {

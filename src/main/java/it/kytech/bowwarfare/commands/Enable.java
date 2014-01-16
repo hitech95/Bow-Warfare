@@ -34,7 +34,7 @@ public class Enable implements SubCommand{
 		} catch (NumberFormatException e) {
 			MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
 		} catch (NullPointerException e) {
-			MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
+			MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedosentexist", player, "arena-" + args[0]);
 		}
 		return true;
 

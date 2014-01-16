@@ -12,13 +12,12 @@ import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.util.NameUtil;
 
-
-
 public class LobbyWall {
 
-    private ArrayList < Sign > signs = new ArrayList < Sign > ();
-    private ArrayList < String > msgqueue = new ArrayList < String > ();
+    private ArrayList< Sign> signs = new ArrayList< Sign>();
+    private ArrayList< String> msgqueue = new ArrayList< String>();
     private int gameid;
+
     public LobbyWall(int gid) {
         gameid = gid;
     }
@@ -42,7 +41,7 @@ public class LobbyWall {
             }
         } else {
             for (int a = Math.min(z1, z2); a <= Math.max(z1, z2); a++) {
-            	BowWarfare.debug(a);
+                BowWarfare.debug(a);
                 Location l = new Location(w, x1, y1, a);
                 BlockState b = l.getBlock().getState();
                 if (b instanceof Sign) {
@@ -50,7 +49,7 @@ public class LobbyWall {
                     LobbyManager.lobbychunks.add(b.getChunk());
                     BowWarfare.debug("notx - " + b.getLocation().toString());
                 } else {
-                	BowWarfare.debug("Not a sign" + b.getType().toString());
+                    BowWarfare.debug("Not a sign" + b.getType().toString());
                     return false;
                 }
             }
@@ -88,20 +87,26 @@ public class LobbyWall {
         s0.setLine(1, "Click to join");
         s0.setLine(2, "Arena " + gameid);
 
-        //sign 1 
-        game.getGameMode().updateSingInfo(s1);
-        s1.setLine(1, game.getState() + "");
+        //sign 1
+        if (game.getGameMode() != null) {
+            game.getGameMode().updateSingInfo(s1);
+        } else {
+            s1.setLine(0, game.getName());
+            s1.setLine(1, game.getState() + "");
+            s1.setLine(2, "");
+            s1.setLine(3, "");
+        }
 
         //live player data
-        ArrayList < String > display = new ArrayList < String > ();
-        for (Player p: game.getAllPlayers()) {
+        ArrayList< String> display = new ArrayList< String>();
+        for (Player p : game.getAllPlayers()) {
             display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY) + NameUtil.stylize(p.getName(), true, !game.isPlayerActive(p)));
         }
 
         try {
             int no = 2;
             int line = 0;
-            for (String s: display) {
+            for (String s : display) {
                 signs.get(no).setLine(line, s);
                 line++;
                 if (line >= 4) {
@@ -109,14 +114,15 @@ public class LobbyWall {
                     no++;
                 }
             }
-        } catch (Exception e) {}
-        for (Sign s: signs) {
+        } catch (Exception e) {
+        }
+        for (Sign s : signs) {
             s.update();
         }
     }
 
     public void clear() {
-        for (Sign s: signs) {
+        for (Sign s : signs) {
             for (int a = 0; a < 4; a++) {
                 s.setLine(a, "");
             }
@@ -127,8 +133,8 @@ public class LobbyWall {
     public void addMsg(String s) {
         msgqueue.add(s);
     }
-
     int displaytid = 0;
+
     public void display() {
         int a = 0;
         while (msgqueue.size() > 0 && a < 4) {
@@ -138,30 +144,19 @@ public class LobbyWall {
                     signs.get(b).setLine(a, s.substring(b * 16, (b + 1) * 16));
 
                     signs.get(b).update();
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
             a++;
             msgqueue.remove(0);
         }
 
     }
-
-
-
     int aniline = 0;
+
     class AniSign implements Runnable {
+
         public void run() {
-
-
         }
     }
-
-
-
-
-
-
-
-
-
 }

@@ -36,7 +36,7 @@ public class Game {
     private ArrayList< String> spectators = new ArrayList< String>();
     HashMap< Player, Integer> nextspec = new HashMap< Player, Integer>();
     private ArrayList< Player> queue = new ArrayList< Player>();
-    private HashMap< String, Object> settings = new HashMap< String, Object>();
+    private HashMap<SettingsManager.OptionFlag, Object> settings = new HashMap<SettingsManager.OptionFlag, Object>();
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
     private Arena arena;
     private int gameID;
@@ -90,7 +90,7 @@ public class Game {
         arena = new Arena(min, max);
 
         hookvars.put("arena", gameID + "");
-        hookvars.put("maxplayers", settings.get("MAX_PLAYERS") + "");
+        hookvars.put("maxplayers", settings.get(SettingsManager.OptionFlag.MAX_PLAYERS) + "");
         hookvars.put("activeplayers", "0");
 
         availableGameModes();
@@ -180,7 +180,7 @@ public class Game {
             return false;
         }
 
-        HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get("MAX_PLAYERS"), "players-" + activePlayers.size());
+        HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(SettingsManager.OptionFlag.MAX_PLAYERS), "players-" + activePlayers.size());
 
         GameManager.getInstance().removeFromOtherQueues(p, gameID);
 
@@ -216,11 +216,11 @@ public class Game {
 
         boolean hasAdded = false;
 
-        if (activePlayers.size() < (Integer) settings.get("MAX_PLAYERS")) {
+        if (activePlayers.size() < (Integer) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS)) {
             hasAdded = currentG.onJoin(p);
         } else if (currentG.getSpawnCount() == 0) {
             msgmgr.sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
-        } else if (activePlayers.size() == (Integer) settings.get("MAX_PLAYERS")) {
+        } else if (activePlayers.size() == (Integer) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS)) {
             msgmgr.sendFMessage(PrefixType.WARNING, "error.gamefull", p, "arena-" + gameID);
         }
 
@@ -633,8 +633,8 @@ public class Game {
     public void setAnGamemode() {
         String strGamemode = "";
 
-        if (settings.get("GAMEMODE") != null) {
-            strGamemode = (String) settings.get("GAMEMODE");
+        if (settings.get(SettingsManager.OptionFlag.GAMEMODE) != null) {
+            strGamemode = (String) settings.get(SettingsManager.OptionFlag.GAMEMODE);
 
             for (int i = 0; i < availableGameModes.size(); i++) {
                 if (availableGameModes.get(i).getGamemodeName().equals(strGamemode)) {
@@ -642,7 +642,7 @@ public class Game {
                     break;
                 }
             }
-        } else {
+        } else if(availableGameModes.size() > 0){
             Random random = new Random();
             gamemode = random.nextInt(availableGameModes.size());
         }
@@ -665,7 +665,7 @@ public class Game {
     }
 
     public int getMaxPlayer() {
-        return Integer.parseInt((String) settings.get("MAX_PLAYERS"));
+        return Integer.parseInt((String) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS));
     }
 
     public Player[][] getPlayers() {
@@ -710,7 +710,7 @@ public class Game {
     }
 
     public Gamemode getGameMode() {
-        return availableGameModes.get(gamemode);
+        return (gamemode < availableGameModes.size() && gamemode > -1)?availableGameModes.get(gamemode):null;
     }
 
     public synchronized void setRBPercent(double d) {
@@ -730,7 +730,7 @@ public class Game {
     }
 
     public String getName() {
-        return (String) settings.get("ARENA_NAME");
+        return (String) settings.get(SettingsManager.OptionFlag.ARENA_NAME);
     }
 
     public void msgFall(PrefixType type, String msg, String... vars) {

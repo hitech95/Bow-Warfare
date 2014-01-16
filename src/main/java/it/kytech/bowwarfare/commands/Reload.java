@@ -58,8 +58,7 @@ public class Reload implements SubCommand{
 
 	@Override
 	public String help(Player p) {
-		// TODO Auto-generated method stub
-		return null;
+		return "/bw reload - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.reload","Reload the configuration");
 	}
 
 	@Override

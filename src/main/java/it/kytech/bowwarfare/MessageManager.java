@@ -14,7 +14,7 @@ import it.kytech.bowwarfare.util.MessageUtil;
 public class MessageManager {
 
 	public static MessageManager instance = new MessageManager();
-	public String pre = ChatColor.BLUE + "" + ChatColor.BOLD + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "bw" + ChatColor.BLUE + "" + ChatColor.BOLD + "] " + ChatColor.RESET;
+	public String pre = ChatColor.BLUE + "" + ChatColor.BOLD + "[" + ChatColor.GOLD + "" + ChatColor.BOLD + "BW" + ChatColor.BLUE + "" + ChatColor.BOLD + "] " + ChatColor.RESET;
 	private HashMap<PrefixType, String>prefix = new HashMap<PrefixType, String>();
 	public enum PrefixType {
 
@@ -32,6 +32,8 @@ public class MessageManager {
 		prefix.put(PrefixType.INFO, MessageUtil.replaceColors(f.getString("prefix.states.info")));
 		prefix.put(PrefixType.WARNING, MessageUtil.replaceColors(f.getString("prefix.states.warning")));
 		prefix.put(PrefixType.ERROR, MessageUtil.replaceColors(f.getString("prefix.states.error")));
+                
+                pre = MessageUtil.replaceColors(f.getString("prefix.main"));
 		
 	}
 	
@@ -48,7 +50,7 @@ public class MessageManager {
 	 * @param vars
 	 */
 	public void sendFMessage(PrefixType type, String input, Player player, String ... args) {
-		String msg = SettingsManager.getInstance().getMessageConfig().getString("messages."+input);
+		String msg = SettingsManager.getInstance().getMessageConfig().getString("messages."+ input);
 		boolean enabled = SettingsManager.getInstance().getMessageConfig().getBoolean("messages."+input+"_enabled", true);
 		if(msg == null){player.sendMessage(ChatColor.RED+"Failed to load message for messages."+input); return;}
 		if(!enabled)return;

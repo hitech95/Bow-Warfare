@@ -29,7 +29,7 @@ public class ListArenas implements SubCommand{
         }
         player.sendMessage(ChatColor.GREEN + arenas.toString());
     	}catch(Exception e){
-    		MessageManager.getInstance().sendMessage(PrefixType.ERROR, "error.gamenoexist", player);
+    		MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamenoexist", player);
     	}
         return false;
     }

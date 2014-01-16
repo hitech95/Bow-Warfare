@@ -36,7 +36,7 @@ kit-select-mode: 'SHOW_ICON'
 
 kits:
   default:
-    cost:0
+    cost: 0
     icon: '399'
     contents:
     - '46, 1, 0'

@@ -30,28 +30,28 @@ public class SpawnManager {
         setNext(p, arena, gameType, "");
     }
 
-    public void setNext(Player p, int arena, String gameType, String team) {
+    public void setNext(Player p, int arena, String gameType, String ... args) {
     }
 
     public void deleteLast(CommandSender sender, int arena, String gameType) {
         deleteLast(sender, arena, gameType, "");
     }
 
-    public void deleteLast(CommandSender sender, int arena, String gameType, String team) {
+    public void deleteLast(CommandSender sender, int arena, String gameType, String ... args) {
     }
 
     public void deleteAll(CommandSender sender, int arena, String gameType) {
         deleteAll(sender, arena, gameType, "");
     }
 
-    public void deleteAll(CommandSender sender, int arena, String gameType, String team) {
+    public void deleteAll(CommandSender sender, int arena, String gameType, String ... args) {
     }
 
     public boolean spawn(Player p, int Arena) {
         return spawn(p, Arena, "");
     }
 
-    public boolean spawn(Player p, int Arena, String Team) {
+    public boolean spawn(Player p, int Arena, String ... args) {
         return false;
     }
 
@@ -59,13 +59,13 @@ public class SpawnManager {
         return getNumberOf(Arena, GameType, "");
     }
 
-    public int getNumberOf(int Arena, String GameType, String Team) {
+    public int getNumberOf(int Arena, String GameType, String ... args) {
         return 0;
     }
 
-    public ArrayList<Location> loadSpawns(int gameID, String gameType, String team) {
+    public ArrayList<Location> loadSpawns(int gameID, String gameType, String ... args) {
         ArrayList list = new ArrayList();
         //TODO
-        return list;
+        return null;
     }
 }

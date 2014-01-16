@@ -10,12 +10,16 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
  *
  * @author M2K
  */
-public class PickupItemEvent implements Listener{
+public class PickupItemEvent implements Listener {
 
     @EventHandler
-    public void onPlayerPickupItem(PlayerPickupItemEvent e) {
-        if (GameManager.getInstance().getPlayerGameId(e.getPlayer()) == -1) {
-            e.setCancelled(true);
+    public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+        Player player = (Player) event.getPlayer();
+        int gameid = GameManager.getInstance().getPlayerGameId(player);
+
+        if (gameid == -1) {
+            return;
         }
+        event.setCancelled(true);
     }
 }
