@@ -4,15 +4,15 @@ Bow-Warfare-Reloaded
 Bow Warfare Reloaded
 
 What is working:
-  *SignJoin (Visual Parts and event)
-  *Creating Arena
-  *Set Lobby Spawn
-  *Arena Options Flags
-  *Stats (not tested)
+  * SignJoin (Visual Parts and event)
+  * Creating Arena
+  * Set Lobby Spawn
+  * Arena Options Flags
+  * Stats (not tested)
 
 What I'm working on:
-  *Add/Remove Spawn
-  *FFA Game Type
+  * Add/Remove Spawn
+  * FFA Game Type
   
 Planned new Feature:
   * Classic Bow
@@ -21,4 +21,4 @@ Planned new Feature:
   * Classes (kits)
 
 Not Working:
- *All other things
+ * All other things
