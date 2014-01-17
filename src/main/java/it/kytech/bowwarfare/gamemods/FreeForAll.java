@@ -6,9 +6,15 @@ package it.kytech.bowwarfare.gamemods;
 
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.MessageManager;
+import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
+import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -29,6 +35,7 @@ public class FreeForAll implements Gamemode {
     public HashMap<Player, Integer> deaths = new HashMap();
     public ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
     public ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
+    private MessageManager msgmgr = MessageManager.getInstance();
 
     public FreeForAll(int gameID) {
         this.gameID = gameID;
@@ -36,25 +43,40 @@ public class FreeForAll implements Gamemode {
         FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, "FFA", "");
     }
 
-    public FreeForAll() {
-        allowedPlace.add(gameID);
-        allowedBreak.add(gameID);
+    public FreeForAll(int gameID, boolean isTest) {
+        this.gameID = gameID;
 
+        if (isTest) {
+            FFASpawns = null;
+            killStreak = null;
+            kills = null;
+            deaths = null;
+            allowedPlace = null;
+            allowedBreak = null;
+        }
     }
 
     @Override
     public boolean onJoin(Player player) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("-----------------Qui Arrivo");
+        msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, player);        
+
+        player.teleport(getRandomSpawnPoint());
+        GameManager.getInstance().getGame(gameID).setState(Game.GameState.INGAME);
+        return true;
     }
 
     @Override
     public boolean onPlayerKilled(Player player, boolean hasLeft) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(!hasLeft){
+            player.teleport(getRandomSpawnPoint());
+        }        
+        return true;
     }
 
     @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return true;
     }
 
     @Override
@@ -69,12 +91,14 @@ public class FreeForAll implements Gamemode {
 
     @Override
     public int getSpawnCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return FFASpawns.size();
     }
 
     @Override
     public Location getRandomSpawnPoint() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("--------" + FFASpawns.size());
+        Random r = new Random();
+        return FFASpawns.get(r.nextInt(FFASpawns.size()));
     }
 
     @Override
@@ -95,29 +119,31 @@ public class FreeForAll implements Gamemode {
             } else {
                 s.setLine(3, (int) game.getRBPercent() + "%");
             }
-        } else {
-            s.setLine(3, "");
         }
     }
 
     @Override
-    public boolean onBlockBreaked(Block block, Player p) {
-        if (!allowedBreak.contains(block.getTypeId())) {
-            return true;
-        }
-        return false;
+    public boolean onBlockBreaked(Block block, Player p) {        
+        return allowedBreak.contains(block.getTypeId());
     }
 
     @Override
     public boolean onBlockPlaced(Block block, Player p) {
-        if (!allowedPlace.contains(block.getTypeId())) {
-            return true;
-        }
-        return false;
+        return allowedPlace.contains(block.getTypeId());
     }
 
     @Override
     public boolean isFrozenSpawn() {
         return false;
+    }
+
+    @Override
+    public boolean tryLoadSpawn() {
+        return (SpawnManager.getInstance().getNumberOf(gameID, NAME) > 0) ? true : false;
+    }
+
+    @Override
+    public void addSpawn(Location l) {
+        FFASpawns.add(l);
     }
 }

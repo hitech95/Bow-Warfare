@@ -27,6 +27,9 @@ public class Spectate implements SubCommand{
                 return true;
             }
         }
+        if(GameManager.getInstance().getGame(Integer.parseInt(args[0])).getGameMode() == null){
+            return true;
+        }
         if(GameManager.getInstance().getGame(Integer.parseInt(args[0])).getGameMode().getSpawnCount() == 0){
             MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", player);
             return true;
@@ -36,7 +39,7 @@ public class Spectate implements SubCommand{
             return true;
         }
         GameManager.getInstance().getGame(Integer.parseInt(args[0])).addSpectator(player);
-        return true;
+        return false;
     }
 
     @Override

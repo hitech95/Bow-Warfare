@@ -30,13 +30,17 @@ public class Option implements SubCommand {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + args[0]);
             return true;
         }
+        try {
 
-        HashMap<SettingsManager.OptionFlag, Object> z = SettingsManager.getInstance().getGameSettings(g.getID());
-        z.put(SettingsManager.OptionFlag.valueOf(args[1].toUpperCase()), args[2]);
-        SettingsManager.getInstance().saveGameSettings(z, g.getID());
-
-
-
+            HashMap<SettingsManager.OptionFlag, Object> z = SettingsManager.getInstance().getGameSettings(g.getID());
+            z.put(SettingsManager.OptionFlag.valueOf(args[1].toUpperCase()), args[2]);
+            SettingsManager.getInstance().saveGameSettings(z, g.getID());
+            g.reloadConfig();
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return true;
+        }
         return false;
     }
 

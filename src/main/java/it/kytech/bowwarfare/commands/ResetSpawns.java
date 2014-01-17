@@ -15,7 +15,11 @@ public class ResetSpawns implements SubCommand {
             return true;
         }
         try {
-            SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
+            if (args.length > 1) {
+                SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]) + "." + args[0].toUpperCase(), null);
+            } else {
+                SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
+            }
             return true;
         } catch (NumberFormatException e) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
@@ -27,7 +31,7 @@ public class ResetSpawns implements SubCommand {
 
     @Override
     public String help(Player p) {
-        return "/bw resetspawns <id> - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.resetspawns", "Resets spawns for Arena <id>");
+        return "/bw resetspawns <id> [<GameType>] - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.resetspawns", "Resets spawns for Arena <id>");
     }
 
     @Override

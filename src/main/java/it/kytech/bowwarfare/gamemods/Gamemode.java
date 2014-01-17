@@ -28,6 +28,8 @@ public interface Gamemode {
     
     public boolean onBlockPlaced(Block block, Player p);
     
+    public boolean tryLoadSpawn();
+    
     public Location getRandomSpawnPoint();
     
     public int getSpawnCount();
@@ -37,4 +39,6 @@ public interface Gamemode {
     public void updateSingInfo(Sign s);
 
     public boolean isFrozenSpawn();
+
+    public void addSpawn(Location l);
 }

@@ -27,7 +27,6 @@ import it.kytech.bowwarfare.commands.ListPlayers;
 import it.kytech.bowwarfare.commands.Reload;
 import it.kytech.bowwarfare.commands.ResetSpawns;
 import it.kytech.bowwarfare.commands.SetLobbySpawn;
-import it.kytech.bowwarfare.commands.SetLobbyWall;
 import it.kytech.bowwarfare.commands.SetSpawn;
 import it.kytech.bowwarfare.commands.Spectate;
 import it.kytech.bowwarfare.commands.SubCommand;
@@ -60,7 +59,6 @@ public class CommandHandler implements CommandExecutor {
         commands.put("enable", new Enable());
         commands.put("leave", new Leave());
         commands.put("setlobbyspawn", new SetLobbySpawn());
-        commands.put("setlobbywall", new SetLobbyWall());
         commands.put("resetspawns", new ResetSpawns());
         commands.put("delarena", new DelArena());
         commands.put("option", new Option());
@@ -95,6 +93,7 @@ public class CommandHandler implements CommandExecutor {
         helpinfo.put("list", 1);
         helpinfo.put("reload", 3);
         helpinfo.put("zombie", 1);
+        helpinfo.put("forcestart", 2);
     }
 
     @Override
