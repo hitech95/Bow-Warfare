@@ -1,5 +1,6 @@
 package it.kytech.bowwarfare.commands;
 
+import it.kytech.bowwarfare.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.MessageManager;
@@ -15,12 +16,21 @@ public class ResetSpawns implements SubCommand {
             return true;
         }
         try {
-            if (args.length > 1) {
-                SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]) + "." + args[0].toUpperCase(), null);
-            } else {
-                SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
+            if (args.length > 0) {
+                GameManager.getInstance().disableGame(Integer.parseInt(args[0]));
+
+                if (args.length > 1) {
+                    SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]) + "." + args[0].toUpperCase(), null);
+                } else {
+                    SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
+                }
+                SettingsManager.getInstance().saveSpawns();
+                GameManager.getInstance().enableGame(Integer.parseInt(args[0]));
+
+                MessageManager.getInstance().sendFMessage(PrefixType.INFO, "info.deleted", player, "input-Spawns");
+                return false;
             }
-            return true;
+            MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notspecified", player, "input-Game ID");
         } catch (NumberFormatException e) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notanumber", player, "input-Arena");
         } catch (NullPointerException e) {

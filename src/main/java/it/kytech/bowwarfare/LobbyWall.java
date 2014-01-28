@@ -77,6 +77,7 @@ public class LobbyWall {
             }, 20L);
             return;
         }
+        
         clear();
         Game game = GameManager.getInstance().getGame(gameid);
         Sign s0 = signs.get(0);
@@ -86,12 +87,13 @@ public class LobbyWall {
         s0.setLine(0, "[BowWarfare]");
         s0.setLine(1, "Click to join");
         s0.setLine(2, "Arena " + gameid);
+        s0.setLine(0, game.getName());
 
         //sign 1
         if (game.getGameMode() != null) {
             game.getGameMode().updateSingInfo(s1);
         } else {
-            s1.setLine(0, game.getName());
+            s1.setLine(0, "");
             s1.setLine(1, game.getState() + "");
             s1.setLine(2, "");
             s1.setLine(3, "");

@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.kytech.bowwarfare.gamemods;
+package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.GameManager;
@@ -10,11 +10,9 @@ import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
-import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -25,42 +23,46 @@ import org.bukkit.entity.Player;
  *
  * @author M2K
  */
-public class FreeForAll implements Gamemode {
+public class FreeForAll implements Gametype {
 
     public static final String NAME = "FFA";
     private int gameID;
-    public ArrayList<Location> FFASpawns;
-    public HashMap<Player, Integer> killStreak = new HashMap();
-    public HashMap<Player, Integer> kills = new HashMap();
-    public HashMap<Player, Integer> deaths = new HashMap();
-    public ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
-    public ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
+    private boolean isTest = false;
+    private ArrayList<Location> FFASpawns;
+    private ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
+    private ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
+    private HashMap<Player, Integer> kills = new HashMap<Player, Integer>();
     private MessageManager msgmgr = MessageManager.getInstance();
 
     public FreeForAll(int gameID) {
+        isTest = false;
         this.gameID = gameID;
 
         FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, "FFA", "");
+        loadConfig();
     }
 
     public FreeForAll(int gameID, boolean isTest) {
         this.gameID = gameID;
+        this.isTest = isTest;
 
         if (isTest) {
             FFASpawns = null;
-            killStreak = null;
-            kills = null;
-            deaths = null;
             allowedPlace = null;
             allowedBreak = null;
         }
     }
 
+    private void loadConfig() {
+
+    }
+
+    private void loadDefaultConfig() {
+
+    }
+
     @Override
     public boolean onJoin(Player player) {
-        System.out.println("-----------------Qui Arrivo");
-        msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, player);        
-
         player.teleport(getRandomSpawnPoint());
         GameManager.getInstance().getGame(gameID).setState(Game.GameState.INGAME);
         return true;
@@ -68,9 +70,18 @@ public class FreeForAll implements Gamemode {
 
     @Override
     public boolean onPlayerKilled(Player player, boolean hasLeft) {
-        if(!hasLeft){
+        Game game = GameManager.getInstance().getGame(gameID);
+        if (!hasLeft) {
+            int kill = kills.get(player.getKiller()) + 1;
+            if (kill >= 5) {
+                game.playerWin(player);
+                return true;
+            } else {
+                kills.put(player.getKiller(), kills.get(player.getKiller()) + 1);
+            }
+
             player.teleport(getRandomSpawnPoint());
-        }        
+        }
         return true;
     }
 
@@ -80,9 +91,14 @@ public class FreeForAll implements Gamemode {
     }
 
     @Override
-    public boolean onArrowHit(Player attacker, Arrow arrow) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean onPlayerQuit(Player p) {
+        return false;
     }
+
+    @Override
+    public boolean onArrowHit(Player attacker, Arrow arrow) {
+        return false;
+    }    
 
     @Override
     public String getGamemodeName() {
@@ -96,7 +112,6 @@ public class FreeForAll implements Gamemode {
 
     @Override
     public Location getRandomSpawnPoint() {
-        System.out.println("--------" + FFASpawns.size());
         Random r = new Random();
         return FFASpawns.get(r.nextInt(FFASpawns.size()));
     }
@@ -105,12 +120,11 @@ public class FreeForAll implements Gamemode {
     public void updateSingInfo(Sign s) {
         Game game = GameManager.getInstance().getGame(gameID);
 
-        s.setLine(0, game.getName());
-        s.setLine(1, NAME);
-        s.setLine(2, game.getState() + "");
-        s.setLine(3, game.getActivePlayers() + "/" + game.getMaxPlayer());
+        s.setLine(0, NAME);
+        s.setLine(1, game.getState() + "");
+        s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
+        s.setLine(3, "");
 
-        //live update
         if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {
             s.setLine(3, game.getRBStatus());
             if (game.getRBPercent() > 100) {
@@ -123,7 +137,12 @@ public class FreeForAll implements Gamemode {
     }
 
     @Override
-    public boolean onBlockBreaked(Block block, Player p) {        
+    public void updateSignPlayer(Sign s) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean onBlockBreaked(Block block, Player p) {
         return allowedBreak.contains(block.getTypeId());
     }
 
@@ -139,7 +158,7 @@ public class FreeForAll implements Gamemode {
 
     @Override
     public boolean tryLoadSpawn() {
-        return (SpawnManager.getInstance().getNumberOf(gameID, NAME) > 0) ? true : false;
+        return (SpawnManager.getInstance().getNumberOf(gameID, NAME) > 0);
     }
 
     @Override

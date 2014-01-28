@@ -78,8 +78,6 @@ public class StatsManager {
         arenas.put(arenaid, new HashMap<Player, PlayerStatsSession>());
     }
 
-
-
     public void addPlayer(Player p, int arenaid){
         arenas.get(arenaid).put(p, new PlayerStatsSession(p, arenaid));
     }
@@ -89,19 +87,12 @@ public class StatsManager {
     }
 
     public void playerDied(Player p, int pos, int arenaid,long time){
-        /*    System.out.println("player null "+(p == null));
-        System.out.println("arena null "+(arenas == null));
-        System.out.println("arenagetplayer null "+(arenas.get(arenaid).get(p) == null));*/
-
         arenas.get(arenaid).get(p).died(pos, time);
     }
 
     public void playerWin(Player p, int arenaid, long time){
         arenas.get(arenaid).get(p).win(time);
     }
-
-
-
 
     public void addKill(Player p, Player killed, int arenaid){
         PlayerStatsSession s = arenas.get(arenaid).get(p);
@@ -147,14 +138,7 @@ public class StatsManager {
 
 
     }
-
-
-
-
-
-
-
-
+    
     private void addSQL(String query){
         addSQL( dbman.createStatement(query));
     }
@@ -167,15 +151,12 @@ public class StatsManager {
         }
     }
 
-
     class DatabaseDumper extends Thread{
 
         public void run(){
             while(queue.size()>0){
                 PreparedStatement s = queue.remove(0);
                 try{
-
-
                     s.execute();
                 }catch(Exception e){     dbman.connect();}
 

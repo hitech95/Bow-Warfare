@@ -10,7 +10,7 @@ import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
-import it.kytech.bowwarfare.gamemods.Gamemode;
+import it.kytech.bowwarfare.gametype.Gametype;
 import java.util.Arrays;
 
 public class SetSpawn implements SubCommand {
@@ -22,7 +22,7 @@ public class SetSpawn implements SubCommand {
 
     public void loadNextSpawn(String gamemode) {
         for (Game g : GameManager.getInstance().getGames().toArray(new Game[0])) { //Avoid Concurrency problems
-            Gamemode availableGameMode = g.getAvailableGameMode(gamemode);
+            Gametype availableGameMode = g.getAvailableGameMode(gamemode);
             if (availableGameMode == null) {
                 next.put(g.getID(), 1);
             } else {

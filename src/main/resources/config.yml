@@ -48,7 +48,8 @@ disallow-commands: true
 #commands.
 cmdwhitelist: 
 - 'kit'
- 
+
+#Block Filtering
 block:
   place:
     whitelist:
@@ -56,6 +57,29 @@ block:
   break:
     whitelist:
     - 46
+
+#If disallow-commands is set to true, you can use
+#the cmdwhitelist section below to whitelist certain
+#commands.
+limits: 
+    ffa:
+        kill: 25
+        time: 500
+        maxp: 16
+    ctf:
+        time: 500
+        maxp: 8
+        minp: 2        
+    tdm:
+        kill: 80
+        time: 800
+        maxp: 8
+        minp: 1
+    inf:
+        kill: 80
+        time: 800
+        maxp: 8
+        minp: 1
 
 #How many blocks to rollback per-tick
 #The higher this settings the fast each

@@ -16,7 +16,8 @@ public class FoodLevelEvent implements Listener{
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         if ((e.getEntity() instanceof Player)) {
             Player p = (Player) e.getEntity();
-            if ((GameManager.getInstance().getPlayerGameId(p) != -1) && (p.getFoodLevel() != 20)) {
+            if (GameManager.getInstance().getPlayerGameId(p) != -1) {
+                e.setCancelled(true);
                 p.setFoodLevel(20);
             }
         }

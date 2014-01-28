@@ -11,11 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.SettingsManager.OptionFlag;
 import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
-import it.kytech.bowwarfare.gamemods.FreeForAll;
-import it.kytech.bowwarfare.gamemods.Gamemode;
+import it.kytech.bowwarfare.gametype.FreeForAll;
+import it.kytech.bowwarfare.gametype.Gametype;
 import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
@@ -35,6 +36,7 @@ public class Game {
         DISABLED, LOADING, INACTIVE, WAITING,
         STARTING, INGAME, FINISHING, RESETING, ERROR
     }
+
     private GameState state = GameState.DISABLED;
     private ArrayList< Player> activePlayers = new ArrayList< Player>();
     private ArrayList< Player> inactivePlayers = new ArrayList< Player>();
@@ -45,9 +47,8 @@ public class Game {
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
     private Arena arena;
     private int gameID;
-    private int gcount = 0;
-    private ArrayList<Gamemode> availableGameModes = new ArrayList<Gamemode>();
-    private int gamemode = -1;
+    private ArrayList<Gametype> availableGameTypes = new ArrayList<Gametype>();
+    private int gametype = -1;
     private FileConfiguration config;
     private FileConfiguration system;
     private HashMap< Player, ItemStack[][]> inv_store = new HashMap< Player, ItemStack[][]>();
@@ -56,7 +57,6 @@ public class Game {
     private String rbstatus = "";
     private long startTime = 0;
     private StatsManager statMan = StatsManager.getInstance();
-    private HashMap< String, String> hookvars = new HashMap< String, String>();
     private MessageManager msgmgr = MessageManager.getInstance();
     private StatsManager sm = StatsManager.getInstance();
 
@@ -95,11 +95,7 @@ public class Game {
         Location min = new Location(SettingsManager.getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
 
         arena = new Arena(min, max);
-
-        hookvars.put("arena", gameID + "");
-        hookvars.put("maxplayers", settings.get(SettingsManager.OptionFlag.MAX_PLAYERS) + "");
-        hookvars.put("activeplayers", "0");
-        availableGameModes();
+        loadAvailableGameModes();
 
         state = GameState.WAITING;
     }
@@ -125,11 +121,11 @@ public class Game {
     }
 
     public void addSpawn(String gamemode, Location l) {
-        Gamemode gameMode = getAvailableGameMode(gamemode);
+        Gametype gameMode = getAvailableGameMode(gamemode);
         if (gameMode != null) {
             gameMode.addSpawn(l);
         } else {
-            availableGameModes();
+            loadAvailableGameModes();
         }
     }
 
@@ -153,12 +149,16 @@ public class Game {
 
         disabled = false;
 
-        int b = (SettingsManager.getInstance().getMaxPlayerCount(gameID) > queue.size()) ? queue.size() : SettingsManager.getInstance().getMaxPlayerCount(gameID);
+        if (queue.size() > 0) {
+            if (gametype < 0) {
+                setAnGamemode();
+            }
+            int b = (SettingsManager.getInstance().getMaxPlayerCount(gameID, availableGameTypes.get(gametype)) > queue.size()) ? queue.size() : SettingsManager.getInstance().getMaxPlayerCount(gameID, availableGameTypes.get(gametype));
 
-        for (int a = 0; a < b; a++) {
-            addPlayer(queue.remove(0));
+            for (int a = 0; a < b; a++) {
+                addPlayer(queue.remove(0));
+            }
         }
-
         int c = 1;
 
         for (Player p : queue) {
@@ -195,7 +195,12 @@ public class Game {
             return false;
         }
 
-        HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(SettingsManager.OptionFlag.MAX_PLAYERS), "players-" + activePlayers.size());
+        if (gametype < 0) {
+            OptionFlag value = SettingsManager.OptionFlag.valueOf(availableGameTypes.get(gametype).getGamemodeName() + "MAXP");
+            HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(value), "players-" + activePlayers.size());
+        } else {
+            HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "players-" + activePlayers.size());
+        }
 
         GameManager.getInstance().removeFromOtherQueues(p, gameID);
 
@@ -216,13 +221,11 @@ public class Game {
 
         boolean hasAdded = false;
 
-        if (state == GameState.WAITING) {
-            if (gamemode < 0) {
+        if (state != GameState.DISABLED && state != GameState.RESETING && state != GameState.LOADING && state != GameState.INACTIVE && state != GameState.ERROR) {
+            if (gametype < 0) {
                 setAnGamemode();
             }
-            Gamemode currentG = availableGameModes.get(gamemode);
-
-            System.out.println("gamemode è" + currentG.getGamemodeName());
+            Gametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
                 msgmgr.sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
             }
@@ -245,7 +248,6 @@ public class Game {
         }
 
         if (!hasAdded) {
-            System.out.println("e qui?");
             if (config.getBoolean("enable-player-queue")) {
                 if (!queue.contains(p)) {
                     queue.add(p);
@@ -261,12 +263,13 @@ public class Game {
                 }
             }
         } else {
+
+            msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(20);
             clearInv(p);
             activePlayers.add(p);
             sm.addPlayer(p, gameID);
-            hookvars.put("activeplayers", activePlayers.size() + "");
             LobbyManager.getInstance().updateWall(gameID);
             showMenu(p);
             HookManager.getInstance().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
@@ -298,7 +301,7 @@ public class Game {
         if (state == GameState.INGAME) {
             return;
         }
-
+        //TODO - Read the correct Value from Config
         if (activePlayers.size() <= 0) {
             for (Player pl : activePlayers) {
                 msgmgr.sendMessage(PrefixType.WARNING, "Not enough players!", pl);
@@ -331,7 +334,7 @@ public class Game {
      * 
      */
     public boolean blockBreak(Block block, Player p) {
-        return availableGameModes.get(gamemode).onBlockBreaked(block, p);
+        return availableGameTypes.get(gametype).onBlockBreaked(block, p);
     }
 
     /*
@@ -345,7 +348,7 @@ public class Game {
      * 
      */
     public boolean blockPlace(Block block, Player p) {
-        return availableGameModes.get(gamemode).onBlockPlaced(block, p);
+        return availableGameTypes.get(gametype).onBlockPlaced(block, p);
     }
 
     /*
@@ -368,7 +371,7 @@ public class Game {
 
             PlayerKilledEvent pk = null;
 
-            if (state != GameState.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null) {
+            if (state != GameState.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null && leave.length > 0) {
                 switch (p.getLastDamageCause().getCause()) {
                     case ENTITY_ATTACK:
                         if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
@@ -378,7 +381,7 @@ public class Game {
                                     "killer-" + ((killer != null) ? (BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
                                     + killer.getName() : "Unknown"),
                                     "item-" + ((killer != null) ? ItemReader.getFriendlyItemName(killer.getItemInHand().getType()) : "Unknown Item"));
-                            if (killer != null && p != null) {
+                            if (killer != null && p != null && activePlayers.contains(killer)) {
                                 sm.addKill(killer, p, gameID);
                             }
                             pk = new PlayerKilledEvent(p, this, killer, p.getLastDamageCause().getCause());
@@ -387,7 +390,6 @@ public class Game {
                                     + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
                                     + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
                             pk = new PlayerKilledEvent(p, this, null, p.getLastDamageCause().getCause());
-
                         }
                         break;
                     default:
@@ -399,9 +401,9 @@ public class Game {
                         break;
                 }
                 Bukkit.getServer().getPluginManager().callEvent(pk);
-
-                availableGameModes.get(gamemode).onPlayerKilled(p, (leave.length > 0));
             }
+
+            availableGameTypes.get(gametype).onPlayerKilled(p, (leave.length > 0));
 
             LobbyManager.getInstance().updateWall(gameID);
 
@@ -426,52 +428,35 @@ public class Game {
      * 
      * 
      */
-    public void removePlayer(Player p) {
+    public void removePlayer(Player p, boolean... leave) {
 
+        availableGameTypes.get(gametype).onPlayerRemove(p, false);
 
-        availableGameModes.get(gamemode).onPlayerRemove(p, false);
+        if (!activePlayers.contains(p)) {
+            return;
+        }
 
         if (state == GameState.INGAME) {
             killPlayer(p, true);
-            try {
-                clearInv(p);
-                p.teleport(SettingsManager.getInstance().getLobbySpawn());
-                sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
-
-                if (!activePlayers.contains(p)) {
-                    return;
-                }
-                restoreInv(p);
-
-                activePlayers.remove(p);
-                inactivePlayers.remove(p);
-
-                PlayerKilledEvent pk = null;
-
-                msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
-
-                if (activePlayers.size() < 1 && state != GameState.WAITING) {
-                    endGame();
-                }
-
-                LobbyManager.getInstance().updateWall(gameID);
-
-            } catch (Exception e) {
-                BowWarfare.$("???????????????????????");
-                e.printStackTrace();
-                BowWarfare.$("ID" + gameID);
-                BowWarfare.$(activePlayers.size() + "");
-                BowWarfare.$(activePlayers.toString());
-                BowWarfare.$(p.getName());
-                BowWarfare.$(p.getLastDamageCause().getCause().name());
-            }
-        } else {
-            sm.removePlayer(p, gameID);
-            restoreInv(p);
-            activePlayers.remove(p);
-            inactivePlayers.remove(p);
-            LobbyManager.getInstance().clearSigns(gameID);
         }
+
+        clearInv(p);
+
+        if (leave.length > 0) {
+            p.teleport(SettingsManager.getInstance().getLobbySpawn());
+        }
+        sm.removePlayer(p, gameID);
+
+        activePlayers.remove(p);
+        inactivePlayers.remove(p);
+
+        restoreInv(p);
+
+        if (activePlayers.size() < 1 && state != GameState.WAITING) {
+            endGame();
+        }
+
+        msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
 
         HookManager.getInstance().runHook("PLAYER_REMOVED", "player-" + p.getName());
 
@@ -491,11 +476,55 @@ public class Game {
      * 
      */
     public void playerLeave(Player p) {
-        if (state == GameState.INGAME) {
-            availableGameModes.get(gamemode).onPlayerKilled(p, true);
-        } else {
-            availableGameModes.get(gamemode).onPlayerRemove(p, true);
+        availableGameTypes.get(gametype).onPlayerQuit(p);
+        removePlayer(p, true);
+    }
+
+    /*
+     *
+     * ################################################
+     *
+     *                                 PLAYER WIN
+     *
+     * ################################################
+     *
+     *
+     */
+    public void playerWin(Player p) {
+        if (GameState.DISABLED == state) {
+            return;
         }
+
+        Player win = p.getKiller();
+
+        for (Player acP : activePlayers) {
+            acP.teleport(SettingsManager.getInstance().getLobbySpawn());
+            clearInv(acP);
+            sm.removePlayer(acP, gameID);
+            activePlayers.remove(acP);
+            restoreInv(acP);
+
+            acP.setHealth(p.getMaxHealth());
+            acP.setFoodLevel(20);
+            acP.setFireTicks(0);
+            acP.setFallDistance(0);
+        }
+
+        msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
+
+        LobbyManager.getInstance().display(new String[]{
+            win.getName(), "", "Won the ", "Bow Warfare!"
+        }, gameID);
+
+        state = GameState.FINISHING;
+        
+        sm.playerWin(win, gameID, new Date().getTime() - startTime);
+        sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+
+        LobbyManager.getInstance().updateWall(gameID);
+        MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
+        
+        endGame();
     }
 
     /*
@@ -539,6 +568,7 @@ public class Game {
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamedisabled", "arena-" + gameID);
 
     }
+
     /*
      * 
      * ################################################
@@ -549,7 +579,6 @@ public class Game {
      * 
      * 
      */
-
     public void resetArena() {
 
         for (Integer i : tasks) {
@@ -559,10 +588,10 @@ public class Game {
         tasks.clear();
         activePlayers.clear();
         inactivePlayers.clear();
-        if (settings.get(SettingsManager.OptionFlag.GAMEMODE) != null) {
+        if (settings.get(SettingsManager.OptionFlag.GAMETYPE) != null) {
             setAnGamemode();
         } else {
-            gamemode = -1;
+            gametype = -1;
         }
         state = GameState.RESETING;
 
@@ -654,7 +683,6 @@ public class Game {
 
         int a = 0;
         int b = 0;
-
 
         ArrayList<Kit> kits = GameManager.getInstance().getKits(p);
         BowWarfare.debug(kits + "");
@@ -750,26 +778,26 @@ public class Game {
 
     }
 
-    public void availableGameModes() {
+    public void loadAvailableGameModes() {
         if (new FreeForAll(gameID, true).tryLoadSpawn()) {
-            availableGameModes.add(new FreeForAll(gameID));
+            availableGameTypes.add(new FreeForAll(gameID));
         }
     }
 
     public void setAnGamemode() {
         String strGamemode = "";
-        if (settings.get(SettingsManager.OptionFlag.GAMEMODE) != null) {
-            strGamemode = (String) settings.get(SettingsManager.OptionFlag.GAMEMODE);
+        if (settings.get(SettingsManager.OptionFlag.GAMETYPE) != null) {
+            strGamemode = (String) settings.get(SettingsManager.OptionFlag.GAMETYPE);
 
-            for (int i = 0; i < availableGameModes.size(); i++) {
-                if (availableGameModes.get(i).getGamemodeName().equalsIgnoreCase(strGamemode)) {
-                    gamemode = i;
+            for (int i = 0; i < availableGameTypes.size(); i++) {
+                if (availableGameTypes.get(i).getGamemodeName().equalsIgnoreCase(strGamemode)) {
+                    gametype = i;
                     break;
                 }
             }
-        } else if (availableGameModes.size() > 0) {
+        } else if (availableGameTypes.size() > 0) {
             Random random = new Random();
-            gamemode = random.nextInt(availableGameModes.size());
+            gametype = random.nextInt(availableGameTypes.size());
         }
     }
 
@@ -823,7 +851,7 @@ public class Game {
     }
 
     public boolean isFrozenSpawn() {
-        return availableGameModes.get(gamemode).isFrozenSpawn();
+        return availableGameTypes.get(gametype).isFrozenSpawn();
     }
 
     public boolean hasPlayer(Player p) {
@@ -834,12 +862,12 @@ public class Game {
         return state;
     }
 
-    public Gamemode getGameMode() {
-        return (gamemode < availableGameModes.size() && gamemode > -1) ? availableGameModes.get(gamemode) : null;
+    public Gametype getGameMode() {
+        return (gametype < availableGameTypes.size() && gametype > -1) ? availableGameTypes.get(gametype) : null;
     }
 
     public boolean isAvailableGameMode(String s) {
-        for (Gamemode g : availableGameModes) {
+        for (Gametype g : availableGameTypes) {
             if (g.getGamemodeName().equalsIgnoreCase(s)) {
                 return true;
             }
@@ -847,8 +875,8 @@ public class Game {
         return false;
     }
 
-    public Gamemode getAvailableGameMode(String s) {
-        for (Gamemode g : availableGameModes) {
+    public Gametype getAvailableGameMode(String s) {
+        for (Gametype g : availableGameTypes) {
             if (g.getGamemodeName().equalsIgnoreCase(s)) {
                 return g;
             }

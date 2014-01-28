@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.kytech.bowwarfare.gamemods;
+package it.kytech.bowwarfare.gametype;
 
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,7 +14,7 @@ import org.bukkit.entity.Player;
  *
  * @author M2K
  */
-public interface Gamemode {
+public interface Gametype {
     
     public boolean onJoin(Player player);
     
@@ -37,8 +37,12 @@ public interface Gamemode {
     public String getGamemodeName();
     
     public void updateSingInfo(Sign s);
+    
+    public void updateSignPlayer(Sign s);
 
     public boolean isFrozenSpawn();
 
     public void addSpawn(Location l);
+
+    public boolean onPlayerQuit(Player p);
 }
