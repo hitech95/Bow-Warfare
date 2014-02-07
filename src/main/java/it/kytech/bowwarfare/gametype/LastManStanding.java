@@ -1,5 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 package it.kytech.bowwarfare.gametype;
@@ -7,9 +8,9 @@ package it.kytech.bowwarfare.gametype;
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
+import static it.kytech.bowwarfare.gametype.FreeForAll.NAME;
 import it.kytech.bowwarfare.util.NameUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,20 +20,18 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import static org.bukkit.event.entity.EntityDamageEvent.DamageCause.ENTITY_ATTACK;
 
 /**
  *
  * @author M2K
  */
-public class FreeForAll implements Gametype {
+public class LastManStanding implements Gametype {
 
-    public static final String NAME = "FFA";
+    public static final String NAME = "LMS";
     private int gameID;
     private boolean isTest = false;
-    private ArrayList<Location> FFASpawns;
+    private ArrayList<Location> LMSSpawns;
     private ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
     private ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
     private HashMap<Player, Integer> kills = new HashMap<Player, Integer>();
@@ -41,22 +40,21 @@ public class FreeForAll implements Gametype {
     private Random r = new Random();
 
     private final int DEFAULT_MAXP = 16;
-    private final int DEFAULT_KILL = 25;
 
-    public FreeForAll(int gameID) {
+    public LastManStanding(int gameID) {
         isTest = false;
         this.gameID = gameID;
 
-        FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
+        LMSSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
         loadSettings();
     }
 
-    public FreeForAll(int gameID, boolean isTest) {
+    public LastManStanding(int gameID, boolean isTest) {
         this.gameID = gameID;
         this.isTest = isTest;
 
         if (isTest) {
-            FFASpawns = null;
+            LMSSpawns = null;
             allowedPlace = null;
             allowedBreak = null;
         }
@@ -75,7 +73,6 @@ public class FreeForAll implements Gametype {
 
     private void loadDefaultSettings() {
         settings.put(SettingsManager.OptionFlag.FFAMAXP, DEFAULT_MAXP);
-        settings.put(SettingsManager.OptionFlag.FFAKILL, DEFAULT_KILL);
 
         saveConfig();
     }
@@ -85,59 +82,14 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onJoin(Player player) {
-        player.teleport(getRandomSpawnPoint());
-
-        if (GameManager.getInstance().getGame(gameID).getState() != Game.GameState.INGAME) {
-            GameManager.getInstance().getGame(gameID).startGame();
-        }
-
-        return true;
-    }
-
-    @Override
-    public boolean onPlayerKilled(Player player, boolean hasLeft) {
-        Game game = GameManager.getInstance().getGame(gameID);
-        if (!hasLeft) {
-
-            if (player.getLastDamageCause().getCause() == ENTITY_ATTACK) {
-
-                if (player.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
-
-                    Player killer = player.getKiller();
-
-                    if (kills.get(killer) == null) {
-                        kills.put(killer, 0);
-                    }
-                    int kill = kills.get(killer) + 1;
-
-                    if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
-                        game.playerWin(player);
-                        return true;
-                    } else {
-                        kills.put(killer, kills.get(killer) + 1);
-                    }
-                } else {
-
-                    /*msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-"
-                            + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
-                            + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
-                    pk = new PlayerKilledEvent(p, this, null, p.getLastDamageCause().getCause());*/
-
-                }
-            }
-            player.teleport(getRandomSpawnPoint());
-        }
-        return true;
-    }
-
-    @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
+        //Mark Player as Death
         return true;
     }
 
     @Override
     public boolean onPlayerQuit(Player p) {
+        //Mark Player as Death
         return false;
     }
 
@@ -153,12 +105,12 @@ public class FreeForAll implements Gametype {
 
     @Override
     public int getSpawnCount() {
-        return FFASpawns.size();
+        return LMSSpawns.size();
     }
 
     @Override
     public Location getRandomSpawnPoint() {
-        return FFASpawns.get(r.nextInt(FFASpawns.size()));
+        return LMSSpawns.get(r.nextInt(LMSSpawns.size()));
     }
 
     @Override
@@ -167,7 +119,7 @@ public class FreeForAll implements Gametype {
 
         s.setLine(0, NAME);
         s.setLine(1, game.getState() + "");
-        s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
+        s.setLine(2, game.getActivePlayers() + "/" + game.getInactivePlayers() + "/" + game.getMaxPlayer());
         s.setLine(3, "");
 
         if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {
@@ -205,6 +157,8 @@ public class FreeForAll implements Gametype {
 
     @Override
     public boolean isFrozenSpawn() {
+
+        //TODO check if is running if so it is false, else true.
         return false;
     }
 
@@ -215,7 +169,7 @@ public class FreeForAll implements Gametype {
 
     @Override
     public void addSpawn(Location l) {
-        FFASpawns.add(l);
+        LMSSpawns.add(l);
     }
 
     @Override
@@ -232,4 +186,19 @@ public class FreeForAll implements Gametype {
     public String toString() {
         return "{name:" + NAME + ", gameID:" + gameID + "}";
     }
+
+    @Override
+    public boolean onJoin(Player player) {
+        player.teleport(getRandomSpawnPoint());
+        
+        //Make the percentage to auto-start the game, etc.
+
+        return true;
+    }
+
+    @Override
+    public boolean onPlayerKilled(Player player, boolean hasLeft) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

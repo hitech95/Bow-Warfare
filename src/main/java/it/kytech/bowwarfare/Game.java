@@ -24,8 +24,10 @@ import it.kytech.bowwarfare.util.ItemReader;
 import it.kytech.bowwarfare.util.Kit;
 import java.util.Date;
 import java.util.Random;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 
 //Data container for a game
@@ -82,8 +84,6 @@ public class Game {
     public void setup() {
         state = GameState.LOADING;
 
-        settings = SettingsManager.getInstance().getGameSettings(gameID);
-
         int x = system.getInt("bw-system.arenas." + gameID + ".x1");
         int y = system.getInt("bw-system.arenas." + gameID + ".y1");
         int z = system.getInt("bw-system.arenas." + gameID + ".z1");
@@ -95,7 +95,10 @@ public class Game {
         Location min = new Location(SettingsManager.getGameWorld(gameID), Math.min(x, x1), Math.min(y, y1), Math.min(z, z1));
 
         arena = new Arena(min, max);
+
         loadAvailableGameModes();
+
+        settings = SettingsManager.getInstance().getGameSettings(gameID);
 
         state = GameState.WAITING;
     }
@@ -183,7 +186,6 @@ public class Game {
      * 
      */
     public boolean addPlayer(Player p) {
-
         if (SettingsManager.getInstance().getLobbySpawn() == null) {
             msgmgr.sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", p);
             return false;
@@ -195,7 +197,7 @@ public class Game {
             return false;
         }
 
-        if (gametype < 0) {
+        if (gametype > -1) {
             OptionFlag value = SettingsManager.OptionFlag.valueOf(availableGameTypes.get(gametype).getGamemodeName() + "MAXP");
             HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(value), "players-" + activePlayers.size());
         } else {
@@ -230,7 +232,7 @@ public class Game {
                 msgmgr.sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
             }
 
-            if (activePlayers.size() < (Integer) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS)) {
+            if (activePlayers.size() < availableGameTypes.get(gametype).getMaxPlayer()) {
                 PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, GameManager.getInstance().getGame(gameID));
                 Bukkit.getServer().getPluginManager().callEvent(joinarena);
                 if (joinarena.isCancelled()) {
@@ -241,8 +243,9 @@ public class Game {
                 p.teleport(SettingsManager.getInstance().getLobbySpawn());
                 saveInv(p);
                 clearInv(p);
+
                 hasAdded = currentG.onJoin(p);
-            } else if (activePlayers.size() == (Integer) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS)) {
+            } else {
                 msgmgr.sendFMessage(PrefixType.WARNING, "error.gamefull", p, "arena-" + gameID);
             }
         }
@@ -262,19 +265,30 @@ public class Game {
                     a++;
                 }
             }
-        } else {
 
+            clearInv(p);
+            restoreInv(p);
+        } else {
             msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(20);
             clearInv(p);
             activePlayers.add(p);
             sm.addPlayer(p, gameID);
+
+            ItemStack Bow = new ItemStack(Material.BOW);
+            Bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+            Bow.addEnchantment(Enchantment.DURABILITY, 3);
+
+            p.getInventory().addItem(new ItemStack[]{Bow});
+            p.getInventory().addItem(new ItemStack[]{new ItemStack(Material.ARROW)});
+            
             LobbyManager.getInstance().updateWall(gameID);
             showMenu(p);
             HookManager.getInstance().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
             return true;
         }
+
         if (state == GameState.DISABLED) {
             msgmgr.sendFMessage(PrefixType.WARNING, "error.gamedisabled", p, "arena-" + gameID);
         } else if (state == GameState.RESETING) {
@@ -301,8 +315,8 @@ public class Game {
         if (state == GameState.INGAME) {
             return;
         }
-        //TODO - Read the correct Value from Config
-        if (activePlayers.size() <= 0) {
+
+        if (activePlayers.size() <= availableGameTypes.get(gametype).getMinPlayer()) {
             for (Player pl : activePlayers) {
                 msgmgr.sendMessage(PrefixType.WARNING, "Not enough players!", pl);
                 state = GameState.WAITING;
@@ -318,6 +332,8 @@ public class Game {
         }
 
         state = GameState.INGAME;
+        startTime = new Date().getTime();
+
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamestarted", "arena-" + gameID);
 
@@ -363,15 +379,16 @@ public class Game {
      */
     public void killPlayer(Player p, boolean... leave) {
         try {
-            sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
 
             if (!activePlayers.contains(p)) {
                 return;
             }
 
+            sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
+
             PlayerKilledEvent pk = null;
 
-            if (state != GameState.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null && leave.length > 0) {
+            if (state != GameState.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null && leave.length < 1) {
                 switch (p.getLastDamageCause().getCause()) {
                     case ENTITY_ATTACK:
                         if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
@@ -442,9 +459,10 @@ public class Game {
 
         clearInv(p);
 
-        if (leave.length > 0) {
+        if (leave.length < 1) {
             p.teleport(SettingsManager.getInstance().getLobbySpawn());
         }
+
         sm.removePlayer(p, gameID);
 
         activePlayers.remove(p);
@@ -496,12 +514,29 @@ public class Game {
         }
 
         Player win = p.getKiller();
+        System.out.println(win);
+
+        msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
+
+        LobbyManager.getInstance().display(new String[]{
+            win.getName(), "", "Won the ", "Bow Warfare!"
+        }, gameID);
+
+        sm.playerWin(win, gameID, new Date().getTime() - startTime);
+        sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+
+        state = GameState.FINISHING;
+
+        System.out.println("---------------->" + activePlayers);
 
         for (Player acP : activePlayers) {
             acP.teleport(SettingsManager.getInstance().getLobbySpawn());
-            clearInv(acP);
+
+            System.out.println(acP.getDisplayName());
+
             sm.removePlayer(acP, gameID);
-            activePlayers.remove(acP);
+
+            clearInv(acP);
             restoreInv(acP);
 
             acP.setHealth(p.getMaxHealth());
@@ -510,20 +545,9 @@ public class Game {
             acP.setFallDistance(0);
         }
 
-        msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
-
-        LobbyManager.getInstance().display(new String[]{
-            win.getName(), "", "Won the ", "Bow Warfare!"
-        }, gameID);
-
-        state = GameState.FINISHING;
-        
-        sm.playerWin(win, gameID, new Date().getTime() - startTime);
-        sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
-
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
-        
+
         endGame();
     }
 
@@ -588,11 +612,16 @@ public class Game {
         tasks.clear();
         activePlayers.clear();
         inactivePlayers.clear();
+        availableGameTypes.clear();
+
+        loadAvailableGameModes();
+
         if (settings.get(SettingsManager.OptionFlag.GAMETYPE) != null) {
             setAnGamemode();
         } else {
             gametype = -1;
         }
+
         state = GameState.RESETING;
 
         GameManager.getInstance().gameEndCallBack(gameID);
@@ -818,7 +847,7 @@ public class Game {
     }
 
     public int getMaxPlayer() {
-        return (Integer) settings.get(SettingsManager.OptionFlag.MAX_PLAYERS);
+        return availableGameTypes.get(gametype).getMaxPlayer();
     }
 
     public Player[][] getPlayers() {

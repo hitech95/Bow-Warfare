@@ -4,6 +4,7 @@
  */
 package it.kytech.bowwarfare.gametype;
 
+import java.util.ArrayList;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
@@ -34,15 +35,22 @@ public interface Gametype {
     
     public int getSpawnCount();
     
+    public int getMaxPlayer();       
+
+    public int getMinPlayer();
+    
     public String getGamemodeName();
     
     public void updateSingInfo(Sign s);
     
-    public void updateSignPlayer(Sign s);
+    public ArrayList<String> updateSignPlayer();
 
     public boolean isFrozenSpawn();
 
     public void addSpawn(Location l);
 
     public boolean onPlayerQuit(Player p);
+    
+    @Override
+    public String toString();
 }

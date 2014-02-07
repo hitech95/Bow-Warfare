@@ -77,19 +77,19 @@ public class LobbyWall {
             }, 20L);
             return;
         }
-        
+
         clear();
         Game game = GameManager.getInstance().getGame(gameid);
         Sign s0 = signs.get(0);
         Sign s1 = signs.get(1);
 
-        //sign 0
+        //static arena info
         s0.setLine(0, "[BowWarfare]");
         s0.setLine(1, "Click to join");
         s0.setLine(2, "Arena " + gameid);
-        s0.setLine(0, game.getName());
+        s0.setLine(3, game.getName());
 
-        //sign 1
+        //live arena data
         if (game.getGameMode() != null) {
             game.getGameMode().updateSingInfo(s1);
         } else {
@@ -101,8 +101,9 @@ public class LobbyWall {
 
         //live player data
         ArrayList< String> display = new ArrayList< String>();
-        for (Player p : game.getAllPlayers()) {
-            display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY) + NameUtil.stylize(p.getName(), true, !game.isPlayerActive(p)));
+
+        if (game.getGameMode() != null) {
+            display = game.getGameMode().updateSignPlayer();
         }
 
         try {
