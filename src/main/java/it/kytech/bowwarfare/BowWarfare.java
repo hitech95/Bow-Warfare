@@ -99,6 +99,7 @@ public class BowWarfare extends JavaPlugin {
                         
 			pm.registerEvents(new PlaceEvent(), p);
 			pm.registerEvents(new BreakEvent(), p);
+                        pm.registerEvents(new DamageEvent(), p);
 			pm.registerEvents(new DeathEvent(), p);
 			pm.registerEvents(new MoveEvent(), p);
 			pm.registerEvents(new CommandCatch(), p);

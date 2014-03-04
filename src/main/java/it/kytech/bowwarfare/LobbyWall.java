@@ -66,7 +66,6 @@ public class LobbyWall {
     }
 
     public void update() {
-        //System.out.println(gameid);
         if (msgqueue.size() > 0) {
             display();
             Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {

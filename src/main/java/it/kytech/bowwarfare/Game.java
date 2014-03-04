@@ -282,7 +282,7 @@ public class Game {
 
             p.getInventory().addItem(new ItemStack[]{Bow});
             p.getInventory().addItem(new ItemStack[]{new ItemStack(Material.ARROW)});
-            
+
             LobbyManager.getInstance().updateWall(gameID);
             showMenu(p);
             HookManager.getInstance().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
@@ -395,16 +395,15 @@ public class Game {
                             Player killer = p.getKiller();
                             msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(),
                                     "player-" + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
-                                    "killer-" + ((killer != null) ? (BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
-                                    + killer.getName() : "Unknown"),
+                                    "killer-" + ((killer != null) ? ((BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName()) : "Unknown"),
                                     "item-" + ((killer != null) ? ItemReader.getFriendlyItemName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && p != null && activePlayers.contains(killer)) {
                                 sm.addKill(killer, p, gameID);
                             }
                             pk = new PlayerKilledEvent(p, this, killer, p.getLastDamageCause().getCause());
                         } else {
-                            msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-"
-                                    + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
+                            msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(),
+                                    "player-" + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
                                     + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
                             pk = new PlayerKilledEvent(p, this, null, p.getLastDamageCause().getCause());
                         }
@@ -418,9 +417,9 @@ public class Game {
                         break;
                 }
                 Bukkit.getServer().getPluginManager().callEvent(pk);
-            }
 
-            availableGameTypes.get(gametype).onPlayerKilled(p, (leave.length > 0));
+                availableGameTypes.get(gametype).onPlayerKilled(p, leave.length > 0);
+            }
 
             LobbyManager.getInstance().updateWall(gameID);
 
@@ -428,10 +427,10 @@ public class Game {
             BowWarfare.$("???????????????????????");
             e.printStackTrace();
             BowWarfare.$("ID" + gameID);
-            BowWarfare.$(activePlayers.size() + "");
-            BowWarfare.$(activePlayers.toString());
-            BowWarfare.$(p.getName());
-            BowWarfare.$(p.getLastDamageCause().getCause().name());
+             BowWarfare.$(activePlayers.size() + "");
+             BowWarfare.$(activePlayers.toString());
+             BowWarfare.$(p.getName());
+             BowWarfare.$(p.getLastDamageCause().getCause().name());
         }
     }
 
@@ -514,8 +513,6 @@ public class Game {
         }
 
         Player win = p.getKiller();
-        System.out.println(win);
-
         msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
 
         LobbyManager.getInstance().display(new String[]{
@@ -527,12 +524,8 @@ public class Game {
 
         state = GameState.FINISHING;
 
-        System.out.println("---------------->" + activePlayers);
-
         for (Player acP : activePlayers) {
             acP.teleport(SettingsManager.getInstance().getLobbySpawn());
-
-            System.out.println(acP.getDisplayName());
 
             sm.removePlayer(acP, gameID);
 

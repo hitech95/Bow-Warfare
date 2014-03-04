@@ -15,43 +15,44 @@ public class DeathEvent implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDieEvent(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player)) {
-            return;
-        }
+        /*if (!(event.getEntity() instanceof Player)) {
+         return;
+         }
         
-        Player player = (Player) event.getEntity();
-        int gameid = GameManager.getInstance().getPlayerGameId(player);
+         Player player = (Player) event.getEntity();
+         System.out.println("Died Player ---------->" + player.getDisplayName());
+         int gameid = GameManager.getInstance().getPlayerGameId(player);
         
-        if (gameid == -1) {
-            return;
-        }
+         if (gameid == -1) {
+         return;
+         }
         
-        if (!GameManager.getInstance().isPlayerActive(player)) {
-            return;
-        }
+         if (!GameManager.getInstance().isPlayerActive(player)) {
+         return;
+         }
         
-        Game game = GameManager.getInstance().getGame(gameid);
+         Game game = GameManager.getInstance().getGame(gameid);
         
-        if (game.getState() != Game.GameState.INGAME) {
-            event.setCancelled(true);
-            return;
-        }
+         if (game.getState() != Game.GameState.INGAME) {
+         event.setCancelled(true);
+         return;
+         }
         
-        if (player.getHealth() <= event.getDamage()) {            
-            event.setCancelled(true);
-            player.setHealth(player.getMaxHealth());
-            player.setFoodLevel(20);
-            player.setFireTicks(0);
-            PlayerInventory inv = player.getInventory();
-            Location l = player.getLocation();
+         if (player.getHealth() <= event.getDamage()) {            
+         event.setCancelled(true);
+         player.setHealth(player.getMaxHealth());
+         player.setFoodLevel(20);
+         player.setFireTicks(0);
+         PlayerInventory inv = player.getInventory();
+         Location l = player.getLocation();
 
-            for (ItemStack i : inv.getContents()) {
-                if (i != null) {
-                    l.getWorld().dropItemNaturally(l, i);
-                }
-            }
-
-            GameManager.getInstance().killPlayer(player);
-        }
+         /*for (ItemStack i : inv.getContents()) {
+         if (i != null) {
+         l.getWorld().dropItemNaturally(l, i);
+         }
+         }*/
+        /*
+         GameManager.getInstance().killPlayer(player);
+         }*/
     }
 }

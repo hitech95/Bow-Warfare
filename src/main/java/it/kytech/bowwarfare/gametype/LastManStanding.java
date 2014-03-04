@@ -61,9 +61,6 @@ public class LastManStanding implements Gametype {
     }
 
     private void loadSettings() {
-
-        System.out.println(settings.get(SettingsManager.OptionFlag.FFAMAXP));
-
         if (!SettingsManager.getInstance().isSetGameSettings(gameID, this)) {
             loadDefaultSettings();
         } else {

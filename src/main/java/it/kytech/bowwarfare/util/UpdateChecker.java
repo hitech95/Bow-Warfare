@@ -46,14 +46,10 @@ public class UpdateChecker {
             while ((line = rd.readLine()) != null) {
                 response = line;
             }
-            //System.out.println(response);
             
-            String [] in = response.split("~");
-            
-            
+            String [] in = response.split("~"); 
             Boolean b =  Boolean.parseBoolean(in[0]);
             
-           // System.out.println(in[0]+b);
             if(b){
                 player.sendMessage(ChatColor.DARK_BLUE+"--------------------------------------");
                 player.sendMessage(ChatColor.DARK_RED+"[BowWarfare] Update Available!");
@@ -64,7 +60,7 @@ public class UpdateChecker {
                 BowWarfare.$("[Updates found!");
 
             }else{
-            	BowWarfare.$("[bw][info]No updates found!");
+            	BowWarfare.$("[BW][info]No updates found!");
             }   
         }catch(Exception e){
         	BowWarfare.$(Level.WARNING, "[BowWarfare] could not check for updates.");

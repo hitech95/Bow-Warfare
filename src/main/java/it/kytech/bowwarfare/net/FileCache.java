@@ -37,7 +37,7 @@ public class FileCache {
 
         try{
             scan = new Scanner(f);
-        }catch(Exception e){System.out.println("Survival Games webstats - Could not load page: " + pagename +"    "+f.getAbsolutePath());}
+        }catch(Exception e){System.out.println("Bow Warfare webstats - Could not load page: " + pagename +"    "+f.getAbsolutePath());}
         String data = "";
 
         if(scan == null){

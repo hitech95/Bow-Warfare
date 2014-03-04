@@ -63,9 +63,6 @@ public class FreeForAll implements Gametype {
     }
 
     private void loadSettings() {
-
-        System.out.println(settings.get(SettingsManager.OptionFlag.FFAMAXP));
-
         if (!SettingsManager.getInstance().isSetGameSettings(gameID, this)) {
             loadDefaultSettings();
         } else {
@@ -99,7 +96,6 @@ public class FreeForAll implements Gametype {
     public boolean onPlayerKilled(Player player, boolean hasLeft) {
         Game game = GameManager.getInstance().getGame(gameID);
         if (!hasLeft) {
-
             if (player.getLastDamageCause().getCause() == ENTITY_ATTACK) {
 
                 if (player.getLastDamageCause().getEntityType() == EntityType.PLAYER) {

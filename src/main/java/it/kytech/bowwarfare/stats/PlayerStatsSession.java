@@ -123,9 +123,6 @@ public class PlayerStatsSession {
         query = query + killeds + "'," + time;
         query = query + "," + kslist.get(1) + "," + kslist.get(2) + "," + kslist.get(3) + "," + kslist.get(4) + "," + kslist.get(5) + ")";
 
-
-        // System.out.println(query);
-
         return query;
 
     }
