@@ -118,16 +118,6 @@ public class LastManStanding implements Gametype {
         s.setLine(1, game.getState() + "");
         s.setLine(2, game.getActivePlayers() + "/" + game.getInactivePlayers() + "/" + game.getMaxPlayer());
         s.setLine(3, "");
-
-        if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {
-            s.setLine(3, game.getRBStatus());
-            if (game.getRBPercent() > 100) {
-                s.setLine(1, "Saving Queue");
-                s.setLine(3, (int) game.getRBPercent() + " left");
-            } else {
-                s.setLine(3, (int) game.getRBPercent() + "%");
-            }
-        }
     }
 
     @Override
@@ -194,7 +184,7 @@ public class LastManStanding implements Gametype {
     }
 
     @Override
-    public boolean onPlayerKilled(Player player, boolean hasLeft) {
+    public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

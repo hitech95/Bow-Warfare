@@ -93,36 +93,23 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onPlayerKilled(Player player, boolean hasLeft) {
+    public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft) {
         Game game = GameManager.getInstance().getGame(gameID);
         if (!hasLeft) {
-            if (player.getLastDamageCause().getCause() == ENTITY_ATTACK) {
 
-                if (player.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
-
-                    Player killer = player.getKiller();
-
-                    if (kills.get(killer) == null) {
-                        kills.put(killer, 0);
-                    }
-                    int kill = kills.get(killer) + 1;
-
-                    if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
-                        game.playerWin(player);
-                        return true;
-                    } else {
-                        kills.put(killer, kills.get(killer) + 1);
-                    }
-                } else {
-
-                    /*msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(), "player-"
-                            + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "")
-                            + p.getName(), "killer-" + p.getLastDamageCause().getEntityType());
-                    pk = new PlayerKilledEvent(p, this, null, p.getLastDamageCause().getCause());*/
-
-                }
+            if (kills.get(killer) == null) {
+                kills.put(killer, 0);
             }
-            player.teleport(getRandomSpawnPoint());
+            int kill = kills.get(killer) + 1;
+
+            if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
+                game.playerWin(victim, killer);
+                return true;
+            } else {
+                kills.put(killer, kills.get(killer) + 1);
+            }
+
+            victim.teleport(getRandomSpawnPoint());
         }
         return true;
     }
@@ -166,15 +153,6 @@ public class FreeForAll implements Gametype {
         s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
         s.setLine(3, "");
 
-        if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {
-            s.setLine(3, game.getRBStatus());
-            if (game.getRBPercent() > 100) {
-                s.setLine(1, "Saving Queue");
-                s.setLine(3, (int) game.getRBPercent() + " left");
-            } else {
-                s.setLine(3, (int) game.getRBPercent() + "%");
-            }
-        }
     }
 
     @Override

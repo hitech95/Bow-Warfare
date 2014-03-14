@@ -377,7 +377,7 @@ public class Game {
      * 
      * 
      */
-    public void killPlayer(Player p, boolean... leave) {
+    public void killPlayer(Player p, Player killer, boolean... leave) {
         try {
 
             if (!activePlayers.contains(p)) {
@@ -392,7 +392,6 @@ public class Game {
                 switch (p.getLastDamageCause().getCause()) {
                     case ENTITY_ATTACK:
                         if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
-                            Player killer = p.getKiller();
                             msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getEntityType(),
                                     "player-" + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
                                     "killer-" + ((killer != null) ? ((BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName()) : "Unknown"),
@@ -411,14 +410,17 @@ public class Game {
                     default:
                         msgFall(PrefixType.INFO, "death." + p.getLastDamageCause().getCause().name(),
                                 "player-" + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
-                                "killer-" + p.getLastDamageCause().getCause());
-                        pk = new PlayerKilledEvent(p, this, null, p.getLastDamageCause().getCause());
+                                "killer-" + ((killer != null) ? ((BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName()) : "Unknown"));
+                        if (killer != null && p != null && activePlayers.contains(killer)) {
+                            sm.addKill(killer, p, gameID);
+                        }
+                        pk = new PlayerKilledEvent(p, this, (killer != null) ? killer : null, p.getLastDamageCause().getCause());
 
                         break;
                 }
                 Bukkit.getServer().getPluginManager().callEvent(pk);
 
-                availableGameTypes.get(gametype).onPlayerKilled(p, leave.length > 0);
+                availableGameTypes.get(gametype).onPlayerKilled(p, killer, leave.length > 0);
             }
 
             LobbyManager.getInstance().updateWall(gameID);
@@ -427,10 +429,10 @@ public class Game {
             BowWarfare.$("???????????????????????");
             e.printStackTrace();
             BowWarfare.$("ID" + gameID);
-             BowWarfare.$(activePlayers.size() + "");
-             BowWarfare.$(activePlayers.toString());
-             BowWarfare.$(p.getName());
-             BowWarfare.$(p.getLastDamageCause().getCause().name());
+            BowWarfare.$(activePlayers.size() + "");
+            BowWarfare.$(activePlayers.toString());
+            BowWarfare.$(p.getName());
+            BowWarfare.$(p.getLastDamageCause().getCause().name());
         }
     }
 
@@ -453,7 +455,7 @@ public class Game {
         }
 
         if (state == GameState.INGAME) {
-            killPlayer(p, true);
+            killPlayer(p, null, true);
         }
 
         clearInv(p);
@@ -507,13 +509,12 @@ public class Game {
      *
      *
      */
-    public void playerWin(Player p) {
+    public void playerWin(Player victim, Player win) {
         if (GameState.DISABLED == state) {
             return;
         }
 
-        Player win = p.getKiller();
-        msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + p.getName(), "player-" + win.getName());
+        msgmgr.broadcastFMessage(PrefixType.INFO, "game.playerwin", "arena-" + gameID, "victim-" + victim.getName(), "player-" + win.getName());
 
         LobbyManager.getInstance().display(new String[]{
             win.getName(), "", "Won the ", "Bow Warfare!"
@@ -532,7 +533,7 @@ public class Game {
             clearInv(acP);
             restoreInv(acP);
 
-            acP.setHealth(p.getMaxHealth());
+            acP.setHealth(acP.getMaxHealth());
             acP.setFoodLevel(20);
             acP.setFireTicks(0);
             acP.setFallDistance(0);

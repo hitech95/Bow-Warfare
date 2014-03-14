@@ -19,7 +19,7 @@ public interface Gametype {
     
     public boolean onJoin(Player player);
     
-    public boolean onPlayerKilled(Player player, boolean hasLeft);
+    public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft);
     
     public boolean onPlayerRemove(Player player, boolean hasLeft);
     

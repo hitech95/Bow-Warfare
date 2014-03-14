@@ -39,7 +39,7 @@ weather-allowed: false
 enable-player-queue: true
 
 #If set to true, commands not associated with
-#the Survival Games will not be allowed to be run 
+#the Bow Warfare will not be allowed to be run 
 #by players in-game.
 disallow-commands: true
 
@@ -93,7 +93,7 @@ rollback:
 #SQL server. These settings will
 #be used for  the online webstats
 #Prefix is what all tables used for 
-#SurvivalGames will be
+#Bow Warfare will be
 #prefixed with. This should stay the same
 #for most cases.
 sql:

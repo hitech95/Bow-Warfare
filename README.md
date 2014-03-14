@@ -11,14 +11,18 @@ Version
 
 Changelog
 ----
- - none (for now)
+ - First Testing release
+ 
+Working GameType
+----
+ - Free For All (FFA)
 
 Working
 ----
  - All Events
  - Sign Wall
  - Sign Join
- - All commands (more or less)
+ - All basic commands
  - Creating arenas
  - Deleting arenas
  - Reload of configs
@@ -31,24 +35,23 @@ Bugs
 
 I'm Working on
 ----
- - Commands
- - Events
- - FFA  - Game Type
+ - Game Type
 
 To Do
 ----
  - Commands
   - Zombie
-  - Spectate (may need some fixes)
+  - Spectate (need some fixes)
   - Setspawn (correct help string)
   - Setflag
-  - Listplayers (need a lot of changes on Gamemanager and on Gamemode)
-  - Listgamemode
- - Gamemode
-  - ALL
+  - Listplayers (need a lot of changes on Gamemanager and on Gametype)
+  - List available Gametype
+ - Game type
+  - ALL missing
  - Utils
   - Arrow TNT Explosion
   - Arrow Glass Break
+  - Plessure plate as granade
   - Classic Bow
  - Hooks
   - Economy
@@ -58,6 +61,6 @@ To Do
 License
 ----
 
-I have no idea, you?
+I have no idea, you? (GNU v3)
 
 **Free Software**

@@ -191,19 +191,19 @@ public class GameManager {
     public void removePlayer(Player p) {
         getGame(getPlayerGameId(p)).removePlayer(p);
     }
-    
+
     public void leftPlayer(Player p) {
         getGame(getPlayerGameId(p)).playerLeave(p);
     }
-    
-    public void killPlayer(Player p) {
-        getGame(getPlayerGameId(p)).killPlayer(p);
+
+    public void killPlayer(Player victim, Player killer) {
+        getGame(getPlayerGameId(victim)).killPlayer(victim, killer);
     }
-    
+
     public boolean blockBreak(Block block, Player p) {
         return getGame(getPlayerGameId(p)).blockBreak(block, p);
     }
-    
+
     public boolean blockPlace(Block block, Player p) {
         return getGame(getPlayerGameId(p)).blockPlace(block, p);
     }
@@ -282,20 +282,20 @@ public class GameManager {
     }
 
     public void createArenaFromSelection(Player pl) {
-        
+
         FileConfiguration c = SettingsManager.getInstance().getSystemConfig();
 
         WorldEditPlugin we = p.getWorldEdit();
         Selection sel = we.getSelection(pl);
-        
+
         if (sel == null) {
             msgmgr.sendMessage(PrefixType.WARNING, "You must make a WorldEdit Selection first!", pl);
             return;
         }
-        
+
         Location max = sel.getMaximumPoint();
         Location min = sel.getMinimumPoint();
-        
+
         int no = c.getInt("bw-system.arenano") + 1;
         c.set("bw-system.arenano", no);
         if (games.size() == 0) {
@@ -314,9 +314,9 @@ public class GameManager {
         c.set("bw-system.arenas." + no + ".enabled", true);
 
         SettingsManager.getInstance().saveSystemConfig();
-        
+
         hotAddArena(no);
-        
+
         pl.sendMessage(ChatColor.GREEN + "Arena ID " + no + " Succesfully added");
 
     }
@@ -347,16 +347,16 @@ public class GameManager {
         StringBuilder sb = new StringBuilder();
         /*Player[][] players = g.getPlayers();
 
-        sb.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->\n" + ChatColor.GREEN + " ");
-        for (Player p : players[0]) {
-            sb.append(p.getName() + ",");
-        }
-        sb.append("\n\n");
-        sb.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]---------------------->\n" + ChatColor.GREEN + " ");
-        for (Player p : players[1]) {
-            sb.append(p.getName() + ",");
-        }
-        sb.append("\n\n");*/
+         sb.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->\n" + ChatColor.GREEN + " ");
+         for (Player p : players[0]) {
+         sb.append(p.getName() + ",");
+         }
+         sb.append("\n\n");
+         sb.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]---------------------->\n" + ChatColor.GREEN + " ");
+         for (Player p : players[1]) {
+         sb.append(p.getName() + ",");
+         }
+         sb.append("\n\n");*/
 
         return sb.toString();
     }

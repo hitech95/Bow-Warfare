@@ -86,7 +86,7 @@ public class DamageEvent implements Listener {
              }
              }*/
             player.setLastDamageCause(event);
-            GameManager.getInstance().killPlayer(player);
+            GameManager.getInstance().killPlayer(player, killer);
 
         }
     }

@@ -91,6 +91,20 @@ public class LobbyWall {
         //live arena data
         if (game.getGameMode() != null) {
             game.getGameMode().updateSingInfo(s1);
+
+            if (game.getState() == Game.GameState.RESETING || game.getState() == Game.GameState.FINISHING) {
+                for (int i = 0; i < 4; i++) {
+                    s1.setLine(i, "");
+                }
+                
+                s1.setLine(3, game.getRBStatus());
+                if (game.getRBPercent() > 100) {
+                    s1.setLine(1, "Saving Queue");
+                    s1.setLine(3, (int) game.getRBPercent() + " left");
+                } else {
+                    s1.setLine(3, (int) game.getRBPercent() + "%");
+                }
+            }
         } else {
             s1.setLine(0, "");
             s1.setLine(1, game.getState() + "");

@@ -55,8 +55,8 @@ public class PlayerStatsSession {
 
     public void died(int pos, long time) {
         this.time = time;
-        death ++;
-        kslevel = 0;
+        death++;
+        kslevel = -1;
         position = pos;
         pppoints = GameManager.getInstance().getGame(arenaid).getInactivePlayers();
     }
@@ -81,7 +81,6 @@ public class PlayerStatsSession {
             Bukkit.getServer().broadcastMessage(SettingsManager.getInstance().getConfig().getString("stats.killstreak.level" + level).replace("{player}", player.getName()).replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"));
         }
         lastkill = new Date().getTime();
-
 
     }
 

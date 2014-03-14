@@ -8,7 +8,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <upload.dbo.category>server-mods</upload.dbo.category>
-        <upload.dbo.slug>survival-games</upload.dbo.slug>
+        <upload.dbo.slug>bow-warfare-reloaded</upload.dbo.slug>
 
     </properties>
   <repositories>
