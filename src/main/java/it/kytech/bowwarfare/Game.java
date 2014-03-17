@@ -22,6 +22,7 @@ import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
 import it.kytech.bowwarfare.util.ItemReader;
 import it.kytech.bowwarfare.util.Kit;
+import it.kytech.bowwarfare.util.bossbar.StatusBarAPI;
 import java.util.Date;
 import java.util.Random;
 import org.bukkit.Material;
@@ -29,6 +30,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 //Data container for a game
 public class Game {
@@ -61,6 +63,7 @@ public class Game {
     private StatsManager statMan = StatsManager.getInstance();
     private MessageManager msgmgr = MessageManager.getInstance();
     private StatsManager sm = StatsManager.getInstance();
+    private ScoreboardManager sbManager = Bukkit.getScoreboardManager();
 
     public Game(int gameid) {
         gameID = gameid;
@@ -464,6 +467,9 @@ public class Game {
             p.teleport(SettingsManager.getInstance().getLobbySpawn());
         }
 
+        StatusBarAPI.removeStatusBar(p);
+        p.setScoreboard(sbManager.getNewScoreboard());
+
         sm.removePlayer(p, gameID);
 
         activePlayers.remove(p);
@@ -526,6 +532,7 @@ public class Game {
         state = GameState.FINISHING;
 
         for (Player acP : activePlayers) {
+
             acP.teleport(SettingsManager.getInstance().getLobbySpawn());
 
             sm.removePlayer(acP, gameID);
@@ -537,8 +544,11 @@ public class Game {
             acP.setFoodLevel(20);
             acP.setFireTicks(0);
             acP.setFallDistance(0);
-        }
 
+            StatusBarAPI.removeStatusBar(acP);
+            acP.setScoreboard(sbManager.getNewScoreboard());
+        }
+        
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
 

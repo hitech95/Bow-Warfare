@@ -16,7 +16,7 @@ public class ProjectileEvent implements Listener {
     @EventHandler
     public void onProjectileHit(ProjectileHitEvent event) {
         if ((event.getEntity() instanceof Arrow)) {
-            Arrow arrow = (Arrow) event.getEntity();  
+            Arrow arrow = (Arrow) event.getEntity();
             if ((arrow.getShooter() instanceof Player)) {
                 Player p = (Player) arrow.getShooter();
                 if (GameManager.getInstance().getPlayerGameId(p) != -1) {

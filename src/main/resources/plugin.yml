@@ -1,4 +1,4 @@
-name: Bow Warfare - Reloaded
+name: BowWarfare-Reloaded
 version: ${project.version}.${BUILD_NUMBER}
 main: it.kytech.bowwarfare.BowWarfare
 authors: [Double0negative, Hitech95, YoshiGenius]

@@ -11,6 +11,5 @@ package it.kytech.bowwarfare.util;
 public class ArrowBreaker {
     //TODO make the tnt explode on arrow hit
     // Break glass when a windows is hit n times
-    
-    
+
 }

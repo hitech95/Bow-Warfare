@@ -96,7 +96,7 @@ public class LobbyWall {
                 for (int i = 0; i < 4; i++) {
                     s1.setLine(i, "");
                 }
-                
+
                 s1.setLine(3, game.getRBStatus());
                 if (game.getRBPercent() > 100) {
                     s1.setLine(1, "Saving Queue");

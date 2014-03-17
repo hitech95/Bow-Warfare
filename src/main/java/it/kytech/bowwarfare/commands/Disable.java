@@ -42,6 +42,6 @@ public class Disable implements SubCommand {
 
     @Override
     public String permission() {
-        return "bw.arena.disable";
+        return "bw.staff.disable";
     }
 }

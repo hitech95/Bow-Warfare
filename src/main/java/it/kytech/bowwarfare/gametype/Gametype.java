@@ -16,33 +16,33 @@ import org.bukkit.entity.Player;
  * @author M2K
  */
 public interface Gametype {
-    
+
     public boolean onJoin(Player player);
-    
+
     public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft);
-    
+
     public boolean onPlayerRemove(Player player, boolean hasLeft);
-    
+
     public boolean onArrowHit(Player attacker, Arrow arrow);
-    
+
     public boolean onBlockBreaked(Block block, Player p);
-    
+
     public boolean onBlockPlaced(Block block, Player p);
-    
+
     public boolean tryLoadSpawn();
-    
+
     public Location getRandomSpawnPoint();
-    
+
     public int getSpawnCount();
-    
-    public int getMaxPlayer();       
+
+    public int getMaxPlayer();
 
     public int getMinPlayer();
-    
+
     public String getGamemodeName();
-    
+
     public void updateSingInfo(Sign s);
-    
+
     public ArrayList<String> updateSignPlayer();
 
     public boolean isFrozenSpawn();
@@ -50,7 +50,7 @@ public interface Gametype {
     public void addSpawn(Location l);
 
     public boolean onPlayerQuit(Player p);
-    
+
     @Override
     public String toString();
 }

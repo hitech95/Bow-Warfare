@@ -34,7 +34,7 @@ public class SpawnManager {
         StringBuilder str = new StringBuilder("spawns." + gameID + "." + gameType);
 
         for (int i = 0; i < args.length; i++) {
-            str.append("." + args[i].toLowerCase());            
+            str.append("." + args[i].toLowerCase());
         }
 
         spawns.set(str.toString() + "." + sID + ".x", l.getBlockX());

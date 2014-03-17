@@ -17,8 +17,7 @@ import it.kytech.bowwarfare.BowWarfare;
 public class UpdateChecker {
 
     //Includes simple metrics!!
-
-    public void check (Player player, Plugin p) {
+    public void check(Player player, Plugin p) {
 
 //        String response = "";
 //        String data="";

@@ -5,9 +5,7 @@ import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.SettingsManager;
 
-
-
-public class LeaveQueue implements SubCommand{
+public class LeaveQueue implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
@@ -21,9 +19,9 @@ public class LeaveQueue implements SubCommand{
         return "/bw lq - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.leavequeue", "Leave the queue for any queued games");
     }
 
-	@Override
-	public String permission() {
-		return null;
-	}
+    @Override
+    public String permission() {
+        return null;
+    }
 
 }

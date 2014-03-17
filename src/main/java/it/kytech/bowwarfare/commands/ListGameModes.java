@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
  *
  * @author M2K
  */
-public class ListGameModes implements SubCommand{
+public class ListGameModes implements SubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
@@ -22,5 +22,5 @@ public class ListGameModes implements SubCommand{
     public String permission() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

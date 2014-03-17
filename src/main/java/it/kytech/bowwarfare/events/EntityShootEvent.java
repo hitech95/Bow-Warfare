@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
  *
  * @author M2K
  */
-public class EntityShootEvent implements Listener{
+public class EntityShootEvent implements Listener {
 
     @EventHandler
     public void onEntityShootBow(EntityShootBowEvent e) {

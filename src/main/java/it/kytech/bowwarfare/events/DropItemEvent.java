@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerDropItemEvent;
  *
  * @author M2K
  */
-public class DropItemEvent implements Listener{
+public class DropItemEvent implements Listener {
 
     @EventHandler
     public void onPlayerDropItem(PlayerDropItemEvent event) {

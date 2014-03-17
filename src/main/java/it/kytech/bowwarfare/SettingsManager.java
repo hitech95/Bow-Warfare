@@ -37,7 +37,7 @@ public class SettingsManager {
 
     public static enum OptionFlag {
 
-        MAX_PLAYERS, ARENA_NAME, GAMETYPE, FFAMAXP, CTFTIME, CTFMAXP, CTFMINP, TDMTIME, TDMMAXP, TDMMINP, INFTIME, INFMAXP, INFMINP, FFAKILL, TDMKILL
+        MAX_PLAYERS, ARENA_NAME, GAMETYPE, FFAMAXP, CTFTIME, CTFMAXP, CTFMINP, TDMTIME, TDMMAXP, TDMMINP, INFTIME, INFMAXP, INFMINP, FFAKILL, TDMKILL, LMSMAXP
     }
 
     private SettingsManager() {
@@ -233,7 +233,7 @@ public class SettingsManager {
     public int getMaxPlayerCount(int gameid, Gametype type) {
         return system.getInt("bw-system.arenas." + gameid + ".flags.+" + type.getGamemodeName().toLowerCase() + "-maxp");
     }
-    
+
     public boolean isSetGameSettings(int gameid, Gametype type) {
         return system.isSet("bw-system.arenas." + gameid + ".flags.+" + type.getGamemodeName().toLowerCase() + "-maxp");
     }
@@ -259,7 +259,7 @@ public class SettingsManager {
         flags.put(OptionFlag.TDMMAXP, system.getInt("bw-system.arenas." + gameid + ".flags.tdm-maxp"));
         flags.put(OptionFlag.TDMMINP, system.getInt("bw-system.arenas." + gameid + ".flags.tdm-minp"));
         flags.put(OptionFlag.TDMKILL, system.getInt("bw-system.arenas." + gameid + ".flags.tdm-kill"));
-        
+
         //INF
         flags.put(OptionFlag.INFTIME, system.getInt("bw-system.arenas." + gameid + ".flags.inf-time"));
         flags.put(OptionFlag.INFMAXP, system.getInt("bw-system.arenas." + gameid + ".flags.inf-maxp"));
@@ -271,7 +271,7 @@ public class SettingsManager {
     public void saveGameSettings(HashMap< OptionFlag, Object> flags, int gameid) {
         system.set("bw-system.arenas." + gameid + ".flags.arenaname", flags.get(OptionFlag.ARENA_NAME));
         system.set("bw-system.arenas." + gameid + ".flags.gametype", flags.get(OptionFlag.GAMETYPE));
-        
+
         //FFA
         system.set("bw-system.arenas." + gameid + ".flags.ffa-maxp", flags.get(OptionFlag.FFAMAXP));
         system.set("bw-system.arenas." + gameid + ".flags.ffa-kill", flags.get(OptionFlag.FFAKILL));
@@ -286,7 +286,7 @@ public class SettingsManager {
         system.set("bw-system.arenas." + gameid + ".flags.tdm-maxp", flags.get(OptionFlag.TDMMAXP));
         system.set("bw-system.arenas." + gameid + ".flags.tdm-minp", flags.get(OptionFlag.TDMMINP));
         system.set("bw-system.arenas." + gameid + ".flags.tdm-kill", flags.get(OptionFlag.TDMKILL));
-        
+
         //INF
         system.set("bw-system.arenas." + gameid + ".flags.inf-time", flags.get(OptionFlag.INFTIME));
         system.set("bw-system.arenas." + gameid + ".flags.inf-maxp", flags.get(OptionFlag.INFMAXP));

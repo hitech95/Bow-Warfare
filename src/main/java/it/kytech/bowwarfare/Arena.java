@@ -31,7 +31,7 @@ public class Arena {
     public Location getMin() {
         return min;
     }
-    
+
     public World getWorld() {
         return min.getWorld();
     }

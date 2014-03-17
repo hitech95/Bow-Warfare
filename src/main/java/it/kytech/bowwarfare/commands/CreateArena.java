@@ -6,12 +6,10 @@ import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.SettingsManager;
 
-
-
-public class CreateArena implements SubCommand{
+public class CreateArena implements SubCommand {
 
     public boolean onCommand(Player player, String[] args) {
-        if(!player.hasPermission(permission()) && !player.isOp()){
+        if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
             return true;
         }
@@ -24,8 +22,8 @@ public class CreateArena implements SubCommand{
         return "/bw createarena - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.createarena", "Create a new arena with the current WorldEdit selection");
     }
 
-	@Override
-	public String permission() {
-		return "bw.admin.createarena";
-	}
+    @Override
+    public String permission() {
+        return "bw.admin.createarena";
+    }
 }

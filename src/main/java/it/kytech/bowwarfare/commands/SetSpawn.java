@@ -84,7 +84,7 @@ public class SetSpawn implements SubCommand {
 
     @Override
     public String help(Player p) {
-        return "/bw setspawn next <GAMETYPE> - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.setspawn", "Sets a spawn for the arena you are located in");
+        return "/bw setspawn next <GameType> - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.setspawn", "Sets a spawn for the arena you are located in");
     }
 
     @Override

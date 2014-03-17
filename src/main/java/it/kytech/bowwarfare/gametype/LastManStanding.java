@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.Game;
@@ -29,6 +24,8 @@ import org.bukkit.entity.Player;
 public class LastManStanding implements Gametype {
 
     public static final String NAME = "LMS";
+    public static final String LONG_NAME = "Last ManS tanding";
+    
     private int gameID;
     private boolean isTest = false;
     private ArrayList<Location> LMSSpawns;
@@ -69,7 +66,7 @@ public class LastManStanding implements Gametype {
     }
 
     private void loadDefaultSettings() {
-        settings.put(SettingsManager.OptionFlag.FFAMAXP, DEFAULT_MAXP);
+        settings.put(SettingsManager.OptionFlag.LMSMAXP, DEFAULT_MAXP);
 
         saveConfig();
     }
@@ -81,6 +78,7 @@ public class LastManStanding implements Gametype {
     @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
         //Mark Player as Death
+        // set in spectator mode        
         return true;
     }
 
@@ -144,8 +142,9 @@ public class LastManStanding implements Gametype {
 
     @Override
     public boolean isFrozenSpawn() {
-
-        //TODO check if is running if so it is false, else true.
+        if (GameManager.getInstance().getGame(gameID).getState() == Game.GameState.INGAME) {
+            return true;
+        }
         return false;
     }
 
@@ -161,7 +160,7 @@ public class LastManStanding implements Gametype {
 
     @Override
     public int getMaxPlayer() {
-        return (Integer) settings.get(SettingsManager.OptionFlag.FFAMAXP);
+        return (Integer) settings.get(SettingsManager.OptionFlag.LMSMAXP);
     }
 
     @Override
@@ -177,9 +176,8 @@ public class LastManStanding implements Gametype {
     @Override
     public boolean onJoin(Player player) {
         player.teleport(getRandomSpawnPoint());
-        
-        //Make the percentage to auto-start the game, etc.
 
+        //Make the percentage to auto-start the game, etc.
         return true;
     }
 

@@ -36,7 +36,7 @@ public class Option implements SubCommand {
             z.put(SettingsManager.OptionFlag.valueOf(args[1].toUpperCase()), args[2]);
             SettingsManager.getInstance().saveGameSettings(z, g.getID());
             g.reloadConfig();
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return true;

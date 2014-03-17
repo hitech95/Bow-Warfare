@@ -1,14 +1,14 @@
 package it.kytech.bowwarfare.api;
 
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import it.kytech.bowwarfare.Game;
 
-public class PlayerKilledEvent extends Event{
-	private static final HandlerList handlers = new HandlerList();
+public class PlayerKilledEvent extends Event {
+
+    private static final HandlerList handlers = new HandlerList();
     private Player player;
     private Player killer;
     private DamageCause cause;
@@ -18,29 +18,29 @@ public class PlayerKilledEvent extends Event{
         player = p;
         game = g;
         this.killer = killer;
-        this.cause  = cause;
+        this.cause = cause;
     }
 
-    public Player getKiller(){
-    	return killer;
+    public Player getKiller() {
+        return killer;
     }
-    
-    public DamageCause getCause(){
-    	return cause;
+
+    public DamageCause getCause() {
+        return cause;
     }
-    
+
     public Player getPlayer() {
         return player;
     }
-    
+
     public Game getGame() {
-    	return game;
+        return game;
     }
- 
+
     public HandlerList getHandlers() {
         return handlers;
     }
- 
+
     public static HandlerList getHandlerList() {
         return handlers;
     }

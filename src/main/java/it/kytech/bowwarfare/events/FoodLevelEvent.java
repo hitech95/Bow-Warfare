@@ -10,8 +10,8 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
  *
  * @author M2K
  */
-public class FoodLevelEvent implements Listener{
-    
+public class FoodLevelEvent implements Listener {
+
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent e) {
         if ((e.getEntity() instanceof Player)) {

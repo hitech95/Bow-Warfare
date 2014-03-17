@@ -7,26 +7,24 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class EconomyManager {
 
-	private static EconomyManager instance = new EconomyManager();
-	private Economy economy;
-	private boolean enabled = false;
-	private EconomyManager(){
-		
-	}
-	
-	public static EconomyManager getInstance(){
-		return instance;
-	}
-	
-	public void setup(){
-		enabled = setupEconomy();
+    private static EconomyManager instance = new EconomyManager();
+    private Economy economy;
+    private boolean enabled = false;
 
+    private EconomyManager() {
 
-	}
-	
-	
-    private boolean setupEconomy()
-    {
+    }
+
+    public static EconomyManager getInstance() {
+        return instance;
+    }
+
+    public void setup() {
+        enabled = setupEconomy();
+
+    }
+
+    private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
@@ -34,13 +32,13 @@ public class EconomyManager {
 
         return (economy != null);
     }
-	
-    public Economy getEcon(){
-    	return economy;
+
+    public Economy getEcon() {
+        return economy;
     }
-    
-    public boolean econPresent(){
-    	return enabled;
+
+    public boolean econPresent() {
+        return enabled;
     }
-	
+
 }

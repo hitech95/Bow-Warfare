@@ -33,7 +33,6 @@ public class DamageEvent implements Listener {
         Player player = (Player) event.getEntity();
         Player killer = null;
 
-        System.out.println("Damaged Player ---------->" + player.getDisplayName());
         int gameid = GameManager.getInstance().getPlayerGameId(player);
 
         if (gameid == -1) {
@@ -68,6 +67,11 @@ public class DamageEvent implements Listener {
         }
 
         if (GameManager.getInstance().getPlayerGameId(killer) == -1 || GameManager.getInstance().getPlayerGameId(killer) != gameid) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (GameManager.getInstance().isInKitMenu(player)) {
             event.setCancelled(true);
             return;
         }

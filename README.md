@@ -39,15 +39,17 @@ I'm Working on
 
 To Do
 ----
+ - General
+  - Scoreboard (personal info kill/death and ratio)
+  - Boss Bar to show infos (time left and teams points)
  - Commands
   - Zombie
-  - Spectate (need some fixes)
+  - Spectate (may need some fixes)
   - Setspawn (correct help string)
-  - Setflag
   - Listplayers (need a lot of changes on Gamemanager and on Gametype)
   - List available Gametype
  - Game type
-  - ALL missing
+  - ALL that are missing
  - Utils
   - Arrow TNT Explosion
   - Arrow Glass Break

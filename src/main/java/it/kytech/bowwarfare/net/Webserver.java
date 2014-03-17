@@ -5,12 +5,11 @@ import java.net.Socket;
 
 import it.kytech.bowwarfare.BowWarfare;
 
-
 public class Webserver extends Thread {
 
     public void run() {
-        try{
-        ServerSocket st =  new ServerSocket(880);
+        try {
+            ServerSocket st = new ServerSocket(880);
 
             while (!BowWarfare.isDisabling()) {
 
@@ -19,14 +18,13 @@ public class Webserver extends Thread {
                 // Spin off request to a new thread to be handled
                 Connection c = new Connection(skt);
                 c.start();
-               // st.close();
+                // st.close();
             }
             st.close();
-        }catch (Exception e) {
+        } catch (Exception e) {
 
             e.printStackTrace();
         }
 
     }
 }
-
