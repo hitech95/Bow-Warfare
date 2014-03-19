@@ -126,7 +126,7 @@ public class FreeForAll implements Gametype {
 
             if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
                 game.playerWin(victim, killer);
-                StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner!")), 1);
+                StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! ")), 1); //Blank space to fix visual error!
 
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
 
@@ -140,7 +140,7 @@ public class FreeForAll implements Gametype {
             } else {
                 if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL) - 5)) {
                     msgmgr.sendFMessage(PrefixType.INFO, "kill.missing", killer,
-                            "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer,
+                            "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName(),
                             "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) - kill)
                     );
                 }

@@ -66,13 +66,13 @@ public class PlayerStatsSession {
     }
 
     public void addkillStreak(int ks) {
-        System.out.println(" -----> ks");
+        System.out.println(" -----> " + ks);
         ksbon = ksbon + (SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.base") * (SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.multiplier") + ks));
         int level = ks;
         if (level > 5) {
             level = 5;
         }
-        System.out.println(" -----> " +kslist.get(level) + 1);
+        System.out.println(" -----> " + (kslist.get(level) + 1));
         kslist.put(level, kslist.get(level) + 1);
         if (level < 4) {
             for (Player p : GameManager.getInstance().getGame(arenaid).getAllPlayers()) {

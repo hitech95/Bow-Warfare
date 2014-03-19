@@ -3,23 +3,23 @@
     <groupId>it.kytech</groupId>
     <artifactId>bowwarfare</artifactId>
     <version>0.1.0</version>
-    <name>BowWarfare</name>
+    <packaging>jar</packaging>
+    
+    <name>BowWarfare</name>    
+    <url>http://dev.bukkit.org/bukkit-plugins/bow-warfare-reloaded/</url>
+    
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <upload.dbo.category>server-mods</upload.dbo.category>
-        <upload.dbo.slug>bow-warfare-reloaded</upload.dbo.slug>
-
+        <build.number>0</build.number>
+        <main.class>it.kytech.bowwarfare.BowWarfare</main.class>
     </properties>
+    
     <repositories>
         <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
-        <!--repository>
-            <id>drtshock-repo</id>
-            <url>http://ci.drtshock.com/plugin/repository/everything</url>
-        </repository-->
         <repository>
             <id>vault-repo</id>
             <url>http://nexus.theyeticave.net/content/repositories/pub_releases</url>
@@ -29,21 +29,23 @@
             <url>http://maven.sk89q.com/repo</url>
         </repository>
     </repositories>
+    
     <build>
         <plugins>
+  
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>2.0.2</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.1</version>
                 <configuration>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
@@ -70,6 +72,7 @@
             </resource>
         </resources>
     </build>
+    
     <dependencies>
         <dependency>
             <groupId>org.bukkit</groupId>

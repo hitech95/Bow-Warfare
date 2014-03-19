@@ -283,6 +283,20 @@ public class Game {
             Bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
             Bow.addEnchantment(Enchantment.DURABILITY, 3);
 
+            ItemStack plessureArrow = new ItemStack(Material.GOLD_PLATE, 2);
+            ItemStack plessureTNT = new ItemStack(Material.IRON_PLATE, 2);
+            ItemStack snowBall = new ItemStack(Material.SNOW_BALL, 3);
+
+            /*
+            ItemMeta im = i1.getItemMeta();
+
+            debug(k.getName() + " " + i1 + " " + im);
+
+            im.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + k.getName());
+            i1.setItemMeta(im);
+            
+            */
+
             p.getInventory().addItem(new ItemStack[]{Bow});
             p.getInventory().addItem(new ItemStack[]{new ItemStack(Material.ARROW)});
 
@@ -548,7 +562,7 @@ public class Game {
             StatusBarAPI.removeStatusBar(acP);
             acP.setScoreboard(sbManager.getNewScoreboard());
         }
-        
+
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
 
