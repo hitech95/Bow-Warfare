@@ -29,6 +29,8 @@ public interface Gametype {
 
     public boolean onBlockPlaced(Block block, Player p);
 
+    public boolean onBlockInteract(Block block, Player p);
+
     public boolean tryLoadSpawn();
 
     public Location getRandomSpawnPoint();
@@ -47,7 +49,7 @@ public interface Gametype {
 
     public boolean isFrozenSpawn();
 
-    public void addSpawn(Location l);
+    public void addSpawn(Location l, String... args);
 
     public boolean onPlayerQuit(Player p);
 

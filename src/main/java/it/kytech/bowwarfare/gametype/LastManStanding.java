@@ -25,7 +25,7 @@ public class LastManStanding implements Gametype {
 
     public static final String NAME = "LMS";
     public static final String LONG_NAME = "Last ManS tanding";
-    
+
     private int gameID;
     private boolean isTest = false;
     private ArrayList<Location> LMSSpawns;
@@ -154,7 +154,7 @@ public class LastManStanding implements Gametype {
     }
 
     @Override
-    public void addSpawn(Location l) {
+    public void addSpawn(Location l, String... args) {
         LMSSpawns.add(l);
     }
 
@@ -183,6 +183,11 @@ public class LastManStanding implements Gametype {
 
     @Override
     public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean onBlockInteract(Block block, Player p) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

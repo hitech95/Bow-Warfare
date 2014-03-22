@@ -66,23 +66,16 @@ public class PlayerStatsSession {
     }
 
     public void addkillStreak(int ks) {
-        System.out.println(" -----> " + ks);
+        if (ks < 1) {
+            return;
+        }
         ksbon = ksbon + (SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.base") * (SettingsManager.getInstance().getConfig().getInt("stats.points.killstreak.multiplier") + ks));
         int level = ks;
         if (level > 5) {
             level = 5;
         }
-        System.out.println(" -----> " + (kslist.get(level) + 1));
-        kslist.put(level, kslist.get(level) + 1);
-        if (level < 4) {
-            for (Player p : GameManager.getInstance().getGame(arenaid).getAllPlayers()) {
-                p.sendMessage(SettingsManager.getInstance().getConfig().getString("stats.killstreak.level" + level).replace("{player}", player.getName()).replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"));
-            }
-        } else {
-            Bukkit.getServer().broadcastMessage(SettingsManager.getInstance().getConfig().getString("stats.killstreak.level" + level).replace("{player}", player.getName()).replaceAll("(&([a-fk-or0-9]))", "\u00A7$2"));
-        }
+        kslist.put(level, kslist.get(level) + 1);        
         lastkill = new Date().getTime();
-
     }
 
     public void calcPoints() {

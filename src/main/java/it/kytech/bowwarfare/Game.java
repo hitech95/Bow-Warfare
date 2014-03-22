@@ -126,10 +126,10 @@ public class Game {
         return arena;
     }
 
-    public void addSpawn(String gamemode, Location l) {
+    public void addSpawn(String gamemode, Location l, String... args) {
         Gametype gameMode = getAvailableGameMode(gamemode);
         if (gameMode != null) {
-            gameMode.addSpawn(l);
+            gameMode.addSpawn(l, args);
         } else {
             loadAvailableGameModes();
         }
@@ -279,26 +279,7 @@ public class Game {
             activePlayers.add(p);
             sm.addPlayer(p, gameID);
 
-            ItemStack Bow = new ItemStack(Material.BOW);
-            Bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
-            Bow.addEnchantment(Enchantment.DURABILITY, 3);
-
-            ItemStack plessureArrow = new ItemStack(Material.GOLD_PLATE, 2);
-            ItemStack plessureTNT = new ItemStack(Material.IRON_PLATE, 2);
-            ItemStack snowBall = new ItemStack(Material.SNOW_BALL, 3);
-
-            /*
-            ItemMeta im = i1.getItemMeta();
-
-            debug(k.getName() + " " + i1 + " " + im);
-
-            im.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + k.getName());
-            i1.setItemMeta(im);
-            
-            */
-
-            p.getInventory().addItem(new ItemStack[]{Bow});
-            p.getInventory().addItem(new ItemStack[]{new ItemStack(Material.ARROW)});
+            setGameInventory(p);
 
             LobbyManager.getInstance().updateWall(gameID);
             showMenu(p);
@@ -383,6 +364,20 @@ public class Game {
     public boolean blockPlace(Block block, Player p) {
         return availableGameTypes.get(gametype).onBlockPlaced(block, p);
     }
+    
+    /*
+     * 
+     * ################################################
+     * 
+     * 				INTERACT BLOCK
+     * 
+     * ################################################
+     * 
+     * 
+     */
+    public boolean blockInteract(Block block, Player p) {
+        return availableGameTypes.get(gametype).onBlockInteract(block, p);
+    }
 
     /*
      * 
@@ -438,6 +433,9 @@ public class Game {
                 Bukkit.getServer().getPluginManager().callEvent(pk);
 
                 availableGameTypes.get(gametype).onPlayerKilled(p, killer, leave.length > 0);
+                if (leave.length > 0) {
+                    setGameInventory(p);
+                }
             }
 
             LobbyManager.getInstance().updateWall(gameID);
@@ -825,6 +823,44 @@ public class Game {
 
     }
 
+    public void setGameInventory(Player p) {
+        clearInv(p);
+
+        ItemStack bow = new ItemStack(Material.BOW);
+        ItemStack bullets = new ItemStack(Material.ARROW);
+        ItemStack plessureArrow = new ItemStack(Material.GOLD_PLATE, 2);
+        ItemStack plessureTNT = new ItemStack(Material.IRON_PLATE, 2);
+        ItemStack snowBall = new ItemStack(Material.SNOW_BALL, 3);
+
+        bow.addEnchantment(Enchantment.ARROW_INFINITE, 1);
+        bow.addEnchantment(Enchantment.DURABILITY, 3);
+
+        ItemMeta imBow = bow.getItemMeta();
+        ItemMeta imBullets = bullets.getItemMeta();
+        ItemMeta imPlessureArrow = plessureArrow.getItemMeta();
+        ItemMeta imPlessureTNT = plessureTNT.getItemMeta();
+        ItemMeta imSnowBall = snowBall.getItemMeta();
+
+        //TODO - Add message.yml
+        imBow.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Weapon");
+        imBullets.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Bullets");
+        imPlessureArrow.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Explosive Mine");
+        imPlessureTNT.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Mine");
+        imSnowBall.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + "Granade");
+
+        bow.setItemMeta(imBow);
+        bullets.setItemMeta(imBullets);
+        plessureArrow.setItemMeta(imPlessureArrow);
+        plessureTNT.setItemMeta(imPlessureTNT);
+        snowBall.setItemMeta(imSnowBall);
+
+        p.getInventory().addItem(new ItemStack[]{bow});
+        p.getInventory().addItem(new ItemStack[]{bullets});
+        p.getInventory().addItem(new ItemStack[]{plessureArrow});
+        p.getInventory().addItem(new ItemStack[]{plessureTNT});
+        p.getInventory().addItem(new ItemStack[]{snowBall});
+    }
+
     public void loadAvailableGameModes() {
         if (new FreeForAll(gameID, true).tryLoadSpawn()) {
             availableGameTypes.add(new FreeForAll(gameID));
@@ -960,6 +996,4 @@ public class Game {
             msgmgr.sendFMessage(type, msg, p, vars);
         }
     }
-    
-    //HI!
 }

@@ -207,6 +207,10 @@ public class GameManager {
     public boolean blockPlace(Block block, Player p) {
         return getGame(getPlayerGameId(p)).blockPlace(block, p);
     }
+    
+    public boolean blockInteract(Block block, Player p) {
+        return getGame(getPlayerGameId(p)).blockInteract(block, p);
+    }
 
     public void removeSpectator(Player p) {
         getGame(getPlayerSpectateId(p)).removeSpectator(p);

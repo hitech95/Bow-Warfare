@@ -1,13 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.kytech.bowwarfare.events;
 
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.GameManager;
 import org.bukkit.Location;
 import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Snowball;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -52,7 +49,7 @@ public class DamageEvent implements Listener {
 
         if ((event.getDamager() instanceof Projectile)) {
             Projectile projectile = (Projectile) event.getDamager();
-            if (((projectile.getShooter() instanceof Player)) && ((projectile instanceof Arrow))) {
+            if (((projectile.getShooter() instanceof Player)) && ((projectile instanceof Arrow) || projectile instanceof Snowball)) {
                 killer = (Player) projectile.getShooter();
             } else {
                 event.setCancelled(true);

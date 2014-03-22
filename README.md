@@ -1,4 +1,4 @@
-Bow Warfare - Reloaded
+Bow Warfare - Reloaded [![Build Status](https://hitech95.ci.cloudbees.com/buildStatus/icon?job=BowWarfare)](https://hitech95.ci.cloudbees.com/job/BowWarfare/it.kytech$bowwarfare/)
 =========
 
 Bow Warfare - Reloaded is a remake of the old Bow Warfare.
@@ -6,8 +6,14 @@ It is based on Double0Negative SurvivalGames, but with a lot of changes, now add
 
 Version
 ----
+[![Build on](http://www.cloudbees.com/sites/default/files/Button-Powered-by-CB.png)](http://www.cloudbees.com/foss/index.cb)
 
-0.0.1-pre1
+[![Build Status](https://hitech95.ci.cloudbees.com/buildStatus/icon?job=BowWarfare)](https://hitech95.ci.cloudbees.com/job/BowWarfare/it.kytech$bowwarfare/)
+
+ - Current: 0.1.0-pre1
+ - Next Stable: 0.1.0
+
+ [DOWNLOAD](https://hitech95.ci.cloudbees.com/job/BowWarfare/it.kytech$bowwarfare/)
 
 Changelog
 ----
@@ -31,23 +37,22 @@ Working
 
 Bugs
 ----
- - I don't know. We are still in alpha
+ - Random Null pointer on server console atrer death/kill 
 
 I'm Working on
 ----
  - Game Type
+  - TDM
+  - LMS
 
 To Do
 ----
  - General
-  - Scoreboard (personal info kill/death and ratio)
-  - Boss Bar to show infos (time left and teams points)
+  - None
  - Commands
-  - Zombie
   - Spectate (may need some fixes)
-  - Setspawn (correct help string)
   - Listplayers (need a lot of changes on Gamemanager and on Gametype)
-  - List available Gametype
+  - List available Gametype (I have to learn how Reflections works)
  - Game type
   - ALL that are missing
  - Utils
