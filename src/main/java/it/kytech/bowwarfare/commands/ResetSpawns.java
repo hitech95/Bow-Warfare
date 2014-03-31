@@ -20,7 +20,7 @@ public class ResetSpawns implements SubCommand {
                 GameManager.getInstance().disableGame(Integer.parseInt(args[0]));
 
                 if (args.length > 1) {
-                    SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]) + "." + args[0].toUpperCase(), null);
+                    SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]) + "." + args[1].toUpperCase(), null);
                 } else {
                     SettingsManager.getInstance().getSpawns().set("spawns." + Integer.parseInt(args[0]), null);
                 }

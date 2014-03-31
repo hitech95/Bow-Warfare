@@ -38,7 +38,7 @@ public class Teleport implements SubCommand {
 
     @Override
     public String permission() {
-        return "bw.arena.teleport";
+        return "bw.staff.teleport";
     }
 
 }

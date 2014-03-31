@@ -29,12 +29,14 @@ import java.util.HashMap;
 import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -146,8 +148,10 @@ public class TeamDeathMatch implements Gametype {
 
         if (t == Teams.RED) {
             redTeam.add(player);
+            player.getInventory().setHelmet(new ItemStack(Material.WOOL, 1, DyeColor.RED.getWoolData()));
         } else {
             blueTeam.add(player);
+            player.getInventory().setHelmet(new ItemStack(Material.WOOL, 1, DyeColor.BLUE.getWoolData()));
         }
 
         StatusBarAPI.setStatusBar(player, buildBossStringTDM(), 1);

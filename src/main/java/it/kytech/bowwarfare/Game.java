@@ -195,7 +195,7 @@ public class Game {
             return false;
         }
 
-        if (!p.hasPermission("bw.arena.join." + gameID)) {
+        if (!p.hasPermission("bw.user.join." + gameID)) {
             debug("permission needed to join arena: " + "bw.arena.join." + gameID);
             msgmgr.sendFMessage(PrefixType.WARNING, "game.nopermission", p, "arena-" + gameID);
             return false;
