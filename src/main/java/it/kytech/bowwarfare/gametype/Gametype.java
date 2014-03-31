@@ -35,13 +35,13 @@ public interface Gametype {
 
     public Location getRandomSpawnPoint();
 
-    public int getSpawnCount();
+    public int getSpawnCount(String... args);
 
     public int getMaxPlayer();
 
     public int getMinPlayer();
 
-    public String getGamemodeName();
+    public String getGametypeName();
 
     public void updateSingInfo(Sign s);
 

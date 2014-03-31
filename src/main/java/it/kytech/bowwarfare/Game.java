@@ -17,6 +17,7 @@ import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.gametype.FreeForAll;
 import it.kytech.bowwarfare.gametype.Gametype;
+import it.kytech.bowwarfare.gametype.TeamDeathMatch;
 import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
@@ -127,7 +128,7 @@ public class Game {
     }
 
     public void addSpawn(String gamemode, Location l, String... args) {
-        Gametype gameMode = getAvailableGameMode(gamemode);
+        Gametype gameMode = getAvailableGameType(gamemode);
         if (gameMode != null) {
             gameMode.addSpawn(l, args);
         } else {
@@ -201,7 +202,7 @@ public class Game {
         }
 
         if (gametype > -1) {
-            OptionFlag value = SettingsManager.OptionFlag.valueOf(availableGameTypes.get(gametype).getGamemodeName() + "MAXP");
+            OptionFlag value = SettingsManager.OptionFlag.valueOf(availableGameTypes.get(gametype).getGametypeName() + "MAXP");
             HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(value), "players-" + activePlayers.size());
         } else {
             HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "players-" + activePlayers.size());
@@ -232,7 +233,7 @@ public class Game {
             }
             Gametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
-                msgmgr.sendMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
+                msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
             }
 
             if (activePlayers.size() < availableGameTypes.get(gametype).getMaxPlayer()) {
@@ -364,7 +365,7 @@ public class Game {
     public boolean blockPlace(Block block, Player p) {
         return availableGameTypes.get(gametype).onBlockPlaced(block, p);
     }
-    
+
     /*
      * 
      * ################################################
@@ -864,6 +865,11 @@ public class Game {
     public void loadAvailableGameModes() {
         if (new FreeForAll(gameID, true).tryLoadSpawn()) {
             availableGameTypes.add(new FreeForAll(gameID));
+            System.out.println("-------------->" + gameID + " FFA");
+        }
+        if (new TeamDeathMatch(gameID, true).tryLoadSpawn()) {
+            availableGameTypes.add(new TeamDeathMatch(gameID));
+            System.out.println("-------------->" + gameID + " TDM");
         }
     }
 
@@ -873,7 +879,7 @@ public class Game {
             strGamemode = (String) settings.get(SettingsManager.OptionFlag.GAMETYPE);
 
             for (int i = 0; i < availableGameTypes.size(); i++) {
-                if (availableGameTypes.get(i).getGamemodeName().equalsIgnoreCase(strGamemode)) {
+                if (availableGameTypes.get(i).getGametypeName().equalsIgnoreCase(strGamemode)) {
                     gametype = i;
                     break;
                 }
@@ -951,16 +957,16 @@ public class Game {
 
     public boolean isAvailableGameMode(String s) {
         for (Gametype g : availableGameTypes) {
-            if (g.getGamemodeName().equalsIgnoreCase(s)) {
+            if (g.getGametypeName().equalsIgnoreCase(s)) {
                 return true;
             }
         }
         return false;
     }
 
-    public Gametype getAvailableGameMode(String s) {
+    public Gametype getAvailableGameType(String s) {
         for (Gametype g : availableGameTypes) {
-            if (g.getGamemodeName().equalsIgnoreCase(s)) {
+            if (g.getGametypeName().equalsIgnoreCase(s)) {
                 return g;
             }
         }

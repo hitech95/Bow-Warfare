@@ -57,8 +57,8 @@ public class TeamDeathMatch implements Gametype {
     private ArrayList<Location> redSpawns;
     private ArrayList<Location> blueSpawns;
 
-    private ArrayList<Player> redTeam;
-    private ArrayList<Player> blueTeam;
+    private ArrayList<Player> redTeam = new ArrayList<Player>();
+    private ArrayList<Player> blueTeam = new ArrayList<Player>();
 
     private ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
     private ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
@@ -68,12 +68,16 @@ public class TeamDeathMatch implements Gametype {
     private MessageManager msgmgr = MessageManager.getInstance();
     private HashMap<SettingsManager.OptionFlag, Object> settings = new HashMap<SettingsManager.OptionFlag, Object>();
     private HashMap<Block, Player> mines = new HashMap<Block, Player>();
+
     private ScoreboardManager sbManager = Bukkit.getScoreboardManager();
-    private Scoreboard scoreBoard = sbManager.getNewScoreboard();
+
+    private Scoreboard redScoreBoard = sbManager.getNewScoreboard();
+    private Scoreboard blueScoreBoard = sbManager.getNewScoreboard();
+
     private Random r = new Random();
 
     private final int DEFAULT_MAXP = 20;
-    private final int DEFAULT_KILL = 25;
+    private final int DEFAULT_KILL = 60;
 
     private static enum Teams {
 
@@ -84,25 +88,33 @@ public class TeamDeathMatch implements Gametype {
         isTest = false;
         this.gameID = gameID;
 
-        redSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
-        blueSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
+        redSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "red");
+        blueSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "blue");
+
+        kills.put(Teams.RED, 0);
+        kills.put(Teams.BLUE, 0);
 
         loadSettings();
 
-        Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "kill", "dummy");
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("ScoreBoard");
+        Objective redObjective = redScoreBoard.registerNewObjective(gameID + "." + NAME + "." + "RED." + "kill", "dummy");
+        Objective blueObjective = blueScoreBoard.registerNewObjective(gameID + "." + NAME + "." + "BLUE." + "kill", "dummy");
+
+        redObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        blueObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        redObjective.setDisplayName("ScoreBoard");
+        blueObjective.setDisplayName("ScoreBoard");
     }
 
     public TeamDeathMatch(int gameID, boolean isTest) {
-        this.gameID = gameID;
-        this.isTest = isTest;
+        this(gameID);
 
         if (isTest) {
             redSpawns = null;
             blueSpawns = null;
             redTeam = null;
             blueTeam = null;
+            kills = null;
             allowedPlace = null;
             allowedBreak = null;
         }
@@ -129,13 +141,20 @@ public class TeamDeathMatch implements Gametype {
 
     @Override
     public boolean onJoin(Player player) {
-        player.teleport(getRandomSpawnPoint());
+        Teams t = balanceNewPlayer();
+        player.teleport(getRandomSpawnPoint(t));
 
-        StatusBarAPI.setStatusBar(player, buildBossString(LONG_NAME), 1);
+        if (t == Teams.RED) {
+            redTeam.add(player);
+        } else {
+            blueTeam.add(player);
+        }
+
+        StatusBarAPI.setStatusBar(player, buildBossStringTDM(), 1);
         buildScoreBoard(player);
         updateScoreBoard();
 
-        msgmgr.sendFMessage(MessageManager.PrefixType.INFO, "gametype.FFA", player);
+        msgmgr.sendFMessage(MessageManager.PrefixType.INFO, "gametype.TDM." + t.toString().toLowerCase(), player);
 
         if (GameManager.getInstance().getGame(gameID).getState() != Game.GameState.INGAME) {
             GameManager.getInstance().getGame(gameID).startGame();
@@ -149,56 +168,63 @@ public class TeamDeathMatch implements Gametype {
         Game game = GameManager.getInstance().getGame(gameID);
         if (!hasLeft) {
 
-            if (kills.get(getTeam(killer)) == null) {
-                kills.put(getTeam(killer), 0);
-            }
-
             int kill = kills.get(getTeam(killer)) + 1;
 
             if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.TDMKILL)) {
 
                 game.playerWin(victim, killer);
 
-                StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! ")), 1); //Blank space to fix visual error!
+                for (Player p : (getTeam(killer) == Teams.RED) ? redTeam : blueTeam) {
+                    final Player pf = p;
 
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
+                    StatusBarAPI.setStatusBar(p, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.team.winner", "Your Team have Won! ")), 1); //Blank space to fix visual error!
 
-                    @Override
-                    public void run() {
-                        StatusBarAPI.removeStatusBar(killer);
-                    }
+                    Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
 
-                }, 10 * 20);
+                        @Override
+                        public void run() {
+                            StatusBarAPI.removeStatusBar(pf);
+                        }
+
+                    }, 10 * 20);
+
+                }
                 return true;
             } else {
-                if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL) - 5)) {
+                if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.TDMKILL) - 5)) {
                     msgmgr.sendFMessage(MessageManager.PrefixType.INFO, "kill.missing", killer,
                             "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName(),
-                            "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) - kill)
+                            "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.TDMKILL)) - kill)
                     );
                 }
                 kills.put(getTeam(killer), kill);
 
-                Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
+                Scoreboard scoreBoard = (getTeam(killer) == Teams.RED) ? redScoreBoard : blueScoreBoard;
+                Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + getTeam(killer).toString() + "." + "kill");
                 Score score = objective.getScore(killer);
                 score.setScore(kill);
+
+                updateAllBossStringTDM();
             }
 
-            victim.teleport(getRandomSpawnPoint());
+            victim.teleport(getRandomSpawnPoint(getTeam(victim)));
+
         } else {
-            scoreBoard.resetScores(victim);
+            if (getTeam(killer) == Teams.RED) {
+                redScoreBoard.resetScores(victim);
+                redTeam.remove(victim);
+            } else {
+                blueScoreBoard.resetScores(victim);
+                blueTeam.remove(victim);
+            }
         }
+
         return true;
     }
 
     @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
-        if (getTeam(player) == Teams.RED) {
-            redTeam.remove(player);
-        } else {
-            blueTeam.remove(player);
-        }
-        return true;
+        return false;
     }
 
     @Override
@@ -212,18 +238,39 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public String getGamemodeName() {
+    public String getGametypeName() {
         return NAME;
     }
 
     @Override
-    public int getSpawnCount() {
-        return redSpawns.size() + blueSpawns.size();
+    public int getSpawnCount(String... args) {
+        if (args.length < 1) {
+            return redSpawns.size() + blueSpawns.size();
+        }
+
+        if (args[0].equalsIgnoreCase("red")) {
+            return redSpawns.size();
+        }
+
+        if (args[0].equalsIgnoreCase("blue")) {
+            return blueSpawns.size();
+        }
+
+        return 0;
+
     }
 
     @Override
     public Location getRandomSpawnPoint() {
         if (r.nextBoolean()) {
+            return redSpawns.get(r.nextInt(redSpawns.size()));
+        } else {
+            return blueSpawns.get(r.nextInt(blueSpawns.size()));
+        }
+    }
+
+    public Location getRandomSpawnPoint(Teams t) {
+        if (t == Teams.RED) {
             return redSpawns.get(r.nextInt(redSpawns.size()));
         } else {
             return blueSpawns.get(r.nextInt(blueSpawns.size()));
@@ -258,8 +305,7 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public boolean onBlockBreaked(Block block, Player p
-    ) {
+    public boolean onBlockBreaked(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             if (mines.containsKey(block)) {
                 mines.remove(block);
@@ -271,8 +317,7 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public boolean onBlockPlaced(Block block, Player p
-    ) {
+    public boolean onBlockPlaced(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             mines.put(block, p);
             return true;
@@ -281,8 +326,7 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public boolean onBlockInteract(Block block, Player p
-    ) {
+    public boolean onBlockInteract(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             Game game = GameManager.getInstance().getGame(gameID);
             Player killer = mines.get(block);
@@ -318,18 +362,17 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public void addSpawn(Location l, String... args
-    ) {
-        if (Teams.valueOf(args[0]) == Teams.RED) {
+    public void addSpawn(Location l, String... args) {
+        if (Teams.valueOf(args[0].toUpperCase()) == Teams.RED) {
             redSpawns.add(l);
-        } else if (Teams.valueOf(args[0]) == Teams.BLUE) {
+        } else if (Teams.valueOf(args[0].toUpperCase()) == Teams.BLUE) {
             blueSpawns.add(l);
         }
     }
 
     @Override
     public int getMaxPlayer() {
-        return (Integer) settings.get(SettingsManager.OptionFlag.FFAMAXP);
+        return (Integer) settings.get(SettingsManager.OptionFlag.TDMMAXP);
     }
 
     @Override
@@ -370,33 +413,41 @@ public class TeamDeathMatch implements Gametype {
         String redKillStr = "" + kills.get(Teams.RED);
         String blueKillStr = "" + kills.get(Teams.BLUE);
 
-        int length = LONG_NAME.length();
-        int totalLength = length + redKillStr.length() + blueKillStr.length();
+        String s = ChatColor.RED + redKillStr + "          " + ChatColor.WHITE + LONG_NAME + "          " + ChatColor.BLUE + blueKillStr;
 
-        int left = (64 - totalLength) / 2;
-        int right = (64 - totalLength) / 2;
+        int left = (64 - s.length()) / 2;
+        int right = 64 - left - s.length();
 
         StringBuilder str = new StringBuilder();
-
-        str.append(ChatColor.RED + redKillStr);
 
         for (int i = 0; i < left; i++) {
             str.append(" ");
         }
 
-        str.append(ChatColor.WHITE + LONG_NAME);
+        str.append(s);
 
         for (int i = 0; i < right; i++) {
             str.append(" ");
         }
 
-        str.append(ChatColor.BLUE + blueKillStr);
-
         return str.toString();
     }
 
+    private void updateAllBossStringTDM() {
+        Game g = GameManager.getInstance().getGame(gameID);
+        String s = buildBossStringTDM();
+        for (Player p : g.getAllPlayers()) {
+            if (g.isPlayerActive(p)) {
+                StatusBarAPI.setStatusBar(p, s, 1);
+            }
+        }
+    }
+
     private void buildScoreBoard(Player player) {
-        Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
+        Scoreboard scoreBoard = (getTeam(player) == Teams.RED) ? redScoreBoard : blueScoreBoard;
+
+        Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + getTeam(player).toString() + "." + "kill");
+
         Score score = objective.getScore(player);
         score.setScore(0);
         player.setScoreboard(scoreBoard);
@@ -407,8 +458,19 @@ public class TeamDeathMatch implements Gametype {
 
         for (Player p : game.getAllPlayers()) {
             if (game.isPlayerActive(p)) {
+                Scoreboard scoreBoard = (getTeam(p) == Teams.RED) ? redScoreBoard : blueScoreBoard;
                 p.setScoreboard(scoreBoard);
             }
+        }
+    }
+
+    public Teams balanceNewPlayer() {
+        if (redTeam.size() < blueTeam.size()) {
+            return Teams.RED;
+        } else if (redTeam.size() > blueTeam.size()) {
+            return Teams.BLUE;
+        } else {
+            return ((Integer) kills.get(Teams.RED) < (Integer) kills.get(Teams.BLUE)) ? Teams.RED : Teams.BLUE;
         }
     }
 

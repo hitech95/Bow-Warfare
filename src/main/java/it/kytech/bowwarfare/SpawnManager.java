@@ -78,9 +78,10 @@ public class SpawnManager {
             str.append("." + args[i]);
         }
         
-        int count = getNumberOf(gameID, gameType);
+        int count = getNumberOf(gameID, gameType, args);
         
         for (int i = 1; i <= count; i++) {
+            System.out.println(str.toString() + "." + i + ".x");
             list.add(new Location(SettingsManager.getGameWorld(gameID),
                     spawns.getInt(str.toString() + "." + i + ".x"),
                     spawns.getInt(str.toString() + "." + i + ".y"),

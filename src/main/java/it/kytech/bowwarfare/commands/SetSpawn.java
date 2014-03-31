@@ -20,14 +20,9 @@ public class SetSpawn implements SubCommand {
     public SetSpawn() {
     }
 
-    public void loadNextSpawn(String gamemode) {
-        for (Game g : GameManager.getInstance().getGames().toArray(new Game[0])) { //Avoid Concurrency problems
-            Gametype availableGameMode = g.getAvailableGameMode(gamemode);
-            if (availableGameMode == null) {
-                next.put(g.getID(), 1);
-            } else {
-                next.put(g.getID(), availableGameMode.getSpawnCount() + 1);
-            }
+    public void loadNextSpawn(String gamemode, String... args) {
+        for (Game g : GameManager.getInstance().getGames().toArray(new Game[0])) {
+            next.put(g.getID(), SpawnManager.getInstance().getNumberOf(g.getID(), gamemode, args) + 1);
         }
     }
 
@@ -47,8 +42,11 @@ public class SetSpawn implements SubCommand {
             MessageManager.getInstance().sendMessage(MessageManager.PrefixType.ERROR, help(player), player);
             return true;
         }
-
-        loadNextSpawn(args[1]);
+        if (args.length > 2) {
+            loadNextSpawn(args[1], Arrays.copyOfRange(args, 2, args.length));
+        } else {
+            loadNextSpawn(args[1]);
+        }
 
         int i = 0;
         if (args[0].equalsIgnoreCase("next")) {

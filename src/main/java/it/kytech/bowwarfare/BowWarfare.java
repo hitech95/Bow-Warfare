@@ -22,6 +22,7 @@ import it.kytech.bowwarfare.stats.StatsManager;
 import it.kytech.bowwarfare.util.DatabaseManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import it.kytech.bowwarfare.Metrics.Graph;
 
 public class BowWarfare extends JavaPlugin {
 
@@ -38,6 +39,7 @@ public class BowWarfare extends JavaPlugin {
 
     BowWarfare p = this;
 
+    @Override
     public void onDisable() {
         disabling = false;
         PluginDescriptionFile pdfFile = p.getDescription();
@@ -55,13 +57,28 @@ public class BowWarfare extends JavaPlugin {
         logger.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " has now been disabled and reset");
     }
 
+    @Override
     public void onEnable() {
         logger = p.getLogger();
 
         //ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
         try {
-            new Metrics(this).start();
+
+            Metrics metrics = new Metrics(this);
+
+            Graph weaponsUsedGraph = metrics.createGraph("Extra Info");
+
+            weaponsUsedGraph.addPlotter(new Metrics.Plotter("Arena Number") {
+
+                @Override
+                public int getValue() {
+                    return GameManager.getInstance().getGameCount();
+                }
+
+            });
+
+            metrics.start();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -71,6 +88,7 @@ public class BowWarfare extends JavaPlugin {
 
     class Startup implements Runnable {
 
+        @Override
         public void run() {
             datafolder = p.getDataFolder();
 
@@ -102,7 +120,6 @@ public class BowWarfare extends JavaPlugin {
 
             pm.registerEvents(new PlaceEvent(), p);
             pm.registerEvents(new BreakEvent(), p);
-            pm.registerEvents(new DamageEvent(), p);
             pm.registerEvents(new DeathEvent(), p);
             pm.registerEvents(new MoveEvent(), p);
             pm.registerEvents(new CommandCatch(), p);

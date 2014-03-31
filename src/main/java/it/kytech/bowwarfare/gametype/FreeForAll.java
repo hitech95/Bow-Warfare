@@ -66,7 +66,7 @@ public class FreeForAll implements Gametype {
         isTest = false;
         this.gameID = gameID;
 
-        FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
+        FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME);
         loadSettings();
 
         Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "kill", "dummy");
@@ -183,12 +183,12 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public String getGamemodeName() {
+    public String getGametypeName() {
         return NAME;
     }
 
     @Override
-    public int getSpawnCount() {
+    public int getSpawnCount(String... args) {
         return FFASpawns.size();
     }
 

@@ -8,10 +8,10 @@ public class NameUtil {
     public static String stylize(String name, boolean s, boolean r) {
 
         if (BowWarfare.auth.contains(name) && r) {
-            name = ChatColor.DARK_RED + name;
+            name = ChatColor.UNDERLINE + name;
         }
         if (BowWarfare.auth.contains(name) && !r) {
-            name = ChatColor.DARK_BLUE + name;
+            name = ChatColor.BOLD + name;
         }
         if (s && name.equalsIgnoreCase("Double0negative")) {
             name = name.replace("Double0negative", "Double0");

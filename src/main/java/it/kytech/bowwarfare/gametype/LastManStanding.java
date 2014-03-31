@@ -94,12 +94,12 @@ public class LastManStanding implements Gametype {
     }
 
     @Override
-    public String getGamemodeName() {
+    public String getGametypeName() {
         return NAME;
     }
 
     @Override
-    public int getSpawnCount() {
+    public int getSpawnCount(String... args) {
         return LMSSpawns.size();
     }
 
