@@ -26,6 +26,7 @@ public class PlayerJoinArenaEvent extends Event implements Cancellable {
         return game;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

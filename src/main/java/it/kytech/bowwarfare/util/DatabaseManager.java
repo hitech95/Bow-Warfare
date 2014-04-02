@@ -57,7 +57,7 @@ public class DatabaseManager {
             p = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
         } catch (SQLException e) {
             if (times == 5) {
-                // System.out.println("[BowWarfare][SQL ERROR] ATTEMPTED TO CONNECT TO DATABASE 5 TIMES AND FAILED! CONNECTION LOST.");
+                System.out.println("[BowWarfare][SQL ERROR] ATTEMPTED TO CONNECT TO DATABASE 5 TIMES AND FAILED! CONNECTION LOST.");
                 return null;
             }
             connect();

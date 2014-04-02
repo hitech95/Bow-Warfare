@@ -1,6 +1,5 @@
 package it.kytech.bowwarfare.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
@@ -8,6 +7,7 @@ import it.kytech.bowwarfare.SettingsManager;
 
 public class Leave implements SubCommand {
 
+    @Override
     public boolean onCommand(Player player, String[] args) {
         if (GameManager.getInstance().getPlayerGameId(player) == -1) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.notinarena", player);

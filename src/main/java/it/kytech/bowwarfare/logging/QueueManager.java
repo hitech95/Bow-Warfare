@@ -76,6 +76,7 @@ public class QueueManager {
             this.id = id;
         }
 
+        @Override
         public void run() {
             ArrayList<Entity> removelist = new ArrayList<Entity>();
 
@@ -86,7 +87,7 @@ public class QueueManager {
                     }
                 }
             }
-            for (int a = 0; a < removelist.size(); a = 0) {
+            for (int a = 0; a < removelist.size(); a++) {
                 try {
                     removelist.remove(0).remove();
                 } catch (Exception e) {
@@ -118,6 +119,7 @@ public class QueueManager {
 
     class DataDumper implements Runnable {
 
+        @Override
         public void run() {
             for (int id : queue.keySet()) {
                 try {
@@ -177,6 +179,7 @@ public class QueueManager {
             this.shutdown = shutdown;
         }
 
+        @Override
         public void run() {
 
             ArrayList<BlockData> data = queue.get(id);

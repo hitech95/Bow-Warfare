@@ -4,13 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.util.NameUtil;
 
 public class LobbyWall {
 

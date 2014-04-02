@@ -40,6 +40,8 @@ public class FreeForAll implements Gametype {
     public static final String LONG_NAME = "Free For All";
 
     private int gameID;
+    private Game game;
+    
     private boolean isTest = false;
 
     private ArrayList<Location> FFASpawns;
@@ -62,9 +64,11 @@ public class FreeForAll implements Gametype {
     private final int DEFAULT_MAXP = 16;
     private final int DEFAULT_KILL = 25;
 
-    public FreeForAll(int gameID) {
-        isTest = false;
-        this.gameID = gameID;
+    public FreeForAll(Game g) {
+        isTest = false;       
+
+        this.game  = g;
+        this.gameID = game.getID();
 
         FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME);
         loadSettings();
@@ -74,9 +78,8 @@ public class FreeForAll implements Gametype {
         objective.setDisplayName("ScoreBoard");
     }
 
-    public FreeForAll(int gameID, boolean isTest) {
-        this.gameID = gameID;
-        this.isTest = isTest;
+    public FreeForAll(Game g, boolean isTest) {
+        this(g);
 
         if (isTest) {
             FFASpawns = null;
@@ -124,8 +127,11 @@ public class FreeForAll implements Gametype {
 
     @Override
     public boolean onPlayerKilled(Player victim, final Player killer, boolean hasLeft) {
-        Game game = GameManager.getInstance().getGame(gameID);
         if (!hasLeft) {
+
+            if (killer == null) {
+                return false;
+            }
 
             if (kills.get(killer) == null) {
                 kills.put(killer, 0);
@@ -147,7 +153,7 @@ public class FreeForAll implements Gametype {
                 return true;
             } else {
                 if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL) - 5)) {
-                    msgmgr.sendFMessage(PrefixType.INFO, "kill.missing", killer,
+                    msgFall(PrefixType.INFO, "kill.missing",
                             "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName(),
                             "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) - kill)
                     );
@@ -199,19 +205,14 @@ public class FreeForAll implements Gametype {
 
     @Override
     public void updateSingInfo(Sign s) {
-        Game game = GameManager.getInstance().getGame(gameID);
-
         s.setLine(0, NAME);
         s.setLine(1, game.getState() + "");
         s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
         s.setLine(3, "");
-
     }
 
     @Override
     public ArrayList<String> updateSignPlayer() {
-        Game game = GameManager.getInstance().getGame(gameID);
-
         ArrayList<String> display = new ArrayList<String>();
         for (Player p : game.getAllPlayers()) {
             display.add((game.isPlayerActive(p) ? ChatColor.BLACK : ChatColor.GRAY) + NameUtil.stylize(p.getName(), true, !game.isPlayerActive(p)));
@@ -244,7 +245,6 @@ public class FreeForAll implements Gametype {
     @Override
     public boolean onBlockInteract(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
-            Game game = GameManager.getInstance().getGame(gameID);
             Player killer = mines.get(block);
 
             if (p == killer) {
@@ -253,7 +253,6 @@ public class FreeForAll implements Gametype {
 
             for (Player other : game.getAllPlayers()) {
                 if (other.getLocation().distance(block.getLocation()) <= 4 && game.isPlayerActive(other)) {
-                    System.out.println("Deve morire!");
                     game.killPlayer(other, killer);
                 }
             }
@@ -320,12 +319,17 @@ public class FreeForAll implements Gametype {
     }
 
     private void updateScoreBoard() {
-        Game game = GameManager.getInstance().getGame(gameID);
-
         for (Player p : game.getAllPlayers()) {
             if (game.isPlayerActive(p)) {
                 p.setScoreboard(scoreBoard);
             }
+        }
+    }
+
+    public void msgFall(PrefixType type, String msg, String... vars) {
+
+        for (Player p : game.getAllPlayers()) {
+            msgmgr.sendFMessage(type, msg, p, vars);
         }
     }
 

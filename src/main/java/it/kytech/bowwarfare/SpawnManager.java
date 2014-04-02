@@ -5,12 +5,8 @@
 package it.kytech.bowwarfare;
 
 import java.util.ArrayList;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 
 /**
  *
@@ -37,9 +33,9 @@ public class SpawnManager {
             str.append("." + args[i].toLowerCase());
         }
 
-        spawns.set(str.toString() + "." + sID + ".x", l.getBlockX());
-        spawns.set(str.toString() + "." + sID + ".y", l.getBlockY());
-        spawns.set(str.toString() + "." + sID + ".z", l.getBlockZ());
+        spawns.set(str.toString() + "." + sID + ".x", l.getX());
+        spawns.set(str.toString() + "." + sID + ".y", l.getY());
+        spawns.set(str.toString() + "." + sID + ".z", l.getZ());
         spawns.set(str.toString() + "." + sID + ".yaw", l.getYaw());
         spawns.set(str.toString() + "." + sID + ".pitch", l.getPitch());
 
@@ -81,11 +77,10 @@ public class SpawnManager {
         int count = getNumberOf(gameID, gameType, args);
         
         for (int i = 1; i <= count; i++) {
-            System.out.println(str.toString() + "." + i + ".x");
             list.add(new Location(SettingsManager.getGameWorld(gameID),
-                    spawns.getInt(str.toString() + "." + i + ".x"),
-                    spawns.getInt(str.toString() + "." + i + ".y"),
-                    spawns.getInt(str.toString() + "." + i + ".z"),
+                    spawns.getDouble(str.toString() + "." + i + ".x"),
+                    spawns.getDouble(str.toString() + "." + i + ".y"),
+                    spawns.getDouble(str.toString() + "." + i + ".z"),
                     (float) spawns.getDouble(str.toString() + "." + i + ".yaw"),
                     (float) spawns.getDouble(str.toString() + "." + i + ".pitch")));
         }

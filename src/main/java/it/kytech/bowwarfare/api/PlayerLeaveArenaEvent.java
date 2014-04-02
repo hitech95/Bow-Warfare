@@ -25,6 +25,7 @@ public class PlayerLeaveArenaEvent extends Event {
         return game;
     }
 
+    @Override
     public HandlerList getHandlers() {
         return handlers;
     }

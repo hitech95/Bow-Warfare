@@ -42,6 +42,8 @@ public class DeathEvent implements Listener {
             event.setCancelled(true);
             return;
         }
+        
+        System.out.println(event.getCause());
 
         if (event.getCause() == ENTITY_ATTACK || event.getCause() == PROJECTILE) {
             return;
@@ -50,7 +52,7 @@ public class DeathEvent implements Listener {
         if (GameManager.getInstance().isInKitMenu(player)) {
             event.setCancelled(true);
             return;
-        }
+        }           
 
         if (player.getHealth() <= event.getDamage()) {
             event.setCancelled(true);

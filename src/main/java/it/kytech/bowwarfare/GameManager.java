@@ -27,7 +27,6 @@ public class GameManager {
     static GameManager instance = new GameManager();
     private ArrayList< Game> games = new ArrayList< Game>();
     private BowWarfare p;
-    public static HashMap< Integer, HashSet< Block>> openedChest = new HashMap< Integer, HashSet< Block>>();
     private ArrayList<Kit> kits = new ArrayList<Kit>();
     private HashSet<Player> kitsel = new HashSet<Player>();
     MessageManager msgmgr = MessageManager.getInstance();
@@ -43,9 +42,6 @@ public class GameManager {
         p = plugin;
         LoadGames();
         LoadKits();
-        for (Game g : getGames()) {
-            openedChest.put(g.getID(), new HashSet< Block>());
-        }
     }
 
     public Plugin getPlugin() {
@@ -207,7 +203,7 @@ public class GameManager {
     public boolean blockPlace(Block block, Player p) {
         return getGame(getPlayerGameId(p)).blockPlace(block, p);
     }
-    
+
     public boolean blockInteract(Block block, Player p) {
         return getGame(getPlayerGameId(p)).blockInteract(block, p);
     }
@@ -337,11 +333,6 @@ public class GameManager {
                 games.remove(getGame(no));
             }
         }
-    }
-
-    public void gameEndCallBack(int id) {
-        getGame(id).setRBStatus("clearing chest");
-        openedChest.put(id, new HashSet< Block>());
     }
 
     public String getStringList(int gid) {

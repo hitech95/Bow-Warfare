@@ -275,8 +275,7 @@ public class Game {
         } else {
             msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
             p.setHealth(p.getMaxHealth());
-            p.setFoodLevel(20);
-            clearInv(p);
+            p.setFoodLevel(20);            
             activePlayers.add(p);
             sm.addPlayer(p, gameID);
 
@@ -434,9 +433,7 @@ public class Game {
                 Bukkit.getServer().getPluginManager().callEvent(pk);
 
                 availableGameTypes.get(gametype).onPlayerKilled(p, killer, leave.length > 0);
-                if (leave.length > 0) {
-                    setGameInventory(p);
-                }
+                setGameInventory(p);
             }
 
             LobbyManager.getInstance().updateWall(gameID);
@@ -490,7 +487,7 @@ public class Game {
 
         restoreInv(p);
 
-        if (activePlayers.size() < 1 && state != GameState.WAITING) {
+        if (activePlayers.size() < 1) {
             endGame();
         }
 
@@ -641,7 +638,6 @@ public class Game {
 
         state = GameState.RESETING;
 
-        GameManager.getInstance().gameEndCallBack(gameID);
         QueueManager.getInstance().rollback(gameID, false);
         LobbyManager.getInstance().updateWall(gameID);
 
@@ -824,8 +820,19 @@ public class Game {
 
     }
 
+    @SuppressWarnings("deprecation")
+    public void clearOnlyInv(Player p) {
+        ItemStack[] inv = p.getInventory().getContents();
+        for (int i = 0; i < inv.length; i++) {
+            inv[i] = null;
+        }
+        p.getInventory().setContents(inv);
+        p.updateInventory();
+    }
+
+    @SuppressWarnings("deprecation")
     public void setGameInventory(Player p) {
-        clearInv(p);
+        clearOnlyInv(p);
 
         ItemStack bow = new ItemStack(Material.BOW);
         ItemStack bullets = new ItemStack(Material.ARROW);
@@ -860,16 +867,17 @@ public class Game {
         p.getInventory().addItem(new ItemStack[]{plessureArrow});
         p.getInventory().addItem(new ItemStack[]{plessureTNT});
         p.getInventory().addItem(new ItemStack[]{snowBall});
+
+        p.updateInventory();
     }
 
     public void loadAvailableGameModes() {
-        if (new FreeForAll(gameID, true).tryLoadSpawn()) {
-            availableGameTypes.add(new FreeForAll(gameID));
-            System.out.println("-------------->" + gameID + " FFA");
+        if (new FreeForAll(this, true).tryLoadSpawn()) {
+            availableGameTypes.add(new FreeForAll(this));
         }
-        if (new TeamDeathMatch(gameID, true).tryLoadSpawn()) {
-            availableGameTypes.add(new TeamDeathMatch(gameID));
-            System.out.println("-------------->" + gameID + " TDM");
+
+        if (new TeamDeathMatch(this, true).tryLoadSpawn()) {
+            availableGameTypes.add(new TeamDeathMatch(this));
         }
     }
 

@@ -9,6 +9,7 @@ import it.kytech.bowwarfare.MessageManager.PrefixType;
 
 public class Join implements SubCommand {
 
+    @Override
     public boolean onCommand(Player player, String[] args) {
         if (args.length == 1) {
             if (player.hasPermission(permission())) {
@@ -27,7 +28,12 @@ public class Join implements SubCommand {
                     MessageManager.getInstance().sendMessage(PrefixType.ERROR, "error.alreadyingame", player);
                     return true;
                 }
-                player.teleport(SettingsManager.getInstance().getLobbySpawn());
+                if (SettingsManager.getInstance().getLobbySpawn() == null) {
+                    MessageManager.getInstance().sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", player);
+                    return false;
+                } else {
+                    player.teleport(SettingsManager.getInstance().getLobbySpawn());
+                }
                 return true;
             } else {
                 MessageManager.getInstance().sendFMessage(PrefixType.WARNING, "error.nopermission", player);
