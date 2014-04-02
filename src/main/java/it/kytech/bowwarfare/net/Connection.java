@@ -15,7 +15,7 @@ public class Connection extends Thread {
     Socket skt;
     HashMap<String, String> html = new HashMap<String, String>();
 
-    public Connection(Socket skt) {
+    public Connection(Socket skt) {        
         try {
             this.in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
             this.out = new DataOutputStream(skt.getOutputStream());
@@ -24,6 +24,7 @@ public class Connection extends Thread {
         }
     }
 
+    @Override
     public void run() {
         try {
             write("ADFSADFDSAF", out, in.readLine());
@@ -42,24 +43,24 @@ public class Connection extends Thread {
 
     }
 
-    public void write(String str, OutputStream out, String header) {
-        String s = "HTTP/1.0 ";
-        s = s + "200 OK";
-        s = s + "\r\n";
-        s = s + "Connection: close\r\n";
-        s = s + "Server: BowWarfare v0\r\n";
-        s = s + "Content-Type: text/html\r\n";
-        s = s + "\r\n";
+    public void write(String str, OutputStream out, String useragent) {
+        StringBuilder header = new StringBuilder("HTTP/1.0 ");
+        header.append("200 OK");
+        header.append("\r\n");
+        header.append("Connection: close\r\n");
+        header.append("Server: BowWarfare v0\r\n");
+        header.append("Content-Type: text/html\r\n");
+        header.append("\r\n");
 
         String template = FileCache.getHTML("template", true);
 
-        String[] args = header.split(" ")[1].trim().split("/");
+        String[] args = useragent.split(" ")[1].trim().split("/");
 
         String page = template;
 
         page = parse(page);
 
-        str = s + page;
+        str = header.toString() + page;
 
         try {
             out.write(str.getBytes());

@@ -7,9 +7,10 @@ import it.kytech.bowwarfare.BowWarfare;
 
 public class Webserver extends Thread {
 
+    @Override
     public void run() {
         try {
-            ServerSocket st = new ServerSocket(880);
+            ServerSocket st = new ServerSocket(8080);
 
             while (!BowWarfare.isDisabling()) {
 
@@ -22,7 +23,6 @@ public class Webserver extends Thread {
             }
             st.close();
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 

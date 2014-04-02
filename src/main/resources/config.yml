@@ -120,7 +120,7 @@ stats:
   enabled: false
   webserver:
     enabled: false
-    port: 880
+    port: 8080
   points:
     kill: 10
     win: 100
