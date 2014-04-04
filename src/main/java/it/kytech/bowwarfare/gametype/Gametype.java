@@ -10,6 +10,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
 /**
  *
@@ -23,7 +24,7 @@ public interface Gametype {
 
     public boolean onPlayerRemove(Player player, boolean hasLeft);
 
-    public boolean onArrowHit(Player attacker, Arrow arrow);
+    public boolean onProjectileHit(Player attacker, Projectile pro);
 
     public boolean onBlockBreaked(Block block, Player p);
 
@@ -32,6 +33,8 @@ public interface Gametype {
     public boolean onBlockInteract(Block block, Player p);
 
     public boolean tryLoadSpawn();
+    
+    public void checkWin(Player victim, Player killer);
 
     public Location getRandomSpawnPoint();
 

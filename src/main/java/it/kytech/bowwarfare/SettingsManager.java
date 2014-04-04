@@ -236,8 +236,7 @@ public class SettingsManager {
     public boolean isSetGameSettings(int gameid, Gametype type) {
         return system.isSet("bw-system.arenas." + gameid + ".flags." + type.getGametypeName().toLowerCase() + "-maxp");
     }
-
-    //TODO: Implement per-arena settings aka flags
+   
     public HashMap<OptionFlag, Object> getGameSettings(int gameid) {
         HashMap<OptionFlag, Object> flags = new HashMap<OptionFlag, Object>();
 

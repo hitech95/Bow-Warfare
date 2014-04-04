@@ -31,6 +31,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Projectile;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 //Data container for a game
@@ -275,7 +276,7 @@ public class Game {
         } else {
             msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
             p.setHealth(p.getMaxHealth());
-            p.setFoodLevel(20);            
+            p.setFoodLevel(20);
             activePlayers.add(p);
             sm.addPlayer(p, gameID);
 
@@ -383,6 +384,20 @@ public class Game {
      * 
      * ################################################
      * 
+     * 				PROJECTILE HIT
+     * 
+     * ################################################
+     * 
+     * 
+     */
+    public boolean projectileHit(Player attacker, Projectile pro) {
+        return availableGameTypes.get(gametype).onProjectileHit(attacker, pro);
+    }
+
+    /*
+     * 
+     * ################################################
+     * 
      * 				KILL PLAYER
      * 
      * ################################################
@@ -396,11 +411,16 @@ public class Game {
                 return;
             }
 
-            sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
-
             PlayerKilledEvent pk = null;
 
             if (state != GameState.WAITING && p.getLastDamageCause() != null && p.getLastDamageCause().getCause() != null && leave.length < 1) {
+
+                if (!availableGameTypes.get(gametype).onPlayerKilled(p, killer, leave.length > 0)) {
+                    return;
+                }
+
+                sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
+
                 switch (p.getLastDamageCause().getCause()) {
                     case ENTITY_ATTACK:
                         if (p.getLastDamageCause().getEntityType() == EntityType.PLAYER) {
@@ -430,9 +450,10 @@ public class Game {
 
                         break;
                 }
+                
+                availableGameTypes.get(gametype).checkWin(p, killer);
+                
                 Bukkit.getServer().getPluginManager().callEvent(pk);
-
-                availableGameTypes.get(gametype).onPlayerKilled(p, killer, leave.length > 0);
                 setGameInventory(p);
             }
 
@@ -864,7 +885,7 @@ public class Game {
 
         p.getInventory().addItem(new ItemStack[]{bow});
         p.getInventory().addItem(new ItemStack[]{bullets});
-        p.getInventory().addItem(new ItemStack[]{plessureArrow});
+        //p.getInventory().addItem(new ItemStack[]{plessureArrow});
         p.getInventory().addItem(new ItemStack[]{plessureTNT});
         p.getInventory().addItem(new ItemStack[]{snowBall});
 

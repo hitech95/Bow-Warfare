@@ -64,8 +64,7 @@ public class QueueManager {
         } else {
             Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
                     new RemoveEntities(id), 5);
-        }//
-
+        }
     }
 
     class RemoveEntities implements Runnable {
@@ -87,7 +86,7 @@ public class QueueManager {
                     }
                 }
             }
-            for (int a = 0; a < removelist.size(); a++) {
+            while (removelist.size() > 0) {
                 try {
                     removelist.remove(0).remove();
                 } catch (Exception e) {

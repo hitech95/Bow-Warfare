@@ -31,8 +31,13 @@ import it.kytech.bowwarfare.commands.SetSpawn;
 import it.kytech.bowwarfare.commands.Spectate;
 import it.kytech.bowwarfare.commands.SubCommand;
 import it.kytech.bowwarfare.commands.Teleport;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.sound.midi.SysexMessage;
+import org.bukkit.command.TabCompleter;
 
-public class CommandHandler implements CommandExecutor {
+public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private Plugin plugin;
     private HashMap< String, SubCommand> commands;
@@ -158,6 +163,59 @@ public class CommandHandler implements CommandExecutor {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmnd, String commandLabel, String[] args) {
+        PluginDescriptionFile pdfFile = plugin.getDescription();
+        if (!(sender instanceof Player)) {
+            msgmgr.logMessage(PrefixType.WARNING, "Only in-game players can use BowWafare commands! ");
+            return null;
+        }
+
+        Player player = (Player) sender;
+
+        if (BowWarfare.config_todate == false) {
+            msgmgr.sendMessage(PrefixType.WARNING, "The config file is out of date. Please tell an administrator to reset the config.", player);
+            return null;
+        }
+
+        if (BowWarfare.dbcon == false) {
+            msgmgr.sendMessage(PrefixType.WARNING, "Could not connect to server. Plugin disabled.", player);
+            return null;
+        }
+
+        if (cmnd.getName().equalsIgnoreCase("bowwarfare")) {
+
+            List<String> list = new ArrayList<String>(commands.keySet());
+            List<String> retList = new ArrayList<String>();
+
+            Collections.sort(list);
+
+            if (args == null || args.length < 1) {
+                return list;
+            } else if (args.length > 0) {
+                if (args.length == 1) {                    
+                    for (String s : list) {
+                        if (s.toLowerCase().startsWith(args[0].toLowerCase())) {
+                            try {
+                                retList.add(s);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    Collections.sort(retList);
+                    return retList;
+                } else {
+                    if (commands.containsKey(args[0])) {
+                        msgmgr.sendMessage(PrefixType.WARNING, commands.get(args[0]).help(player), player);
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<String>();
     }
 
     public void help(Player p, int page) {

@@ -10,6 +10,7 @@ import it.kytech.bowwarfare.SettingsManager;
 
 public class ListArenas implements SubCommand {
 
+    @Override
     public boolean onCommand(Player player, String[] args) {
         StringBuilder arenas = new StringBuilder();
         try {

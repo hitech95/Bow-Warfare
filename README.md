@@ -22,6 +22,7 @@ Changelog
 Working GameType
 ----
  - Free For All (FFA)
+ - Team Death Match (TDM)
 
 Working
 ----
@@ -37,28 +38,24 @@ Working
 
 Bugs
 ----
- - Random Null pointer on server console atrer death/kill 
+ - None (for Now)
 
 I'm Working on
 ----
  - Game Type
-  - TDM
   - LMS
 
 To Do
 ----
- - General
-  - None
  - Commands
-  - Spectate (may need some fixes)
-  - Listplayers (need a lot of changes on Gamemanager and on Gametype)
-  - List available Gametype (I have to learn how Reflections works)
+  - Listplayers
+  - List available Gametype using refelctions
  - Game type
-  - ALL that are missing
+  - INF
+  - CTF
  - Utils
   - Arrow TNT Explosion
   - Arrow Glass Break
-  - Plessure plate as granade
   - Classic Bow
  - Hooks
   - Economy

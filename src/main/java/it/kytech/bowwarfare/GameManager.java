@@ -21,6 +21,7 @@ import it.kytech.bowwarfare.util.Kit;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import org.bukkit.entity.Projectile;
 
 public class GameManager {
 
@@ -208,6 +209,10 @@ public class GameManager {
         return getGame(getPlayerGameId(p)).blockInteract(block, p);
     }
 
+    public boolean projectileHit(Player attacker, Projectile pro) {
+        return getGame(getPlayerGameId(attacker)).projectileHit(attacker, pro);
+    }
+
     public void removeSpectator(Player p) {
         getGame(getPlayerSpectateId(p)).removeSpectator(p);
     }
@@ -247,7 +252,6 @@ public class GameManager {
         return k;
     }
 
-    //TODO: Fix (may be unused)
     public void startGame(int a) {
         getGame(a).startGame();
     }
@@ -336,22 +340,16 @@ public class GameManager {
     }
 
     public String getStringList(int gid) {
-        //TODO
-
         Game g = getGame(gid);
         StringBuilder sb = new StringBuilder();
-        /*Player[][] players = g.getPlayers();
+        ArrayList<String> updateSignPlayer = g.getGameMode().updateSignPlayer();
 
-         sb.append(ChatColor.GREEN + "<---------------------[ Alive: " + players[0].length + " ]--------------------->\n" + ChatColor.GREEN + " ");
-         for (Player p : players[0]) {
-         sb.append(p.getName() + ",");
-         }
-         sb.append("\n\n");
-         sb.append(ChatColor.RED + "<---------------------[ Dead: " + players[1].length + " ]---------------------->\n" + ChatColor.GREEN + " ");
-         for (Player p : players[1]) {
-         sb.append(p.getName() + ",");
-         }
-         sb.append("\n\n");*/
+        sb.append(ChatColor.GREEN + "<--------------[ " + updateSignPlayer.size() + " Players | " + g.getGameMode().getGametypeName() + " ]-------------->\n" + ChatColor.GREEN + " ");
+        for (String p : updateSignPlayer) {
+            sb.append(p.replace(ChatColor.BLACK.toString(), ChatColor.WHITE.toString()) + ",");
+        }
+
+        sb.append("\n\n");
 
         return sb.toString();
     }

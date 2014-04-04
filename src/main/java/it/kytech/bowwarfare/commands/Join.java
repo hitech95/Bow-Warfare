@@ -1,6 +1,5 @@
 package it.kytech.bowwarfare.commands;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;

@@ -42,8 +42,6 @@ public class DeathEvent implements Listener {
             event.setCancelled(true);
             return;
         }
-        
-        System.out.println(event.getCause());
 
         if (event.getCause() == ENTITY_ATTACK || event.getCause() == PROJECTILE) {
             return;
@@ -96,15 +94,13 @@ public class DeathEvent implements Listener {
             Projectile projectile = (Projectile) event.getDamager();
             if (((projectile.getShooter() instanceof Player)) && ((projectile instanceof Arrow) || projectile instanceof Snowball)) {
                 killer = (Player) projectile.getShooter();
-                //TODO
-                event.setDamage(event.getDamage() * 10);
             } else {
                 event.setCancelled(true);
                 return;
             }
         } else if ((event.getDamager() instanceof Player)) {
             killer = (Player) event.getDamager();
-            event.setDamage(event.getDamage() * 7);
+            event.setDamage(event.getDamage() * 10);
         } else {
             event.setCancelled(true);
             return;

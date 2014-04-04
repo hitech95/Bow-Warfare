@@ -24,6 +24,11 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Snowball;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
@@ -41,7 +46,7 @@ public class FreeForAll implements Gametype {
 
     private int gameID;
     private Game game;
-    
+
     private boolean isTest = false;
 
     private ArrayList<Location> FFASpawns;
@@ -65,9 +70,9 @@ public class FreeForAll implements Gametype {
     private final int DEFAULT_KILL = 25;
 
     public FreeForAll(Game g) {
-        isTest = false;       
+        isTest = false;
 
-        this.game  = g;
+        this.game = g;
         this.gameID = game.getID();
 
         FFASpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME);
@@ -138,32 +143,11 @@ public class FreeForAll implements Gametype {
             }
             int kill = kills.get(killer) + 1;
 
-            if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
-                game.playerWin(victim, killer);
-                StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! ")), 1); //Blank space to fix visual error!
+            kills.put(killer, kill);
 
-                Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
-
-                    @Override
-                    public void run() {
-                        StatusBarAPI.removeStatusBar(killer);
-                    }
-
-                }, 10 * 20);
-                return true;
-            } else {
-                if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL) - 5)) {
-                    msgFall(PrefixType.INFO, "kill.missing",
-                            "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName(),
-                            "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) - kill)
-                    );
-                }
-                kills.put(killer, kill);
-
-                Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
-                Score score = objective.getScore(killer);
-                score.setScore(kill);
-            }
+            Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
+            Score score = objective.getScore(killer);
+            score.setScore(kill);
 
             victim.teleport(getRandomSpawnPoint());
         } else {
@@ -173,18 +157,61 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onPlayerRemove(Player player, boolean hasLeft) {
+    public void checkWin(Player victim, final Player killer) {
+        int kill = kills.get(killer);
+
+        if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
+            game.playerWin(victim, killer);
+            StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! ")), 1); //Blank space to fix visual error!
+
+            Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
+
+                @Override
+                public void run() {
+                    StatusBarAPI.removeStatusBar(killer);
+                }
+
+            }, 10 * 20);
+        } else {
+            if ((kill % 5) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL) - 5)) {
+                msgFall(PrefixType.INFO, "kill.missing",
+                        "player-" + (BowWarfare.auth.contains(killer) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName(),
+                        "kill-" + (((Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) - kill)
+                );
+            }
+        }
+    }
+
+    @Override
+    public boolean onPlayerRemove(Player player, boolean hasLeft
+    ) {
         kills.put(player, null);
         return true;
     }
 
     @Override
-    public boolean onPlayerQuit(Player p) {
+    public boolean onPlayerQuit(Player p
+    ) {
         return false;
     }
 
     @Override
-    public boolean onArrowHit(Player attacker, Arrow arrow) {
+    public boolean onProjectileHit(Player attacker, Projectile pro) {
+        if (pro instanceof Snowball) {
+            Snowball snowball = (Snowball) pro;
+            Location loc = snowball.getLocation();
+
+            for (Player other : game.getAllPlayers()) {
+                if (other.getLocation().distance(loc) <= 4 && game.isPlayerActive(other) && other != attacker) {
+                    other.setLastDamageCause(new EntityDamageByEntityEvent(snowball, other, EntityDamageEvent.DamageCause.ENTITY_EXPLOSION, other.getHealth()));
+                    game.killPlayer(other, attacker);
+                }
+            }
+
+            loc.getWorld().createExplosion(loc, 0);
+
+            return true;
+        }
         return false;
     }
 
@@ -194,7 +221,8 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public int getSpawnCount(String... args) {
+    public int getSpawnCount(String... args
+    ) {
         return FFASpawns.size();
     }
 
@@ -204,7 +232,8 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public void updateSingInfo(Sign s) {
+    public void updateSingInfo(Sign s
+    ) {
         s.setLine(0, NAME);
         s.setLine(1, game.getState() + "");
         s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
@@ -222,7 +251,8 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onBlockBreaked(Block block, Player p) {
+    public boolean onBlockBreaked(Block block, Player p
+    ) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             if (mines.containsKey(block)) {
                 mines.remove(block);
@@ -234,7 +264,8 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onBlockPlaced(Block block, Player p) {
+    public boolean onBlockPlaced(Block block, Player p
+    ) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             mines.put(block, p);
             return true;
@@ -252,14 +283,15 @@ public class FreeForAll implements Gametype {
             }
 
             for (Player other : game.getAllPlayers()) {
-                if (other.getLocation().distance(block.getLocation()) <= 4 && game.isPlayerActive(other)) {
+                if (other.getLocation().distance(block.getLocation()) <= 4 && game.isPlayerActive(other) && other != killer) {
+                    other.setLastDamageCause(new EntityDamageByBlockEvent(block, other, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, other.getHealth()));
                     game.killPlayer(other, killer);
                 }
             }
 
             block.getWorld().createExplosion(block.getLocation(), 0);
-            mines.remove(block);
 
+            mines.remove(block);
             block.setType(Material.AIR);
             return true;
         }
@@ -277,7 +309,8 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public void addSpawn(Location l, String... args) {
+    public void addSpawn(Location l, String... args
+    ) {
         FFASpawns.add(l);
     }
 

@@ -5,7 +5,6 @@ import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
-import static it.kytech.bowwarfare.gametype.FreeForAll.NAME;
 import it.kytech.bowwarfare.util.NameUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 
 /**
  *
@@ -24,7 +24,7 @@ import org.bukkit.entity.Player;
 public class LastManStanding implements Gametype {
 
     public static final String NAME = "LMS";
-    public static final String LONG_NAME = "Last ManS tanding";
+    public static final String LONG_NAME = "Last Man Standing";
 
     private int gameID;
     private boolean isTest = false;
@@ -89,7 +89,7 @@ public class LastManStanding implements Gametype {
     }
 
     @Override
-    public boolean onArrowHit(Player attacker, Arrow arrow) {
+    public boolean onProjectileHit(Player attacker, Projectile pro) {
         return false;
     }
 
@@ -183,6 +183,11 @@ public class LastManStanding implements Gametype {
 
     @Override
     public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void checkWin(Player victim, Player killer) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
