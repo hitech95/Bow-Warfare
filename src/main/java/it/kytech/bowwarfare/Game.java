@@ -895,10 +895,12 @@ public class Game {
     public void loadAvailableGameModes() {
         if (new FreeForAll(this, true).tryLoadSpawn()) {
             availableGameTypes.add(new FreeForAll(this));
+            BowWarfare.$("Loading Gametype: FFA for Arena " + gameID);            
         }
 
         if (new TeamDeathMatch(this, true).tryLoadSpawn()) {
-            availableGameTypes.add(new TeamDeathMatch(this));
+            availableGameTypes.add(new TeamDeathMatch(this));            
+            BowWarfare.$("Loading Gametype: TDM for Arena " + gameID);
         }
     }
 

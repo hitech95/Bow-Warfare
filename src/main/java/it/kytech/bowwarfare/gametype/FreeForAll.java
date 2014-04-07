@@ -22,7 +22,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -66,9 +65,6 @@ public class FreeForAll implements Gametype {
 
     private Scoreboard scoreBoard = sbManager.getNewScoreboard();
 
-    private final int DEFAULT_MAXP = 16;
-    private final int DEFAULT_KILL = 25;
-
     public FreeForAll(Game g) {
         isTest = false;
 
@@ -101,9 +97,9 @@ public class FreeForAll implements Gametype {
         }
     }
 
-    private void loadDefaultSettings() {
-        settings.put(SettingsManager.OptionFlag.FFAMAXP, DEFAULT_MAXP);
-        settings.put(SettingsManager.OptionFlag.FFAKILL, DEFAULT_KILL);
+    private void loadDefaultSettings() {        
+        settings.put(SettingsManager.OptionFlag.FFAMAXP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".maxp"));
+        settings.put(SettingsManager.OptionFlag.FFAKILL, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".kill"));
 
         saveConfig();
     }
@@ -278,7 +274,7 @@ public class FreeForAll implements Gametype {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             Player killer = mines.get(block);
 
-            if (p == killer) {
+            if (p == killer || killer == null) {
                 return false;
             }
 
@@ -295,7 +291,7 @@ public class FreeForAll implements Gametype {
             block.setType(Material.AIR);
             return true;
         }
-        return allowedPlace.contains(block.getTypeId());
+        return true;
     }
 
     @Override

@@ -60,18 +60,16 @@ block:
 
 #Set default limits for a GameType -- WIP
 limits: 
-    ffa:
+    FFA:
         kill: 25
         maxp: 16
-    ctf:
+    CTF:
         time: 500
-        maxp: 8
-        minp: 2        
-    tdm:
+        maxp: 8        
+    TDM:
         kill: 60
         maxp: 20
-        minp: 2
-    inf:
+    INF:
         time: 800
         maxp: 10
         minp: 2

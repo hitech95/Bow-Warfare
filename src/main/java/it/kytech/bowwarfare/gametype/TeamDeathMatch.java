@@ -16,7 +16,6 @@
  */
 package it.kytech.bowwarfare.gametype;
 
-import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
@@ -32,10 +31,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;
@@ -43,14 +40,11 @@ import org.bukkit.event.entity.EntityDamageByBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Wool;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
-import org.bukkit.scoreboard.Team;
 
 /**
  *
@@ -88,9 +82,6 @@ public class TeamDeathMatch implements Gametype {
     private Scoreboard blueScoreBoard = sbManager.getNewScoreboard();
 
     private Random r = new Random();
-
-    private final int DEFAULT_MAXP = 20;
-    private final int DEFAULT_KILL = 60;
 
     private static enum Teams {
 
@@ -144,8 +135,8 @@ public class TeamDeathMatch implements Gametype {
     }
 
     private void loadDefaultSettings() {
-        settings.put(SettingsManager.OptionFlag.TDMMAXP, DEFAULT_MAXP);
-        settings.put(SettingsManager.OptionFlag.TDMKILL, DEFAULT_KILL);
+        settings.put(SettingsManager.OptionFlag.TDMMAXP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".maxp"));
+        settings.put(SettingsManager.OptionFlag.TDMKILL, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".kill"));
 
         saveConfig();
     }
@@ -409,7 +400,7 @@ public class TeamDeathMatch implements Gametype {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             Player killer = mines.get(block);
 
-            if (p == killer || getTeam(p) == getTeam(killer)) {
+            if (p == killer || getTeam(p) == getTeam(killer) || killer == null) {
                 return false;
             }
 
@@ -426,7 +417,7 @@ public class TeamDeathMatch implements Gametype {
             block.setType(Material.AIR);
             return true;
         }
-        return allowedPlace.contains(block.getTypeId());
+        return true;
     }
 
     @Override
@@ -531,7 +522,6 @@ public class TeamDeathMatch implements Gametype {
     }
 
     private void updateScoreBoard() {
-        System.out.println(game);
         for (Player p : game.getAllPlayers()) {
             if (game.isPlayerActive(p)) {
                 Scoreboard scoreBoard = (getTeam(p) == Teams.RED) ? redScoreBoard : blueScoreBoard;
