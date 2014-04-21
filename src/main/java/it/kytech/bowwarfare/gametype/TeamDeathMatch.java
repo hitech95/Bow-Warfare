@@ -149,6 +149,9 @@ public class TeamDeathMatch implements Gametype {
     @SuppressWarnings("deprecation")
     public boolean onJoin(Player player) {
         Teams t = balanceNewPlayer();
+
+        msgFall(MessageManager.PrefixType.INFO, "game.teams.join", "player-" + player.getName(), "team-" + t.name().toUpperCase(), "teamsplayers-" + ChatColor.RED + redTeam.size() + ChatColor.WHITE + "/" + ChatColor.BLUE + blueTeam.size(), "maxplayers-" + getMaxPlayer());
+
         player.teleport(getRandomSpawnPoint(t));
 
         ItemStack coloredWool;
@@ -278,20 +281,17 @@ public class TeamDeathMatch implements Gametype {
     }
 
     @Override
-    public boolean onPlayerRemove(Player player, boolean hasLeft
-    ) {
+    public boolean onPlayerRemove(Player player, boolean hasLeft) {
         return false;
     }
 
     @Override
-    public boolean onPlayerQuit(Player p
-    ) {
+    public boolean onPlayerQuit(Player p) {
         return false;
     }
 
     @Override
-    public boolean onProjectileHit(Player attacker, Projectile pro
-    ) {
+    public boolean onProjectileHit(Player attacker, Projectile pro) {
 
         if (pro instanceof Snowball) {
             Snowball snowball = (Snowball) pro;
@@ -541,7 +541,6 @@ public class TeamDeathMatch implements Gametype {
     }
 
     public void msgFall(MessageManager.PrefixType type, String msg, String... vars) {
-
         for (Player p : game.getAllPlayers()) {
             msgmgr.sendFMessage(type, msg, p, vars);
         }

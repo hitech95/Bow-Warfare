@@ -6,7 +6,6 @@ package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.SettingsManager;
@@ -97,7 +96,7 @@ public class FreeForAll implements Gametype {
         }
     }
 
-    private void loadDefaultSettings() {        
+    private void loadDefaultSettings() {
         settings.put(SettingsManager.OptionFlag.FFAMAXP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".maxp"));
         settings.put(SettingsManager.OptionFlag.FFAKILL, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".kill"));
 
@@ -110,6 +109,7 @@ public class FreeForAll implements Gametype {
 
     @Override
     public boolean onJoin(Player player) {
+        msgFall(PrefixType.INFO, "game.playerjoingame", "player-" + player.getName(), "activeplayers-" + game.getActivePlayers(), "maxplayers-" + getMaxPlayer());
         player.teleport(getRandomSpawnPoint());
 
         StatusBarAPI.setStatusBar(player, buildBossString(LONG_NAME), 1);
@@ -119,8 +119,8 @@ public class FreeForAll implements Gametype {
 
         msgmgr.sendFMessage(PrefixType.INFO, "gametype.FFA", player);
 
-        if (GameManager.getInstance().getGame(gameID).getState() != Game.GameState.INGAME) {
-            GameManager.getInstance().getGame(gameID).startGame();
+        if (game.getState() != Game.GameState.INGAME) {
+            game.startGame();
         }
 
         return true;
@@ -179,15 +179,12 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onPlayerRemove(Player player, boolean hasLeft
-    ) {
-        kills.put(player, null);
+    public boolean onPlayerRemove(Player player, boolean hasLeft) {
         return true;
     }
 
     @Override
-    public boolean onPlayerQuit(Player p
-    ) {
+    public boolean onPlayerQuit(Player p) {
         return false;
     }
 
@@ -356,7 +353,6 @@ public class FreeForAll implements Gametype {
     }
 
     public void msgFall(PrefixType type, String msg, String... vars) {
-
         for (Player p : game.getAllPlayers()) {
             msgmgr.sendFMessage(type, msg, p, vars);
         }

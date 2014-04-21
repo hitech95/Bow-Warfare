@@ -15,6 +15,7 @@ import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.commands.AddWall;
 import it.kytech.bowwarfare.commands.CreateArena;
 import it.kytech.bowwarfare.commands.DelArena;
+import it.kytech.bowwarfare.commands.DelWall;
 import it.kytech.bowwarfare.commands.Disable;
 import it.kytech.bowwarfare.commands.Enable;
 import it.kytech.bowwarfare.commands.Option;
@@ -34,7 +35,6 @@ import it.kytech.bowwarfare.commands.Teleport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.sound.midi.SysexMessage;
 import org.bukkit.command.TabCompleter;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
@@ -56,6 +56,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         commands.put("createarena", new CreateArena());
         commands.put("join", new Join());
         commands.put("addwall", new AddWall());
+        commands.put("delwall", new DelWall());
         commands.put("setspawn", new SetSpawn());
         commands.put("listarenas", new ListArenas());
         commands.put("disable", new Disable());
@@ -80,6 +81,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         helpinfo.put("createarena", 3);
         helpinfo.put("join", 1);
         helpinfo.put("addwall", 3);
+        helpinfo.put("delwall", 3);
         helpinfo.put("setspawn", 3);
         //helpinfo.put("getcount", 3); Don't Exist...
         helpinfo.put("disable", 2);

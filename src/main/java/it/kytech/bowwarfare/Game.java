@@ -274,7 +274,12 @@ public class Game {
             clearInv(p);
             restoreInv(p);
         } else {
-            msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
+            if(getName().equals("") || getName() == null){
+                msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
+            }else{
+                msgmgr.sendMessage(PrefixType.INFO, "Joining " + getName(), p);
+            }
+            
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(20);
             activePlayers.add(p);

@@ -20,7 +20,7 @@ public class LobbyWall {
     }
 
     public boolean loadSign(World w, int x1, int x2, int z1, int z2, int y1) {
-        boolean usingx = (x1 == x2) ? false : true;
+        boolean usingx = (x1 != x2);
         BowWarfare.debug(w + " " + x1 + " " + x2 + " " + z1 + " " + z2 + " " + y1 + " " + usingx);
         int dir = new Location(w, x1, y1, z1).getBlock().getData();
         if (usingx) {
@@ -66,6 +66,7 @@ public class LobbyWall {
         if (msgqueue.size() > 0) {
             display();
             Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(), new Runnable() {
+                @Override
                 public void run() {
                     display();
                     update();
@@ -127,7 +128,7 @@ public class LobbyWall {
                     no++;
                 }
             }
-        } catch (Exception e) {
+        } catch (IndexOutOfBoundsException e) {
         }
         for (Sign s : signs) {
             s.update();
@@ -157,7 +158,7 @@ public class LobbyWall {
                     signs.get(b).setLine(a, s.substring(b * 16, (b + 1) * 16));
 
                     signs.get(b).update();
-                } catch (Exception e) {
+                } catch (IndexOutOfBoundsException e) {
                 }
             }
             a++;
@@ -166,10 +167,4 @@ public class LobbyWall {
 
     }
     int aniline = 0;
-
-    class AniSign implements Runnable {
-
-        public void run() {
-        }
-    }
 }

@@ -29,7 +29,7 @@ public class DelArena implements SubCommand {
         Game g = GameManager.getInstance().getGame(arena);
 
         if (g == null) {
-            MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamedoesntexist", player, "arena-" + arena);
+            MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.gamedosentexist", player, "arena-" + arena);
             return true;
         }
 
