@@ -1,12 +1,9 @@
 package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
 import it.kytech.bowwarfare.MessageManager;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
-import static it.kytech.bowwarfare.gametype.FreeForAll.LONG_NAME;
-import static it.kytech.bowwarfare.gametype.FreeForAll.NAME;
 import it.kytech.bowwarfare.util.NameUtil;
 import it.kytech.bowwarfare.util.bossbar.StatusBarAPI;
 import java.util.ArrayList;
@@ -18,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;

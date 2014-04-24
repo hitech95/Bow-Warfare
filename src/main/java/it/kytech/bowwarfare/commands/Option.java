@@ -37,7 +37,7 @@ public class Option implements SubCommand {
         SettingsManager.getInstance().saveGameSettings(z, g.getID());
         g.reloadConfig();
         
-        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.success", player, "command-" + args[0] + " " + args[1] +  args[2]);        
+        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.success", player, "command-" + "option " + args[0] + " " + args[1] + " " + args[2]);       
         
         return false;
     }
@@ -52,7 +52,7 @@ public class Option implements SubCommand {
         }
 
         flags.substring(0, flags.length() - 1);
-        return help + "/n" + ChatColor.WHITE + flags;
+        return help + "\n" + ChatColor.WHITE + flags;
     }
 
     @Override

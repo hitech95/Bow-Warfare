@@ -193,6 +193,7 @@ public class Game {
     public boolean addPlayer(Player p) {
         if (SettingsManager.getInstance().getLobbySpawn() == null) {
             msgmgr.sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", p);
+            debug("Lobby Spawn not Set " + "bw.arena.join." + gameID);
             return false;
         }
 
@@ -235,16 +236,18 @@ public class Game {
             Gametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
                 msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
+                debug("Arena Without Spawns " + "bw.arena.join." + gameID);
             }
 
             if (activePlayers.size() < availableGameTypes.get(gametype).getMaxPlayer()) {
                 PlayerJoinArenaEvent joinarena = new PlayerJoinArenaEvent(p, GameManager.getInstance().getGame(gameID));
                 Bukkit.getServer().getPluginManager().callEvent(joinarena);
+
                 if (joinarena.isCancelled()) {
                     return false;
                 }
 
-                p.setGameMode(org.bukkit.GameMode.SURVIVAL);
+                p.setGameMode(org.bukkit.GameMode.SURVIVAL);                
                 p.teleport(SettingsManager.getInstance().getLobbySpawn());
                 saveInv(p);
                 clearInv(p);
@@ -252,6 +255,7 @@ public class Game {
                 hasAdded = currentG.onJoin(p);
             } else {
                 msgmgr.sendFMessage(PrefixType.WARNING, "error.gamefull", p, "arena-" + gameID);
+                debug("Arena Full " + "bw.arena.join." + gameID);
             }
         }
 
@@ -274,12 +278,13 @@ public class Game {
             clearInv(p);
             restoreInv(p);
         } else {
-            if(getName().equals("") || getName() == null){
+
+            if (getName() == null) {
                 msgmgr.sendMessage(PrefixType.INFO, "Joining Arena " + gameID, p);
-            }else{
+            } else {
                 msgmgr.sendMessage(PrefixType.INFO, "Joining " + getName(), p);
             }
-            
+
             p.setHealth(p.getMaxHealth());
             p.setFoodLevel(20);
             activePlayers.add(p);
@@ -290,6 +295,7 @@ public class Game {
             LobbyManager.getInstance().updateWall(gameID);
             showMenu(p);
             HookManager.getInstance().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
+
             return true;
         }
 
@@ -455,9 +461,9 @@ public class Game {
 
                         break;
                 }
-                
+
                 availableGameTypes.get(gametype).checkWin(p, killer);
-                
+
                 Bukkit.getServer().getPluginManager().callEvent(pk);
                 setGameInventory(p);
             }
@@ -900,11 +906,11 @@ public class Game {
     public void loadAvailableGameModes() {
         if (new FreeForAll(this, true).tryLoadSpawn()) {
             availableGameTypes.add(new FreeForAll(this));
-            BowWarfare.$("Loading Gametype: FFA for Arena " + gameID);            
+            BowWarfare.$("Loading Gametype: FFA for Arena " + gameID);
         }
 
         if (new TeamDeathMatch(this, true).tryLoadSpawn()) {
-            availableGameTypes.add(new TeamDeathMatch(this));            
+            availableGameTypes.add(new TeamDeathMatch(this));
             BowWarfare.$("Loading Gametype: TDM for Arena " + gameID);
         }
     }

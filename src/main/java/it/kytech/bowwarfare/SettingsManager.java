@@ -137,7 +137,7 @@ public class SettingsManager {
     }
 
     public boolean moveFile(File ff) {
-        BowWarfare.$("Moving outdated config file. " + f.getName());
+        BowWarfare.$("Moving outdated config file. " + ff.getName());
         String name = ff.getName();
         File ff2 = new File(BowWarfare.getPluginDataFolder(), getNextName(name, 0));
         return ff.renameTo(ff2);
