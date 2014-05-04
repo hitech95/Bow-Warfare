@@ -233,6 +233,12 @@ public class Game {
             if (gametype < 0) {
                 setAnGamemode();
             }
+            
+            if(gametype < 0){
+                msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nogametype", p);
+                return false;
+            }
+            
             Gametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
                 msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);

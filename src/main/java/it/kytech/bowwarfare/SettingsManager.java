@@ -30,7 +30,7 @@ public class SettingsManager {
     private File f3; //kits
     private File f4; //messages
     private static final int KIT_VERSION = 1;
-    private static final int MESSAGE_VERSION = 2;
+    private static final int MESSAGE_VERSION = 0;
     private static final int SPAWN_VERSION = 0;
     private static final int SYSTEM_VERSION = 0;
 

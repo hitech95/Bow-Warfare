@@ -51,11 +51,13 @@ public class UpdateChecker {
 
             String[] in = response.split("~");
             Boolean b = Boolean.parseBoolean(in[0]);
+            
+            String build = v.split("\\.")[(v.split("\\.")).length - 1];
 
             if (!b) {
                 player.sendMessage(ChatColor.DARK_BLUE + "--------------------------------------");
                 player.sendMessage(ChatColor.DARK_RED + "[BowWarfare] Update Available!");
-                player.sendMessage(ChatColor.DARK_AQUA + "Your version: " + ChatColor.GOLD + v + ChatColor.DARK_AQUA + " Latest: " + ChatColor.GOLD + in[1]);
+                player.sendMessage(ChatColor.DARK_AQUA + "Your Build is: " + ChatColor.GOLD + build + ChatColor.DARK_AQUA + " Latest: " + ChatColor.GOLD + in[1]);
                 player.sendMessage(ChatColor.DARK_AQUA + in[2]);
                 player.sendMessage(ChatColor.AQUA + "" + ChatColor.UNDERLINE + in[3]);
                 player.sendMessage(ChatColor.DARK_BLUE + "--------------------------------------");
@@ -65,7 +67,8 @@ public class UpdateChecker {
                 BowWarfare.$("[BW][Info] No updates found!");
             }
         } catch (Exception e) {
-            BowWarfare.$(Level.WARNING, "[BW] could not check for updates.");
+            e.printStackTrace();
+            BowWarfare.$(Level.WARNING, "[BW] Could not check for updates.");
         }
     }
 }
