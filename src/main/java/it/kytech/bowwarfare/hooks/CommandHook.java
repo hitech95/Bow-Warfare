@@ -2,15 +2,38 @@ package it.kytech.bowwarfare.hooks;
 
 import org.bukkit.Bukkit;
 
-public class CommandHook implements HookBase {
+public class CommandHook extends HookBase {
 
-    @Override
-    public void executehook(String player, String[] args) {
+    public CommandHook() {
+		super(null);
+	}
+
+	@Override
+    public boolean execute(String... args) {
+		String player = args.length > 0 ? args[0] : "";
         if (player.equalsIgnoreCase("console")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), args[1]);
-        } else {
+        } else if (!player.isEmpty()) {
             Bukkit.getPlayer(player).chat("/" + args[1]);
+        } else {
+        	return false;
         }
+        return true;
     }
+
+	@Override
+	protected boolean ready() {
+		return true;
+	}
+
+	@Override
+	public String getShortName() {
+		return "command";
+	}
+
+	@Override
+	public Class<?>[] getParameters() {
+		return new Class<?>[]{ String.class };
+	}
 
 }

@@ -1,11 +1,12 @@
 package it.kytech.bowwarfare.hooks;
 
-import java.util.HashMap;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.util.MessageUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.bukkit.configuration.file.FileConfiguration;
 
 public class HookManager {
 
@@ -19,37 +20,69 @@ public class HookManager {
         return instance;
     }
 
-    private HashMap<String, HookBase> hooks = new HashMap<String, HookBase>();
+    private Map<Class<? extends HookBase>, HookBase> hooks = new HashMap<>();
 
-    public void setup() {
-        hooks.put("c", new CommandHook());
+	@SuppressWarnings("unchecked")
+	public <T extends HookBase> T getHook(Class<T> clazz) {
+    	for (HookBase hbase : hooks.values()) {
+    		if (hbase.getClass() == clazz) {
+    			try {
+    				return (T) hbase;
+    			} catch (Throwable t) {}
+    		}
+    	}
+    	return null;
     }
-
-    /*public void runFHook(String hook, String... args){
-     HashMap<String, String>vars = new HashMap<String, String>();
-     for(String str: args){
-     String[] s = str.split("|");
-     vars.put(s[0], s[1]);
-     }
-
-     runHook(hook, vars);
-     }*/
+    
+    public void setup() {
+        hooks.put(CommandHook.class, new CommandHook());
+        hooks.put(EconHook.class, new EconHook());
+    }
+    
     public void runHook(String hook, String... args) {
+    	for (Class<? extends HookBase> clazz : hooks.keySet()) {
+    		if (hooks.get(clazz).getShortName().equalsIgnoreCase(hook)) {
+    			runHook(clazz, args);
+    		}
+    	}
+    }
+    
+    public void runHook(Class<? extends HookBase> hook, String... args) {
         FileConfiguration c = SettingsManager.getInstance().getConfig();
 
-        for (String str : c.getStringList("hooks." + hook)) {
-            String[] split = str.split("!");
-            String p = MessageUtil.replaceVars(split[0], args);
-            String[] commands = MessageUtil.replaceVars(split[1], args).split(";");
-            if (checkConditions(split[2], args)) {
-                if (p.equalsIgnoreCase("console") || (split.length == 4 && Bukkit.getPlayer(p).hasPermission(split[3])) || (split.length == 3)) {
-                    for (String s1 : commands) {
-                        String[] s2 = s1.split("#");
-                        hooks.get(s2[0]).executehook(p, s2);
-                    }
-                }
+        HookBase hbase = hooks.get(hook);
+        
+        if (c.getBoolean("hooks." + hbase.getShortName(), true) && hbase.isReady()) {
+            if (args.length < hbase.getParameters().length) {
+            	boolean go = true;
+            	Class<?>[] params = hbase.getParameters();
+            	for (int i = 0; i < args.length; i++) {
+            		if (args[i].getClass() != params[i] && !args[i].getClass().isAssignableFrom(params[i])) {
+            			go = false;
+            			break;
+            		}
+            	}
+            	if (go) {
+            		hbase.executeHook(args);
+            	}
             }
         }
+        
+        /*
+         * for (String str : c.getStringList("hooks." + hook)) {
+         *     String[] split = str.split("!");
+         *     String p = MessageUtil.replaceVars(split[0], args);
+         *     String[] commands = MessageUtil.replaceVars(split[1], args).split(";");
+         *     if (checkConditions(split[2], args)) {
+         *         if (p.equalsIgnoreCase("console") || (split.length == 4 && Bukkit.getPlayer(p).hasPermission(split[3])) || (split.length == 3)) {
+         *             for (String s1 : commands) {
+         *                 String[] s2 = s1.split("#");
+         *                 hooks.get(s2[0]).executeHook(p, s2);
+         *             }
+         *         }
+         *     }
+         * }
+         */
     }
 
     public boolean checkConditions(String str, String... args) {

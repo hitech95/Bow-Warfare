@@ -1,32 +1,69 @@
 package it.kytech.bowwarfare.hooks;
 
-import net.milkbowl.vault.economy.Economy;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.util.EconomyManager;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 
 /**
- *
- *
  * something wrote by pogo.
- *
  */
-public class EconHook implements HookBase {
+public class EconHook extends HookBase {
 
-    @Override
-    public void executehook(String player, String[] s2) {
+	public static final String REMOVE = "remove";
+	public static final String ADD = "add";
+	public static final String SET = "set";
+	
+    public EconHook() {
+		super("net.milkbowl.vault.economy.Economy");
+	}
+    
+	@Override
+    protected boolean execute(String... args) {
+		// args: <add/set/remove>
         if (EconomyManager.getInstance().econPresent()) {
             Economy econ = EconomyManager.getInstance().getEcon();
-            String split[] = s2[1].split(" ");
-            if (split.length == 3) {
-                Player p = Bukkit.getServer().getPlayer(split[1]);
-                int funds = Integer.parseInt(split[2]);
-                if (split[0].equals("remove")) {
-                    econ.bankWithdraw(p.getName(), funds);
-                }
+            EconomyResponse response = null;
+            if (args.length > 2) {
+            	String player = args[1];
+            	double amount = -1;
+            	try {
+            		amount = Double.parseDouble(args[2]);
+            	} catch (NumberFormatException ex) {}
+            	switch (args[0]) {
+            	case REMOVE:
+            		response = econ.withdrawPlayer(player, amount);
+            		break;
+            	case ADD:
+            		response = econ.depositPlayer(player, amount);
+            		break;
+            	case SET:
+            		double bal = econ.getBalance(player);
+            		econ.withdrawPlayer(player, bal);
+            		response = econ.depositPlayer(player, amount);
+            		break;
+            	}
             }
+            if (response == null || response.type != EconomyResponse.ResponseType.SUCCESS || !response.transactionSuccess()) {
+            	return false;
+            }
+            return true;
         }
+        return false;
     }
+
+	@Override
+	protected boolean ready() {
+		return EconomyManager.getInstance().getEcon() != null;
+	}
+
+	@Override
+	public String getShortName() {
+		return "economy";
+	}
+
+	@Override
+	public Class<?>[] getParameters() {
+		return new Class<?>[]{ String.class, String.class, Double.class };
+	}
 
 }
