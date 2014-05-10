@@ -57,7 +57,7 @@ public class HookManager {
             	boolean go = true;
             	Class<?>[] params = hbase.getParameters();
             	for (int i = 0; i < args.length; i++) {
-            		if (args[i].getClass() != params[i] && !args[i].getClass().isAssignableFrom(params[i])) {
+            		if (params[i] != Wildcard.class && args[i].getClass() != params[i] && !args[i].getClass().isAssignableFrom(params[i])) {
             			go = false;
             			break;
             		}
