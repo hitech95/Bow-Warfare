@@ -19,7 +19,7 @@ public class EconHook extends HookBase {
     }
 
     @Override
-    protected boolean execute(String... args) {
+    protected boolean execute(String... args) throws InvalidHookArgumentError {
         // args: <add/set/remove>
         if (EconomyManager.getInstance().econPresent()) {
             Economy econ = EconomyManager.getInstance().getEcon();
@@ -31,6 +31,9 @@ public class EconHook extends HookBase {
                     amount = Double.parseDouble(args[2]);
                 } catch (NumberFormatException ex) {
                     return false;
+                }
+                if (amount < 0) {
+                	throw new InvalidHookArgumentError("Amount should not be less than 0 in EconHook. Appropriate keyword should be used.");
                 }
                 
                 EconCommands command = EconCommands.valueOf(args[0].toUpperCase());

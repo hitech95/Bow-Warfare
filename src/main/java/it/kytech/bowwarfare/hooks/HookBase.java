@@ -6,7 +6,7 @@ public abstract class HookBase {
 
     protected abstract boolean ready();
 
-    protected abstract boolean execute(String... args);
+    protected abstract boolean execute(String... args) throws InvalidHookArgumentError;
 
     public abstract String getShortName();
 
@@ -32,8 +32,7 @@ public abstract class HookBase {
     public final boolean executeHook(String... args) {
         try {
             return execute(args);
-        } catch (InvalidHookArgumentError error) {
-        }
+        } catch (InvalidHookArgumentError error) {}
         return false;
     }
 
@@ -48,12 +47,17 @@ public abstract class HookBase {
         }
 
         public InvalidHookArgumentError(Throwable t) {
-            this.message = t.getMessage();
+            this(t.getMessage());
         }
 
         @Override
         public String toString() {
-            return "InvalidHookArgumentError@{" + message + "}";
+            return "InvalidHookArgumentError@{ " + message + " }";
+        }
+        
+        @Override
+        public String getMessage() {
+        	return this.message;
         }
 
     }
