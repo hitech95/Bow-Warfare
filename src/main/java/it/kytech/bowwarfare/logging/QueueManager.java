@@ -25,6 +25,7 @@ public class QueueManager {
     private static QueueManager instance = new QueueManager();
     private ConcurrentHashMap<Integer, ArrayList<BlockData>> queue = new ConcurrentHashMap<Integer, ArrayList<BlockData>>();
     File baseDir;
+    BowWarfare p;
 
     private QueueManager() {
 
@@ -34,7 +35,9 @@ public class QueueManager {
         return instance;
     }
 
-    public void setup() {
+    public void setup(BowWarfare p) {
+        this.p = p;
+        
         baseDir = new File(BowWarfare.getPluginDataFolder() + "/ArenaData/");
         try {
             if (!baseDir.exists()) {
@@ -47,13 +50,13 @@ public class QueueManager {
         } catch (Exception e) {
         }
 
-        Bukkit.getScheduler().runTaskTimerAsynchronously(GameManager.getInstance().getPlugin(), new DataDumper(), 100, 100);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(p, new DataDumper(), 100, 100);
     }
 
     public void rollback(final int id, final boolean shutdown) {
         loadSave(id);
         if (!shutdown) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
+            Bukkit.getScheduler().scheduleSyncDelayedTask(p,
                     new Rollback(id, shutdown, 0, 1, 0));
         } else {
             new Rollback(id, shutdown, 0, 1, 0).run();
@@ -62,7 +65,7 @@ public class QueueManager {
         if (shutdown) {
             new RemoveEntities(id);
         } else {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
+            Bukkit.getScheduler().scheduleSyncDelayedTask(p,
                     new RemoveEntities(id), 5);
         }
     }
@@ -210,7 +213,7 @@ public class QueueManager {
                 }
                 time += new Date().getTime() - t1;
                 if (a != -1) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(GameManager.getInstance().getPlugin(),
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(p,
                             new Rollback(id, shutdown, totalRollback + rb, iteration + 1, time), 1);
                 } else {
                     BowWarfare.$("Arena " + id + " reset. Rolled back " + (totalRollback + rb) + " blocks in " + iteration + " iterations (" + pt + " blocks per iteration Total time spent rolling back was " + time + "ms)");

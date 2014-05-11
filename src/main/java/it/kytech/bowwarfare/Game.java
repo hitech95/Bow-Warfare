@@ -21,6 +21,7 @@ import it.kytech.bowwarfare.gametype.TeamDeathMatch;
 import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
+import it.kytech.bowwarfare.util.EconomyManager;
 import it.kytech.bowwarfare.util.ItemReader;
 import it.kytech.bowwarfare.util.Kit;
 import it.kytech.bowwarfare.util.bossbar.StatusBarAPI;
@@ -201,14 +202,7 @@ public class Game {
             debug("permission needed to join arena: " + "bw.arena.join." + gameID);
             msgmgr.sendFMessage(PrefixType.WARNING, "game.nopermission", p, "arena-" + gameID);
             return false;
-        }
-
-        if (gametype > -1) {
-            OptionFlag value = SettingsManager.OptionFlag.valueOf(availableGameTypes.get(gametype).getGametypeName() + "MAXP");
-            HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "maxplayers-" + settings.get(value), "players-" + activePlayers.size());
-        } else {
-            HookManager.getInstance().runHook("GAME_PRE_ADDPLAYER", "arena-" + gameID, "player-" + p.getName(), "players-" + activePlayers.size());
-        }
+        }        
 
         GameManager.getInstance().removeFromOtherQueues(p, gameID);
 
@@ -299,8 +293,7 @@ public class Game {
             setGameInventory(p);
 
             LobbyManager.getInstance().updateWall(gameID);
-            showMenu(p);
-            HookManager.getInstance().runHook("GAME_POST_ADDPLAYER", "activePlayers-" + activePlayers.size());
+            showMenu(p);            
 
             return true;
         }
@@ -464,10 +457,12 @@ public class Game {
                             sm.addKill(killer, p, gameID);
                         }
                         pk = new PlayerKilledEvent(p, this, (killer != null) ? killer : null, p.getLastDamageCause().getCause());
-
+                        EconomyManager.getInstance().executeTask(EconomyManager.kill, killer);
                         break;
                 }
-
+                
+                EconomyManager.getInstance().executeTask(EconomyManager.death, p);
+                
                 availableGameTypes.get(gametype).checkWin(p, killer);
 
                 Bukkit.getServer().getPluginManager().callEvent(pk);
@@ -529,9 +524,7 @@ public class Game {
             endGame();
         }
 
-        msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
-
-        HookManager.getInstance().runHook("PLAYER_REMOVED", "player-" + p.getName());
+        msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());        
 
         PlayerLeaveArenaEvent pl = new PlayerLeaveArenaEvent(p, this, false);
 
@@ -701,9 +694,7 @@ public class Game {
         clearInv(p);
 
         //TO FIX: teleport over a player not on the same place
-        p.teleport(activePlayers.get(0).getLocation());
-
-        HookManager.getInstance().runHook("PLAYER_SPECTATE", "player-" + p.getName());
+        p.teleport(activePlayers.get(0).getLocation());        
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
             pl.hidePlayer(p);

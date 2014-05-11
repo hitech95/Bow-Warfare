@@ -40,15 +40,16 @@ public class HookManager {
         hooks.put(EconHook.class, new EconHook());
     }
 
-    public void runHook(String hook, String... args) {
+    public boolean runHook(String hook, String... args) {
         for (Class<? extends HookBase> clazz : hooks.keySet()) {
             if (hooks.get(clazz).getShortName().equalsIgnoreCase(hook)) {
-                runHook(clazz, args);
+                return runHook(clazz, args);
             }
         }
+        return false;
     }
 
-    public void runHook(Class<? extends HookBase> hook, String... args) {
+    public boolean runHook(Class<? extends HookBase> hook, String... args) {
         FileConfiguration c = SettingsManager.getInstance().getConfig();
 
         HookBase hbase = hooks.get(hook);
@@ -64,10 +65,13 @@ public class HookManager {
                     }
                 }
                 if (go) {
-                    hbase.executeHook(args);
+                    return hbase.executeHook(args);
                 }
+                return false;
             }
         }
+
+        return false;
     }
 
     public boolean checkConditions(String str, String... args) {

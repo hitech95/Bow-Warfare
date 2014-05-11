@@ -9,7 +9,7 @@
 ################################################
 
 #Do NOT touch this!
-config-version: 1
+config-version: 2
 
 #Enable debug messages
 debug: false
@@ -97,8 +97,13 @@ sql:
   database: 'bowwarfare'
   prefix: 'bw_'
 
-  
-  
+#Settings for Economy
+economy:
+  enabled: false
+  win: 5
+  loose: -1
+  kill: 1
+  death: 0
 ###########################################################
 #######################  Stats ############################
 ###########################################################

@@ -37,8 +37,7 @@ public class LobbyManager {
 
         for (int a = 1; a <= s.getInt("bw-system.lobby.signno"); a++) {
             loadSign(a);
-        }
-        //Bukkit.getScheduler().scheduleSyncRepeatingTask(GameManager.getInstance().getPlugin(), new updater(), 100L, 20L);
+        }        
     }
 
     public void loadSign(int a) {

@@ -23,15 +23,17 @@ import it.kytech.bowwarfare.util.DatabaseManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import it.kytech.bowwarfare.Metrics.Graph;
+import it.kytech.bowwarfare.util.EconomyManager;
 
 public class BowWarfare extends JavaPlugin {
 
-    public static Logger logger;
     private static File datafolder;
     private static boolean disabling = false;
+
+    public static Logger logger;
     public static boolean dbcon = false;
     public static boolean config_todate = false;
-    public static int config_version = 1;
+    public static int config_version = 2;
 
     public static List< String> auth = Arrays.asList(new String[]{
         "Double0negative", "hitech95", "YoshiGenius" //:) -Bryce
@@ -63,6 +65,7 @@ public class BowWarfare extends JavaPlugin {
 
         //ensure that all worlds are loaded. Fixes some issues with Multiverse loading after this plugin had started
         getServer().getScheduler().scheduleSyncDelayedTask(this, new Startup(), 10);
+
         try {
 
             Metrics metrics = new Metrics(this);
@@ -92,19 +95,22 @@ public class BowWarfare extends JavaPlugin {
         public void run() {
             datafolder = p.getDataFolder();
 
-            PluginManager pm = getServer().getPluginManager();
-            setCommands();
-
             SettingsManager.getInstance().setup(p);
             MessageManager.getInstance().setup();
-            GameManager.getInstance().setup(p);
+
+            FileConfiguration c = SettingsManager.getInstance().getConfig();
+
+            if (c.getBoolean("economy.enabled")) {
+                EconomyManager.getInstance().setup();
+            }
+
+            HookManager.getInstance().setup();
 
             try { // try loading everything that uses SQL. 
-                FileConfiguration c = SettingsManager.getInstance().getConfig();
                 if (c.getBoolean("stats.enabled")) {
                     DatabaseManager.getInstance().setup(p);
                 }
-                QueueManager.getInstance().setup();
+                QueueManager.getInstance().setup(p);
                 StatsManager.getInstance().setup(p, c.getBoolean("stats.enabled"));
                 dbcon = true;
             } catch (Exception e) {
@@ -112,11 +118,14 @@ public class BowWarfare extends JavaPlugin {
                 e.printStackTrace();
                 logger.severe("!!!Failed to connect to the database. Please check the settings and try again!!!");
                 return;
-            } finally {
-                LobbyManager.getInstance().setup(p);
             }
 
-            HookManager.getInstance().setup();
+            GameManager.getInstance().setup(p);
+            LobbyManager.getInstance().setup(p);
+
+            setCommands();
+
+            PluginManager pm = getServer().getPluginManager();
 
             pm.registerEvents(new PlaceEvent(), p);
             pm.registerEvents(new BreakEvent(), p);
@@ -152,6 +161,10 @@ public class BowWarfare extends JavaPlugin {
 
     public static File getPluginDataFolder() {
         return datafolder;
+    }
+
+    public BowWarfare getPlugin() {
+        return p;
     }
 
     public static boolean isDisabling() {
