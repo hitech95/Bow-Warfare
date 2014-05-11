@@ -21,11 +21,11 @@ public class EconomyManager {
 
     public void setup() {
         enabled = setupEconomy();
-
     }
 
     private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+        
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
         }
