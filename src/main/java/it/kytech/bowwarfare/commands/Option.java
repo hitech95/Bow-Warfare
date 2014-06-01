@@ -36,9 +36,9 @@ public class Option implements SubCommand {
         z.put(OptionFlag.valueOf(args[1].toUpperCase()), args[2]);
         SettingsManager.getInstance().saveGameSettings(z, g.getID());
         g.reloadConfig();
-        
-        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.success", player, "command-" + "option " + args[0] + " " + args[1] + " " + args[2]);       
-        
+
+        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.success", player, "command-" + "option " + args[0] + " " + args[1] + " " + args[2]);
+
         return false;
     }
 

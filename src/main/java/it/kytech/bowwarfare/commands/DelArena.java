@@ -36,8 +36,8 @@ public class DelArena implements SubCommand {
         g.disable();
         s.set("bw-system.arenas." + arena + ".enabled", false);
         s.set("bw-system.arenano", s.getInt("bw-system.arenano") - 1);
-        
-        spawn.set("spawns."+arena, null);
+
+        spawn.set("spawns." + arena, null);
         MessageManager.getInstance().sendFMessage(PrefixType.INFO, "info.deleted", player, "input-Arena");
         SettingsManager.getInstance().saveSystemConfig();
         GameManager.getInstance().hotRemoveArena(arena);

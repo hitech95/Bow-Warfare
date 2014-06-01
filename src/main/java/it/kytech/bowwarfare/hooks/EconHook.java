@@ -33,9 +33,9 @@ public class EconHook extends HookBase {
                     return false;
                 }
                 if (amount < 0) {
-                	throw new InvalidHookArgumentError("Amount should not be less than 0 in EconHook. Appropriate keyword should be used.");
+                    throw new InvalidHookArgumentError("Amount should not be less than 0 in EconHook. Appropriate keyword should be used.");
                 }
-                
+
                 EconCommands command = EconCommands.valueOf(args[0].toUpperCase());
 
                 switch (command) {

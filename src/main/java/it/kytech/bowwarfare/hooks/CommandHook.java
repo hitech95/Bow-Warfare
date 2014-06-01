@@ -5,35 +5,35 @@ import org.bukkit.Bukkit;
 public class CommandHook extends HookBase {
 
     public CommandHook() {
-		super(null);
-	}
+        super(null);
+    }
 
-	@Override
+    @Override
     public boolean execute(String... args) {
-		String player = args.length > 0 ? args[0] : "";
+        String player = args.length > 0 ? args[0] : "";
         if (player.equalsIgnoreCase("console")) {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), args[1]);
         } else if (!player.isEmpty()) {
             Bukkit.getPlayer(player).chat("/" + args[1]);
         } else {
-        	return false;
+            return false;
         }
         return true;
     }
 
-	@Override
-	protected boolean ready() {
-		return true;
-	}
+    @Override
+    protected boolean ready() {
+        return true;
+    }
 
-	@Override
-	public String getShortName() {
-		return "command";
-	}
+    @Override
+    public String getShortName() {
+        return "command";
+    }
 
-	@Override
-	public Class<?>[] getParameters() {
-		return new Class<?>[]{ String.class };
-	}
+    @Override
+    public Class<?>[] getParameters() {
+        return new Class<?>[]{String.class};
+    }
 
 }

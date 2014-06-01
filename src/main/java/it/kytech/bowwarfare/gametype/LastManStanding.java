@@ -42,15 +42,17 @@ public class LastManStanding implements Gametype {
     private boolean isTest = false;
 
     private ArrayList<Location> LMSSpawns;
+    private HashMap<Integer, Player> firstFreeSpawn = new HashMap<Integer, Player>();
 
     private ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
     private ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
 
-    private HashMap<Player, Integer> kills = new HashMap<Player, Integer>();
+    private HashMap<Player, Integer> life = new HashMap<Player, Integer>();
 
     private HashMap<Block, Player> mines = new HashMap<Block, Player>();
 
     private MessageManager msgmgr = MessageManager.getInstance();
+    private HashMap<SettingsManager.OptionFlag, Object> settings = new HashMap<SettingsManager.OptionFlag, Object>();
     private Random r = new Random();
 
     private ScoreboardManager sbManager = Bukkit.getScoreboardManager();
@@ -62,11 +64,16 @@ public class LastManStanding implements Gametype {
         this.game = g;
         this.gameID = gameID;
 
-        LMSSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
+        loadSettings();
 
-        Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "kill", "dummy");
+        LMSSpawns = SpawnManager.getInstance().loadSpawns(gameID, NAME, "");
+        for (int a = 1; a <= LMSSpawns.size(); a++) {
+            firstFreeSpawn.put(a, null);
+        }
+
+        Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "life", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("ScoreBoard");
+        objective.setDisplayName(SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.life"));
     }
 
     public LastManStanding(Game g, boolean isTest) {
@@ -77,7 +84,33 @@ public class LastManStanding implements Gametype {
             LMSSpawns = null;
             allowedPlace = null;
             allowedBreak = null;
+            life = null;
+            mines = null;
+            msgmgr = null;
+            r = null;
+            sbManager = null;
+            scoreBoard = null;
         }
+    }
+
+    private void loadSettings() {
+        if (!SettingsManager.getInstance().isSetGameSettings(gameID, this)) {
+            loadDefaultSettings();
+        } else {
+            settings = SettingsManager.getInstance().getGameSettings(gameID);
+        }
+    }
+
+    private void loadDefaultSettings() {
+        settings.put(SettingsManager.OptionFlag.LMSLIFE, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".life"));
+        settings.put(SettingsManager.OptionFlag.LMSMINP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".minp"));
+        settings.put(SettingsManager.OptionFlag.LMSTIME, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".time"));
+
+        saveConfig();
+    }
+
+    private void saveConfig() {
+        SettingsManager.getInstance().saveGameSettings(settings, gameID);
     }
 
     @Override
@@ -203,8 +236,10 @@ public class LastManStanding implements Gametype {
     @Override
     public boolean onJoin(Player player) {
 
-        //TODO - Not true random but first empty        
-        player.teleport(getRandomSpawnPoint());
+        player.teleport(LMSSpawns.get(firstFreeSpawn()));
+
+        firstFreeSpawn.put(firstFreeSpawn(), player);
+        life.put(player, (Integer) settings.get(SettingsManager.OptionFlag.LMSLIFE));
 
         StatusBarAPI.setStatusBar(player, buildBossString(LONG_NAME), 1);
         buildScoreBoard(player);
@@ -214,23 +249,38 @@ public class LastManStanding implements Gametype {
         msgmgr.sendFMessage(MessageManager.PrefixType.INFO, "gametype.LMS", player);
 
         //TODO - Verify the number of presence and make percentage
-        //Make the percentage to auto-start the game, etc.
-        if (game.getState() != Game.GameState.INGAME) {
-            game.startGame();
-        }
+        //Make the percentage to auto-start the game, etc
         return true;
     }
 
     @Override
     public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft) {
+        if (!hasLeft) {
 
-        scoreBoard.resetScores(victim);
+            if (killer == null) {
+                return false;
+            }
+
+            int lifeCount = life.get(victim) - 1;
+
+            if (lifeCount == 0) {
+                //TODO - Exit From Current Game - Go to Spectate Mode.
+            }
+
+            Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "life");
+            Score score = objective.getScore(victim);
+            score.setScore(lifeCount);
+
+            victim.teleport(getRandomSpawnPoint());
+        } else {
+            scoreBoard.resetScores(victim);
+        }
         return true;
     }
 
     @Override
     public void checkWin(Player victim, final Player killer) {
-        if (game.getActivePlayers() < 1) {
+        if (game.getActivePlayers() < 2) {
 
             game.playerWin(victim, killer);
 
@@ -247,7 +297,10 @@ public class LastManStanding implements Gametype {
 
     @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
-        return true;
+        if (game.getState() == Game.GameState.WAITING) {
+
+        }
+        return false;
     }
 
     @Override
@@ -276,9 +329,9 @@ public class LastManStanding implements Gametype {
     }
 
     private void buildScoreBoard(Player player) {
-        Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
+        Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "life");
         Score score = objective.getScore(player);
-        score.setScore(0);
+        score.setScore((Integer) settings.get(SettingsManager.OptionFlag.LMSLIFE));
         player.setScoreboard(scoreBoard);
     }
 
@@ -288,6 +341,15 @@ public class LastManStanding implements Gametype {
                 p.setScoreboard(scoreBoard);
             }
         }
+    }
+
+    private int firstFreeSpawn() {
+        for (int a = 1; a <= getSpawnCount(); a++) {
+            if (firstFreeSpawn.get(a) == null) {
+                return a;
+            }
+        }
+        return -1;
     }
 
     public void msgFall(MessageManager.PrefixType type, String msg, String... vars) {

@@ -63,12 +63,16 @@ limits:
     FFA:
         kill: 25
         maxp: 16
-    CTF:
-        time: 500
-        maxp: 8        
     TDM:
         kill: 60
         maxp: 20
+    CTF:
+        time: 500
+        maxp: 8
+    LMS:        
+        life: 4
+        minp: 8
+        time: 500        
     INF:
         time: 800
         maxp: 10

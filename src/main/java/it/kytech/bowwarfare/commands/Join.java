@@ -30,7 +30,7 @@ public class Join implements SubCommand {
                 if (SettingsManager.getInstance().getLobbySpawn() == null) {
                     MessageManager.getInstance().sendFMessage(PrefixType.WARNING, "error.nolobbyspawn", player);
                     return false;
-                } else {                    
+                } else {
                     player.teleport(SettingsManager.getInstance().getLobbySpawn());
                 }
                 return true;

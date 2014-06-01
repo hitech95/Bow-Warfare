@@ -37,7 +37,7 @@ public class QueueManager {
 
     public void setup(BowWarfare p) {
         this.p = p;
-        
+
         baseDir = new File(BowWarfare.getPluginDataFolder() + "/ArenaData/");
         try {
             if (!baseDir.exists()) {

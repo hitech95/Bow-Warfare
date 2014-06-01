@@ -75,7 +75,7 @@ public class FreeForAll implements Gametype {
 
         Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "kill", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName("ScoreBoard");
+        objective.setDisplayName(SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
     }
 
     public FreeForAll(Game g, boolean isTest) {
@@ -180,7 +180,7 @@ public class FreeForAll implements Gametype {
 
     @Override
     public boolean onPlayerRemove(Player player, boolean hasLeft) {
-        return true;
+        return false;
     }
 
     @Override

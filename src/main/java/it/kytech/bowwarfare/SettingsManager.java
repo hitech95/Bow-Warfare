@@ -36,7 +36,23 @@ public class SettingsManager {
 
     public static enum OptionFlag {
 
-        MAX_PLAYERS, ARENA_NAME, GAMETYPE, FFAMAXP, CTFTIME, CTFMAXP, CTFMINP, TDMTIME, TDMMAXP, TDMMINP, INFTIME, INFMAXP, INFMINP, FFAKILL, TDMKILL, LMSMAXP
+        MAX_PLAYERS,
+        ARENA_NAME,
+        GAMETYPE,
+        FFAMAXP,
+        CTFTIME,
+        CTFMAXP,
+        CTFMINP,
+        TDMMAXP,
+        TDMMINP,
+        TDMKILL,
+        INFTIME,
+        INFMAXP,
+        INFMINP,
+        FFAKILL,
+        LMSMINP,
+        LMSLIFE,
+        LMSTIME
     }
 
     private SettingsManager() {
@@ -236,7 +252,7 @@ public class SettingsManager {
     public boolean isSetGameSettings(int gameid, Gametype type) {
         return system.isSet("bw-system.arenas." + gameid + ".flags." + type.getGametypeName().toLowerCase() + "-maxp");
     }
-   
+
     public HashMap<OptionFlag, Object> getGameSettings(int gameid) {
         HashMap<OptionFlag, Object> flags = new HashMap<OptionFlag, Object>();
 

@@ -11,14 +11,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager.OptionFlag;
 import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.gametype.FreeForAll;
 import it.kytech.bowwarfare.gametype.Gametype;
 import it.kytech.bowwarfare.gametype.TeamDeathMatch;
-import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
 import it.kytech.bowwarfare.util.EconomyManager;
@@ -202,7 +200,7 @@ public class Game {
             debug("permission needed to join arena: " + "bw.arena.join." + gameID);
             msgmgr.sendFMessage(PrefixType.WARNING, "game.nopermission", p, "arena-" + gameID);
             return false;
-        }        
+        }
 
         GameManager.getInstance().removeFromOtherQueues(p, gameID);
 
@@ -227,12 +225,12 @@ public class Game {
             if (gametype < 0) {
                 setAnGamemode();
             }
-            
-            if(gametype < 0){
+
+            if (gametype < 0) {
                 msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nogametype", p);
                 return false;
             }
-            
+
             Gametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
                 msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
@@ -247,7 +245,7 @@ public class Game {
                     return false;
                 }
 
-                p.setGameMode(org.bukkit.GameMode.SURVIVAL);                
+                p.setGameMode(org.bukkit.GameMode.SURVIVAL);
                 p.teleport(SettingsManager.getInstance().getLobbySpawn());
                 saveInv(p);
                 clearInv(p);
@@ -293,7 +291,7 @@ public class Game {
             setGameInventory(p);
 
             LobbyManager.getInstance().updateWall(gameID);
-            showMenu(p);            
+            showMenu(p);
 
             return true;
         }
@@ -460,9 +458,9 @@ public class Game {
                         EconomyManager.getInstance().executeTask(EconomyManager.kill, killer);
                         break;
                 }
-                
+
                 EconomyManager.getInstance().executeTask(EconomyManager.death, p);
-                
+
                 availableGameTypes.get(gametype).checkWin(p, killer);
 
                 Bukkit.getServer().getPluginManager().callEvent(pk);
@@ -524,7 +522,7 @@ public class Game {
             endGame();
         }
 
-        msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());        
+        msgFall(PrefixType.INFO, "game.playerleavegame", "player-" + p.getName());
 
         PlayerLeaveArenaEvent pl = new PlayerLeaveArenaEvent(p, this, false);
 
@@ -694,7 +692,7 @@ public class Game {
         clearInv(p);
 
         //TO FIX: teleport over a player not on the same place
-        p.teleport(activePlayers.get(0).getLocation());        
+        p.teleport(activePlayers.get(0).getLocation());
 
         for (Player pl : Bukkit.getOnlinePlayers()) {
             pl.hidePlayer(p);

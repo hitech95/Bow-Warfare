@@ -15,7 +15,7 @@ public class Connection extends Thread {
     Socket skt;
     HashMap<String, String> html = new HashMap<String, String>();
 
-    public Connection(Socket skt) {        
+    public Connection(Socket skt) {
         try {
             this.in = new BufferedReader(new InputStreamReader(skt.getInputStream()));
             this.out = new DataOutputStream(skt.getOutputStream());

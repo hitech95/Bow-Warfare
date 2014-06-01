@@ -32,7 +32,8 @@ public abstract class HookBase {
     public final boolean executeHook(String... args) {
         try {
             return execute(args);
-        } catch (InvalidHookArgumentError error) {}
+        } catch (InvalidHookArgumentError error) {
+        }
         return false;
     }
 
@@ -54,10 +55,10 @@ public abstract class HookBase {
         public String toString() {
             return "InvalidHookArgumentError@{ " + message + " }";
         }
-        
+
         @Override
         public String getMessage() {
-        	return this.message;
+            return this.message;
         }
 
     }

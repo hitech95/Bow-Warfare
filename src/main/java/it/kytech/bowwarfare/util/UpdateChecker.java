@@ -51,7 +51,7 @@ public class UpdateChecker {
 
             String[] in = response.split("~");
             Boolean b = Boolean.parseBoolean(in[0]);
-            
+
             String build = v.split("\\.")[(v.split("\\.")).length - 1];
 
             if (!b) {

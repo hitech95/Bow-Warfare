@@ -52,13 +52,13 @@ public class SpawnManager {
         SettingsManager s = SettingsManager.getInstance();
         FileConfiguration spawns = s.getSpawns();
         StringBuilder str = new StringBuilder("spawns." + gameID + "." + gameType.toUpperCase());
-        
+
         for (int i = 0; i < args.length; i++) {
             str.append("." + args[i].toLowerCase());
         }
-        
+
         str.append(".count");
-        
+
         return spawns.getInt(str.toString());
     }
 
@@ -68,14 +68,14 @@ public class SpawnManager {
         SettingsManager s = SettingsManager.getInstance();
         FileConfiguration spawns = s.getSpawns();
         StringBuilder str = new StringBuilder("spawns." + gameID + "." + gameType);
-        
+
         for (int i = 0; i < args.length; i++) {
             args[i] = args[i].toLowerCase();
             str.append("." + args[i]);
         }
-        
+
         int count = getNumberOf(gameID, gameType, args);
-        
+
         for (int i = 1; i <= count; i++) {
             list.add(new Location(SettingsManager.getGameWorld(gameID),
                     spawns.getDouble(str.toString() + "." + i + ".x"),
@@ -84,7 +84,7 @@ public class SpawnManager {
                     (float) spawns.getDouble(str.toString() + "." + i + ".yaw"),
                     (float) spawns.getDouble(str.toString() + "." + i + ".pitch")));
         }
-        
+
         return list;
     }
 }

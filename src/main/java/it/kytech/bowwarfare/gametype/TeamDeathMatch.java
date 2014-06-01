@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2014 M2K
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
 package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.Game;
@@ -108,8 +92,8 @@ public class TeamDeathMatch implements Gametype {
         redObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         blueObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        redObjective.setDisplayName(ChatColor.RED + "ScoreBoard");
-        blueObjective.setDisplayName(ChatColor.BLUE + "ScoreBoard");
+        redObjective.setDisplayName(ChatColor.RED + SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
+        blueObjective.setDisplayName(ChatColor.BLUE + SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
     }
 
     public TeamDeathMatch(Game g, boolean isTest) {
@@ -123,6 +107,12 @@ public class TeamDeathMatch implements Gametype {
             kills = null;
             allowedPlace = null;
             allowedBreak = null;
+            msgmgr = null;
+            mines = null;
+            sbManager = null;
+            redScoreBoard = null;
+            blueScoreBoard = null;
+            r = null;
         }
     }
 

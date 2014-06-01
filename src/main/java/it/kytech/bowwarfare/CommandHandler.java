@@ -197,7 +197,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
             if (args == null || args.length < 1) {
                 return list;
             } else if (args.length > 0) {
-                if (args.length == 1) {                    
+                if (args.length == 1) {
                     for (String s : list) {
                         if (s.toLowerCase().startsWith(args[0].toLowerCase())) {
                             try {

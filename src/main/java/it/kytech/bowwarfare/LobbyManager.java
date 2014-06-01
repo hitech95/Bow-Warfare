@@ -37,7 +37,7 @@ public class LobbyManager {
 
         for (int a = 1; a <= s.getInt("bw-system.lobby.signno"); a++) {
             loadSign(a);
-        }        
+        }
     }
 
     public void loadSign(int a) {
@@ -166,27 +166,27 @@ public class LobbyManager {
     public void deleteLobbySignsFromSelection(Player pl) {
         FileConfiguration c = SettingsManager.getInstance().getSystemConfig();
         SettingsManager s = SettingsManager.getInstance();
-        
+
         if (!c.getBoolean("bw-system.lobby.sign.set", false)) {
             return;
         }
-        
+
         WorldEditPlugin we = GameManager.getInstance().getWorldEdit();
         Selection sel = we.getSelection(pl);
-        
+
         if (sel == null) {
             pl.sendMessage(ChatColor.RED + "You must make a WorldEdit Selection first");
             return;
         }
-        
+
         if ((sel.getNativeMaximumPoint().getBlockX() - sel.getNativeMinimumPoint().getBlockX()) != 0 && (sel.getNativeMinimumPoint().getBlockZ() - sel.getNativeMaximumPoint().getBlockZ() != 0)) {
             pl.sendMessage(ChatColor.RED + " Must be in a straight line!");
             return;
         }
-        
+
         Vector max = sel.getNativeMaximumPoint();
         Vector min = sel.getNativeMinimumPoint();
-        
+
         for (int i = 0; i < c.getInt("bw-system.lobby.signno", 0) + 1; i++) {
             String path = "bw-system.lobby.signs." + i + ".";
             if (c.getInt(path + "x1", 0) == max.getBlockX()
@@ -198,7 +198,7 @@ public class LobbyManager {
                 c.set(path + "enabled", false);
                 return;
             }
-        }        
+        }
         s.saveSystemConfig();
     }
 }

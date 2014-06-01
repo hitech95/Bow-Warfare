@@ -43,7 +43,7 @@ public class PlaceEvent implements Listener {
             event.setCancelled(true);
             return;
         }
-        
+
         if (!GameManager.getInstance().blockPlace(block, p)) {
             event.setCancelled(true);
         }

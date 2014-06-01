@@ -50,7 +50,7 @@ public class DeathEvent implements Listener {
         if (GameManager.getInstance().isInKitMenu(player)) {
             event.setCancelled(true);
             return;
-        }           
+        }
 
         if (player.getHealth() <= event.getDamage()) {
             event.setCancelled(true);
@@ -59,11 +59,11 @@ public class DeathEvent implements Listener {
             player.setFireTicks(0);
             PlayerInventory inv = player.getInventory();
             Location l = player.getLocation();
-           
+
             GameManager.getInstance().killPlayer(player, null);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player)) {
@@ -123,7 +123,7 @@ public class DeathEvent implements Listener {
             player.setFireTicks(0);
             PlayerInventory inv = player.getInventory();
             Location l = player.getLocation();
-            
+
             player.setLastDamageCause(event);
             GameManager.getInstance().killPlayer(player, killer);
 

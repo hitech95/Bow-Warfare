@@ -74,7 +74,7 @@ public class PlayerStatsSession {
         if (level > 5) {
             level = 5;
         }
-        kslist.put(level, kslist.get(level) + 1);        
+        kslist.put(level, kslist.get(level) + 1);
         lastkill = new Date().getTime();
     }
 

@@ -32,7 +32,7 @@ public interface Gametype {
     public boolean onBlockInteract(Block block, Player p);
 
     public boolean tryLoadSpawn();
-    
+
     public void checkWin(Player victim, Player killer);
 
     public Location getRandomSpawnPoint();
