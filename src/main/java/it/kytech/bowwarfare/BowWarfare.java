@@ -83,7 +83,6 @@ public class BowWarfare extends JavaPlugin {
 
             metrics.start();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -119,7 +118,7 @@ public class BowWarfare extends JavaPlugin {
                 logger.severe("!!!Failed to connect to the database. Please check the settings and try again!!!");
                 return;
             }
-
+            
             GameManager.getInstance().setup(p);
             LobbyManager.getInstance().setup(p);
 

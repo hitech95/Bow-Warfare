@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.BowWarfare;
@@ -33,10 +29,6 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-/**
- *
- * @author M2K
- */
 public class FreeForAll implements Gametype {
 
     public static final String NAME = "FFA";
@@ -75,7 +67,7 @@ public class FreeForAll implements Gametype {
 
         Objective objective = scoreBoard.registerNewObjective(gameID + "." + NAME + "." + "kill", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-        objective.setDisplayName(SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
+        objective.setDisplayName(SettingsManager.getInstance().getMessageConfig().getString("messages.scoreboard.scoreboard"));
     }
 
     public FreeForAll(Game g, boolean isTest) {
@@ -83,8 +75,14 @@ public class FreeForAll implements Gametype {
 
         if (isTest) {
             FFASpawns = null;
+            kills = null;
             allowedPlace = null;
             allowedBreak = null;
+            msgmgr = null;
+            mines = null;
+            sbManager = null;
+            scoreBoard = null;
+            r = null;
         }
     }
 
@@ -214,8 +212,7 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public int getSpawnCount(String... args
-    ) {
+    public int getSpawnCount(String... args) {
         return FFASpawns.size();
     }
 
@@ -225,8 +222,7 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public void updateSingInfo(Sign s
-    ) {
+    public void updateSingInfo(Sign s) {
         s.setLine(0, NAME);
         s.setLine(1, game.getState() + "");
         s.setLine(2, game.getActivePlayers() + "/" + game.getMaxPlayer());
@@ -244,8 +240,7 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onBlockBreaked(Block block, Player p
-    ) {
+    public boolean onBlockBreaked(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             if (mines.containsKey(block)) {
                 mines.remove(block);
@@ -257,8 +252,7 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public boolean onBlockPlaced(Block block, Player p
-    ) {
+    public boolean onBlockPlaced(Block block, Player p) {
         if (block.getType() == Material.IRON_PLATE || block.getType() == Material.GOLD_PLATE) {
             mines.put(block, p);
             return true;
@@ -302,8 +296,7 @@ public class FreeForAll implements Gametype {
     }
 
     @Override
-    public void addSpawn(Location l, String... args
-    ) {
+    public void addSpawn(Location l, String... args) {
         FFASpawns.add(l);
     }
 

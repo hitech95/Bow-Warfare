@@ -122,7 +122,6 @@ public class StatsManager {
                 System.out.println("Your database took a long time to respond. Check the connection between the server and database");
             }
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             g.setRBStatus("Error: getno");
         }

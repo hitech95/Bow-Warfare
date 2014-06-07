@@ -30,10 +30,6 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-/**
- *
- * @author M2K
- */
 public class TeamDeathMatch implements Gametype {
 
     public static final String NAME = "TDM";
@@ -92,8 +88,8 @@ public class TeamDeathMatch implements Gametype {
         redObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         blueObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
-        redObjective.setDisplayName(ChatColor.RED + SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
-        blueObjective.setDisplayName(ChatColor.BLUE + SettingsManager.getInstance().getMessageConfig().getString("gui.scoreboard.scoreboard"));
+        redObjective.setDisplayName(ChatColor.RED + SettingsManager.getInstance().getMessageConfig().getString("messages.scoreboard.scoreboard"));
+        blueObjective.setDisplayName(ChatColor.BLUE + SettingsManager.getInstance().getMessageConfig().getString("messages.scoreboard.scoreboard"));
     }
 
     public TeamDeathMatch(Game g, boolean isTest) {

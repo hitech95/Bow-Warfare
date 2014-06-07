@@ -19,31 +19,24 @@ Changelog
 ----
  - First Testing release
  
-Working GameType
+Available GameType
 ----
  - Free For All (FFA)
  - Team Death Match (TDM)
 
 Working
 ----
- - All Events
- - Sign Wall
- - Sign Join
- - All basic commands
- - Creating arenas
- - Deleting arenas
- - Reload of configs
- - Add spawns
- - Arena Rollback
+ -Everything is implemented
 
 Bugs
 ----
  - None (for Now)
 
-I'm Working on
+Working on
 ----
  - Game Type
   - LMS
+  - CTF
 
 To Do
 ----
@@ -57,8 +50,6 @@ To Do
   - Arrow TNT Explosion
   - Arrow Glass Break
   - Classic Bow
- - Hooks
-  - Economy
  - API
   - Some new Events
 

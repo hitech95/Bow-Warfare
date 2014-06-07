@@ -15,6 +15,7 @@ import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.gametype.FreeForAll;
+import it.kytech.bowwarfare.gametype.LastManStanding;
 import it.kytech.bowwarfare.gametype.Gametype;
 import it.kytech.bowwarfare.gametype.TeamDeathMatch;
 import it.kytech.bowwarfare.logging.QueueManager;
@@ -43,11 +44,11 @@ public class Game {
     }
 
     private GameState state = GameState.DISABLED;
-    private ArrayList< Player> activePlayers = new ArrayList< Player>();
-    private ArrayList< Player> inactivePlayers = new ArrayList< Player>();
-    private ArrayList< String> spectators = new ArrayList< String>();
-    HashMap< Player, Integer> nextspec = new HashMap< Player, Integer>();
-    private ArrayList< Player> queue = new ArrayList< Player>();
+    private ArrayList<Player> activePlayers = new ArrayList< Player>();
+    private ArrayList<Player> inactivePlayers = new ArrayList< Player>();
+    private ArrayList<String> spectators = new ArrayList< String>();
+    HashMap<Player, Integer> nextspec = new HashMap< Player, Integer>();
+    private ArrayList<Player> queue = new ArrayList< Player>();
     private HashMap<SettingsManager.OptionFlag, Object> settings = new HashMap<SettingsManager.OptionFlag, Object>();
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
     private Arena arena;
@@ -160,7 +161,7 @@ public class Game {
             if (gametype < 0) {
                 setAnGamemode();
             }
-            int b = (SettingsManager.getInstance().getMaxPlayerCount(gameID, availableGameTypes.get(gametype)) > queue.size()) ? queue.size() : SettingsManager.getInstance().getMaxPlayerCount(gameID, availableGameTypes.get(gametype));
+            int b = (availableGameTypes.get(gametype).getMaxPlayer() > queue.size()) ? queue.size() : availableGameTypes.get(gametype).getMaxPlayer();
 
             for (int a = 0; a < b; a++) {
                 addPlayer(queue.remove(0));
@@ -322,8 +323,7 @@ public class Game {
         if (state == GameState.INGAME) {
             return;
         }
-
-        if (activePlayers.size() <= availableGameTypes.get(gametype).getMinPlayer()) {
+        if ((activePlayers.size() + 1) <= availableGameTypes.get(gametype).getMinPlayer()) {
             for (Player pl : activePlayers) {
                 msgmgr.sendMessage(PrefixType.WARNING, "Not enough players!", pl);
                 state = GameState.WAITING;
@@ -492,11 +492,11 @@ public class Game {
      */
     public void removePlayer(Player p, boolean... leave) {
 
-        availableGameTypes.get(gametype).onPlayerRemove(p, false);
-
         if (!activePlayers.contains(p)) {
             return;
         }
+
+        availableGameTypes.get(gametype).onPlayerRemove(p, false);
 
         if (state == GameState.INGAME) {
             killPlayer(p, null, true);
@@ -564,6 +564,8 @@ public class Game {
         LobbyManager.getInstance().display(new String[]{
             win.getName(), "", "Won the ", "Bow Warfare!"
         }, gameID);
+        
+        clearSpectators();
 
         sm.playerWin(win, gameID, new Date().getTime() - startTime);
         sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
@@ -908,6 +910,11 @@ public class Game {
             availableGameTypes.add(new TeamDeathMatch(this));
             BowWarfare.$("Loading Gametype: TDM for Arena " + gameID);
         }
+
+        if (new LastManStanding(this, true).tryLoadSpawn()) {
+            availableGameTypes.add(new LastManStanding(this));
+            BowWarfare.$("Loading Gametype: LMS for Arena " + gameID);
+        }
     }
 
     public void setAnGamemode() {
@@ -1008,6 +1015,15 @@ public class Game {
             }
         }
         return null;
+    }
+
+    public boolean markAsInactive(Player p) {
+        if (activePlayers.contains(p)) {
+            activePlayers.remove(p);
+            inactivePlayers.add(p);
+            return true;
+        }
+        return false;
     }
 
     public synchronized void setRBPercent(double d) {

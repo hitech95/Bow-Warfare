@@ -65,7 +65,6 @@ public class Connection extends Thread {
         try {
             out.write(str.getBytes());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 

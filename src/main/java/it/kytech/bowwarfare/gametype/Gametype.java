@@ -17,11 +17,25 @@ import org.bukkit.entity.Projectile;
  */
 public interface Gametype {
 
+    /**
+     * @param player an Player that join the game
+     * @return true if the player can join else false
+     */
     public boolean onJoin(Player player);
 
+    /**
+     * @param victim an Player that get killed
+     * @param killer the killer (Player)
+     * @param hasLeft true if the victim left the game
+     * @return true if the player is killed else false
+     */
     public boolean onPlayerKilled(Player victim, Player killer, boolean hasLeft);
 
     public boolean onPlayerRemove(Player player, boolean hasLeft);
+
+    public boolean onPlayerQuit(Player p);
+
+    public void checkWin(Player victim, Player killer);
 
     public boolean onProjectileHit(Player attacker, Projectile pro);
 
@@ -33,27 +47,23 @@ public interface Gametype {
 
     public boolean tryLoadSpawn();
 
-    public void checkWin(Player victim, Player killer);
-
     public Location getRandomSpawnPoint();
 
     public int getSpawnCount(String... args);
-
-    public int getMaxPlayer();
-
-    public int getMinPlayer();
-
-    public String getGametypeName();
-
-    public void updateSingInfo(Sign s);
-
-    public ArrayList<String> updateSignPlayer();
 
     public boolean isFrozenSpawn();
 
     public void addSpawn(Location l, String... args);
 
-    public boolean onPlayerQuit(Player p);
+    public int getMaxPlayer();
+
+    public int getMinPlayer();
+
+    public void updateSingInfo(Sign s);
+
+    public ArrayList<String> updateSignPlayer();
+
+    public String getGametypeName();
 
     @Override
     public String toString();

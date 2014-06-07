@@ -58,8 +58,8 @@ public class UpdateChecker {
                 player.sendMessage(ChatColor.DARK_BLUE + "--------------------------------------");
                 player.sendMessage(ChatColor.DARK_RED + "[BowWarfare] Update Available!");
                 player.sendMessage(ChatColor.DARK_AQUA + "Your Build is: " + ChatColor.GOLD + build + ChatColor.DARK_AQUA + " Latest: " + ChatColor.GOLD + in[1]);
-                player.sendMessage(ChatColor.DARK_AQUA + in[2]);
-                player.sendMessage(ChatColor.AQUA + "" + ChatColor.UNDERLINE + in[3]);
+                //player.sendMessage(ChatColor.DARK_AQUA + in[2]);
+                //player.sendMessage(ChatColor.AQUA + "" + ChatColor.UNDERLINE + in[3]);
                 player.sendMessage(ChatColor.DARK_BLUE + "--------------------------------------");
                 BowWarfare.$("[BW][Info] Updates found!");
 

@@ -266,7 +266,7 @@ public class GameManager {
     }
 
     public void autoAddPlayer(Player pl) {
-        ArrayList< Game> qg = new ArrayList< Game>(5);
+        ArrayList<Game> qg = new ArrayList<Game>(5);
         for (Game g : games) {
             if (g.getState() == Game.GameState.WAITING) {
                 qg.add(g);
