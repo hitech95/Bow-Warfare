@@ -161,7 +161,7 @@ public class LastManStanding implements Gametype {
 
                 //TODO not left arena but loose the match
                 msgFall(MessageManager.PrefixType.INFO, "game.playerloosegame", "player-" + victim.getName());
-                
+
                 game.addSpectator(victim);
             } else {
                 victim.teleport(getRandomSpawnPoint());
