@@ -7,10 +7,10 @@ import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.SpawnManager;
 import it.kytech.bowwarfare.util.NameUtil;
-import it.kytech.bowwarfare.util.bossbar.StatusBarAPI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
+import it.kytech.bowwarfare.util.bossbar.BarAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -41,8 +41,8 @@ public class FreeForAll implements Gametype {
 
     private ArrayList<Location> FFASpawns;
 
-    private ArrayList<Integer> allowedPlace = new ArrayList<Integer>();
-    private ArrayList<Integer> allowedBreak = new ArrayList<Integer>();
+    private ArrayList<Material> allowedPlace = new ArrayList<Material>();
+    private ArrayList<Material> allowedBreak = new ArrayList<Material>();
 
     private HashMap<Player, Integer> kills = new HashMap<Player, Integer>();
 
@@ -110,7 +110,7 @@ public class FreeForAll implements Gametype {
         msgFall(PrefixType.INFO, "game.playerjoingame", "player-" + player.getName(), "activeplayers-" + game.getActivePlayers(), "maxplayers-" + getMaxPlayer());
         player.teleport(getRandomSpawnPoint());
 
-        StatusBarAPI.setStatusBar(player, buildBossString(LONG_NAME), 1);
+        BarAPI.setMessage(player, buildBossString(LONG_NAME));
         buildScoreBoard(player);
 
         updateScoreBoard();
@@ -140,12 +140,12 @@ public class FreeForAll implements Gametype {
             kills.put(killer, kill);
 
             Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
-            Score score = objective.getScore(killer);
+            Score score = objective.getScore(killer.getName());
             score.setScore(kill);
 
             victim.teleport(getRandomSpawnPoint());
         } else {
-            scoreBoard.resetScores(victim);
+            scoreBoard.resetScores(victim.getName());
         }
         return true;
     }
@@ -156,13 +156,13 @@ public class FreeForAll implements Gametype {
 
         if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
             game.playerWin(victim, killer);
-            StatusBarAPI.setStatusBar(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! ")), 1); //Blank space to fix visual error!
+            BarAPI.setMessage(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! "))); //Blank space to fix visual error!
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
 
                 @Override
                 public void run() {
-                    StatusBarAPI.removeStatusBar(killer);
+                    BarAPI.removeBar(killer);
                 }
 
             }, 10 * 20);
@@ -247,7 +247,7 @@ public class FreeForAll implements Gametype {
                 return true;
             }
         }
-        return allowedBreak.contains(block.getTypeId());
+        return allowedBreak.contains(block.getType());
 
     }
 
@@ -257,7 +257,7 @@ public class FreeForAll implements Gametype {
             mines.put(block, p);
             return true;
         }
-        return allowedPlace.contains(block.getTypeId());
+        return allowedPlace.contains(block.getType());
     }
 
     @Override
@@ -332,7 +332,7 @@ public class FreeForAll implements Gametype {
 
     private void buildScoreBoard(Player player) {
         Objective objective = scoreBoard.getObjective(gameID + "." + NAME + "." + "kill");
-        Score score = objective.getScore(player);
+        Score score = objective.getScore(player.getName());
         score.setScore(0);
         player.setScoreboard(scoreBoard);
     }
@@ -349,6 +349,11 @@ public class FreeForAll implements Gametype {
         for (Player p : game.getAllPlayers()) {
             msgmgr.sendFMessage(type, msg, p, vars);
         }
+    }
+
+    @Override
+    public boolean requireVote() {
+        return false;
     }
 
     @Override

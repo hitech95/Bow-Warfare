@@ -1,36 +1,38 @@
 package it.kytech.bowwarfare;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.gametype.FreeForAll;
 import it.kytech.bowwarfare.gametype.Gametype;
+import it.kytech.bowwarfare.gametype.LastManStanding;
 import it.kytech.bowwarfare.gametype.TeamDeathMatch;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
 import it.kytech.bowwarfare.util.EconomyManager;
 import it.kytech.bowwarfare.util.ItemReader;
 import it.kytech.bowwarfare.util.Kit;
-import it.kytech.bowwarfare.util.bossbar.StatusBarAPI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
+import it.kytech.bowwarfare.util.bossbar.BarAPI;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 //Data container for a game
@@ -54,7 +56,7 @@ public class Game {
 
     private ArrayList<Player> activePlayers = new ArrayList<Player>();
     private ArrayList<Player> inactivePlayers = new ArrayList<Player>();
-    private ArrayList<String> spectators = new ArrayList< String>();
+    private ArrayList<Player> spectators = new ArrayList<Player>();
     private ArrayList<Player> queue = new ArrayList<Player>();
 
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
@@ -326,6 +328,10 @@ public class Game {
 
     public void vote(Player pl) {
 
+        if (!availableGameTypes.get(gametype).requireVote()) {
+            return;
+        }
+
         if (GameState.STARTING == state) {
             msgmgr.sendMessage(PrefixType.WARNING, "Game already starting!", pl);
             return;
@@ -546,11 +552,11 @@ public class Game {
                 }
 
                 EconomyManager.getInstance().executeTask(EconomyManager.death, p);
-
-                availableGameTypes.get(gametype).checkWin(p, killer);
-
+                
                 Bukkit.getServer().getPluginManager().callEvent(pk);
                 setGameInventory(p);
+
+                availableGameTypes.get(gametype).checkWin(p, killer);
             }
 
             LobbyManager.getInstance().updateWall(gameID);
@@ -594,7 +600,7 @@ public class Game {
             p.teleport(SettingsManager.getInstance().getLobbySpawn());
         }
 
-        StatusBarAPI.removeStatusBar(p);
+        BarAPI.removeBar(p);
         p.setScoreboard(sbManager.getNewScoreboard());
 
         sm.removePlayer(p, gameID);
@@ -657,6 +663,7 @@ public class Game {
         state = GameState.FINISHING;
 
         for (Player acP : activePlayers) {
+            System.out.println("Restore Player" + acP.getName());
 
             acP.teleport(SettingsManager.getInstance().getLobbySpawn());
 
@@ -670,14 +677,17 @@ public class Game {
             acP.setFireTicks(0);
             acP.setFallDistance(0);
 
-            StatusBarAPI.removeStatusBar(acP);
+            BarAPI.removeBar(acP);
             acP.setScoreboard(sbManager.getNewScoreboard());
         }
 
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
-
+        
+        System.out.println("Clear Spectators");
+        clearSpectators();
         endGame();
+        System.out.println("Call END GAME");
     }
 
     /*
@@ -787,7 +797,7 @@ public class Game {
         p.setAllowFlight(true);
         p.setFlying(true);
 
-        spectators.add(p.getName());
+        spectators.add(p);
 
         msgmgr.sendMessage(PrefixType.INFO, "You are now spectating! Use /bw spectate again to return to the lobby.", p);
         msgmgr.sendMessage(PrefixType.INFO, "Right click while holding shift to teleport to the next ingame player, left click to go back.", p);
@@ -796,15 +806,12 @@ public class Game {
     }
 
     public void removeSpectator(Player p) {
-        ArrayList< Player> players = new ArrayList< Player>();
-        players.addAll(activePlayers);
-        players.addAll(inactivePlayers);
-
         if (p.isOnline()) {
             for (Player pl : Bukkit.getOnlinePlayers()) {
                 pl.showPlayer(p);
             }
         }
+        
         restoreInv(p);
         p.setAllowFlight(false);
         p.setFlying(false);
@@ -814,14 +821,15 @@ public class Game {
         p.setSaturation(20);
         p.teleport(SettingsManager.getInstance().getLobbySpawn());
 
-        spectators.remove(p.getName());
+        spectators.remove(p);
 
         nextSpectator.remove(p);
     }
 
     public void clearSpectators() {
-        for (int a = 0; a < spectators.size(); a = 0) {
-            removeSpectator(Bukkit.getPlayerExact(spectators.get(0)));
+        while (spectators.size() > 0) {
+            System.out.println("Remove Spectator:" + spectators.get(0).getName());
+            removeSpectator(spectators.get(0));
         }
 
         spectators.clear();
@@ -901,8 +909,8 @@ public class Game {
         inventoryStore.put(p, store);
     }
 
-    public void restoreInvOffline(String p) {
-        restoreInv(Bukkit.getPlayer(p));
+    public void restoreInvOffline(UUID id) {
+        restoreInv(Bukkit.getPlayer(id));
     }
 
     @SuppressWarnings("deprecation")
@@ -993,6 +1001,11 @@ public class Game {
         if (new TeamDeathMatch(this, true).tryLoadSpawn()) {
             availableGameTypes.add(new TeamDeathMatch(this));
             BowWarfare.$("Loading Gametype: TDM for Arena " + gameID);
+        }
+
+        if (new LastManStanding(this, true).tryLoadSpawn()) {
+            availableGameTypes.add(new LastManStanding(this));
+            BowWarfare.$("Loading Gametype: LMS for Arena " + gameID);
         }
     }
 

@@ -28,7 +28,7 @@ import org.bukkit.entity.Player;
  * @author AmoebaMan ---> Thanks For your code!
  *
  */
-public class StatusBarAPI {
+public class StatusBarAPI_old {
 
     private static PlayerMap<FakeDragon> DRAGONS = new PlayerMap<FakeDragon>();
 

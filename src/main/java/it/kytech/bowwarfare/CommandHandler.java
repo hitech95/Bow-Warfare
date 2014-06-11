@@ -1,16 +1,5 @@
 package it.kytech.bowwarfare;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Vector;
-
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginDescriptionFile;
 import it.kytech.bowwarfare.MessageManager.PrefixType;
 import it.kytech.bowwarfare.commands.AddWall;
 import it.kytech.bowwarfare.commands.CreateArena;
@@ -18,13 +7,13 @@ import it.kytech.bowwarfare.commands.DelArena;
 import it.kytech.bowwarfare.commands.DelWall;
 import it.kytech.bowwarfare.commands.Disable;
 import it.kytech.bowwarfare.commands.Enable;
-import it.kytech.bowwarfare.commands.Option;
 import it.kytech.bowwarfare.commands.ForceStart;
 import it.kytech.bowwarfare.commands.Join;
 import it.kytech.bowwarfare.commands.Leave;
 import it.kytech.bowwarfare.commands.LeaveQueue;
 import it.kytech.bowwarfare.commands.ListArenas;
 import it.kytech.bowwarfare.commands.ListPlayers;
+import it.kytech.bowwarfare.commands.Option;
 import it.kytech.bowwarfare.commands.Reload;
 import it.kytech.bowwarfare.commands.ResetSpawns;
 import it.kytech.bowwarfare.commands.SetLobbySpawn;
@@ -32,10 +21,21 @@ import it.kytech.bowwarfare.commands.SetSpawn;
 import it.kytech.bowwarfare.commands.Spectate;
 import it.kytech.bowwarfare.commands.SubCommand;
 import it.kytech.bowwarfare.commands.Teleport;
+import it.kytech.bowwarfare.commands.Vote;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Vector;
+import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 
 public class CommandHandler implements CommandExecutor, TabCompleter {
 
@@ -73,6 +73,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         commands.put("list", new ListPlayers());
         commands.put("tp", new Teleport());
         commands.put("reload", new Reload());
+        commands.put("vote", new Vote());
     }
 
     private void loadHelpInfo() {
@@ -96,6 +97,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         helpinfo.put("lq", 1);
         helpinfo.put("list", 1);
         helpinfo.put("reload", 3);
+         helpinfo.put("vote", 1);
     }
 
     @Override

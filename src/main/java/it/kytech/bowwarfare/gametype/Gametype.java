@@ -63,7 +63,9 @@ public interface Gametype {
 
     public ArrayList<String> updateSignPlayer();
 
-    public String getGametypeName();
+    public String getGametypeName();   
+
+    public boolean requireVote();
 
     @Override
     public String toString();
