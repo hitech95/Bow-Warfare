@@ -1,9 +1,9 @@
 package it.kytech.bowwarfare.commands;
 
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class SetStatsWall implements SubCommand {
+public class SetStatsWall implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

@@ -8,8 +8,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import org.bukkit.block.Block;
 
 public class PlaceEvent implements Listener {

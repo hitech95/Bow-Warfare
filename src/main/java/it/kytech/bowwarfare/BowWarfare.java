@@ -1,5 +1,10 @@
 package it.kytech.bowwarfare;
 
+import it.kytech.bowwarfare.util.Metrics;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -19,11 +24,11 @@ import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.LoggingManager;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
-import it.kytech.bowwarfare.util.DatabaseManager;
+import it.kytech.bowwarfare.manager.DatabaseManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import it.kytech.bowwarfare.Metrics.Graph;
-import it.kytech.bowwarfare.util.EconomyManager;
+import it.kytech.bowwarfare.util.Metrics.Graph;
+import it.kytech.bowwarfare.manager.EconomyManager;
 
 public class BowWarfare extends JavaPlugin {
 
@@ -33,7 +38,7 @@ public class BowWarfare extends JavaPlugin {
     public static Logger logger;
     public static boolean dbcon = false;
     public static boolean config_todate = false;
-    public static int config_version = 2;
+    public static int config_version = 0;
 
     public static List< String> auth = Arrays.asList(new String[]{
         "Double0negative", "hitech95", "YoshiGenius" //:) -Bryce
@@ -137,7 +142,6 @@ public class BowWarfare extends JavaPlugin {
             pm.registerEvents(new TeleportEvent(), p);
             pm.registerEvents(LoggingManager.getInstance(), p);
             pm.registerEvents(new SpectatorEvents(), p);
-            pm.registerEvents(new KitEvents(), p);
             pm.registerEvents(new KeepLobbyLoadedEvent(), p);
             pm.registerEvents(new DropItemEvent(), p);
             pm.registerEvents(new EntityShootEvent(), p);

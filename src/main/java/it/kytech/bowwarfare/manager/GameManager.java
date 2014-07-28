@@ -1,4 +1,4 @@
-package it.kytech.bowwarfare;
+package it.kytech.bowwarfare.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +14,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import it.kytech.bowwarfare.Game.GameState;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.stats.StatsManager;
-import it.kytech.bowwarfare.util.Kit;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import it.kytech.bowwarfare.BowWarfare;
+import it.kytech.bowwarfare.Game;
 import org.bukkit.entity.Projectile;
 
 public class GameManager {
@@ -28,7 +29,6 @@ public class GameManager {
     static GameManager instance = new GameManager();
     private ArrayList< Game> games = new ArrayList< Game>();
     private BowWarfare p;
-    private ArrayList<Kit> kits = new ArrayList<Kit>();
     private HashSet<Player> kitsel = new HashSet<Player>();
     MessageManager msgmgr = MessageManager.getInstance();
 
@@ -42,7 +42,6 @@ public class GameManager {
     public void setup(BowWarfare plugin) {
         p = plugin;
         LoadGames();
-        LoadKits();
     }
 
     public Plugin getPlugin() {
@@ -51,14 +50,7 @@ public class GameManager {
 
     public void reloadGames() {
         LoadGames();
-    }
-
-    public void LoadKits() {
-        Set<String> kits1 = SettingsManager.getInstance().getKits().getConfigurationSection("kits").getKeys(false);
-        for (String s : kits1) {
-            kits.add(new Kit(s));
-        }
-    }
+    }    
 
     public void LoadGames() {
         FileConfiguration c = SettingsManager.getInstance().getSystemConfig();
@@ -155,21 +147,7 @@ public class GameManager {
 
     public void openKitMenu(Player p) {
         kitsel.add(p);
-    }
-
-    @SuppressWarnings("deprecation")
-    public void selectKit(Player p, int i) {
-        p.getInventory().clear();
-        ArrayList<Kit> kits = getKits(p);
-        if (i <= kits.size()) {
-            Kit k = getKits(p).get(i);
-            if (k != null) {
-                p.getInventory().setContents(k.getContents().toArray(new ItemStack[0]));
-            }
-        }
-        p.updateInventory();
-
-    }
+    }   
 
     public int getGameCount() {
         return games.size();
@@ -240,17 +218,7 @@ public class GameManager {
             }
         }
         return null;
-    }
-
-    public ArrayList<Kit> getKits(Player p) {
-        ArrayList<Kit> k = new ArrayList<Kit>();
-        for (Kit kit : kits) {
-            if (kit.canUse(p)) {
-                k.add(kit);
-            }
-        }
-        return k;
-    }
+    }    
 
     public void startGame(int a) {
         getGame(a).startGame();

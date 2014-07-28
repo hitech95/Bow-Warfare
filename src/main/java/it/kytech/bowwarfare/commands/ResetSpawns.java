@@ -1,13 +1,13 @@
 package it.kytech.bowwarfare.commands;
 
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 
-public class ResetSpawns implements SubCommand {
+public class ResetSpawns implements ISubCommand {
 
     public boolean onCommand(Player player, String[] args) {
 

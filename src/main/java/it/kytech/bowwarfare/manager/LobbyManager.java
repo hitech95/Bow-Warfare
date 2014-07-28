@@ -1,4 +1,4 @@
-package it.kytech.bowwarfare;
+package it.kytech.bowwarfare.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,8 @@ import org.bukkit.entity.Player;
 import com.sk89q.worldedit.Vector;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
+import it.kytech.bowwarfare.BowWarfare;
+import it.kytech.bowwarfare.LobbyWall;
 
 public class LobbyManager {
 

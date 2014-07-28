@@ -9,7 +9,7 @@
 ################################################
 
 #Do NOT touch this!
-config-version: 2
+config-version: 0
 
 #Enable debug messages
 debug: false
@@ -72,7 +72,7 @@ limits:
     LMS:        
         life: 4
         minp: 8
-        time: 500        
+        time: 300        
     INF:
         time: 800
         maxp: 10
@@ -101,22 +101,31 @@ sql:
   database: 'bowwarfare'
   prefix: 'bw_'
 
-#Settings for Economy
+
+###########################################################
+######################  Economy ###########################
+###########################################################
+
+#Can be written both negative and positive values​​.
+#the money you win is a win singiolo player in case of winning.
+#Similarly loose is the price that each player will have to pay.
+#kill is the price that will be given to the player who makes a kill.
+#death is similar to kill, it's the price to pay when you are killed.
 economy:
   enabled: false
   win: 5
   loose: -1
   kill: 1
   death: 0
+  
+  
 ###########################################################
 #######################  Stats ############################
 ###########################################################
   
-  
 #Settings for the webstats. If enabled, stats 
 #such as k/d record, wins, win streaks, kill
 #streaks, etc. will be saved. 
-
 
 stats:
   enabled: false

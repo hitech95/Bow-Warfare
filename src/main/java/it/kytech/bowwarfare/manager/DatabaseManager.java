@@ -1,4 +1,4 @@
-package it.kytech.bowwarfare.util;
+package it.kytech.bowwarfare.manager;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
-import it.kytech.bowwarfare.SettingsManager;
 
 public class DatabaseManager {
 

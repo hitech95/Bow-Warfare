@@ -1,6 +1,7 @@
 package it.kytech.bowwarfare;
 
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.commands.AddWall;
 import it.kytech.bowwarfare.commands.CreateArena;
 import it.kytech.bowwarfare.commands.DelArena;
@@ -19,7 +20,7 @@ import it.kytech.bowwarfare.commands.ResetSpawns;
 import it.kytech.bowwarfare.commands.SetLobbySpawn;
 import it.kytech.bowwarfare.commands.SetSpawn;
 import it.kytech.bowwarfare.commands.Spectate;
-import it.kytech.bowwarfare.commands.SubCommand;
+import it.kytech.bowwarfare.commands.ISubCommand;
 import it.kytech.bowwarfare.commands.Teleport;
 import it.kytech.bowwarfare.commands.Vote;
 import java.util.ArrayList;
@@ -40,13 +41,13 @@ import org.bukkit.plugin.PluginDescriptionFile;
 public class CommandHandler implements CommandExecutor, TabCompleter {
 
     private Plugin plugin;
-    private HashMap< String, SubCommand> commands;
+    private HashMap< String, ISubCommand> commands;
     private HashMap< String, Integer> helpinfo;
     private MessageManager msgmgr = MessageManager.getInstance();
 
     public CommandHandler(Plugin plugin) {
         this.plugin = plugin;
-        commands = new HashMap< String, SubCommand>();
+        commands = new HashMap< String, ISubCommand>();
         helpinfo = new HashMap< String, Integer>();
         loadCommands();
         loadHelpInfo();

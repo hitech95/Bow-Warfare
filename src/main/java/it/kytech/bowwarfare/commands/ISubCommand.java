@@ -2,7 +2,7 @@ package it.kytech.bowwarfare.commands;
 
 import org.bukkit.entity.Player;
 
-public interface SubCommand {
+public interface ISubCommand {
 
     public boolean onCommand(Player player, String[] args);
 

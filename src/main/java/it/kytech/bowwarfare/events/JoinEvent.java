@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import it.kytech.bowwarfare.util.UpdateChecker;
 
 public class JoinEvent implements Listener {

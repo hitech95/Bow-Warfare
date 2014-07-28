@@ -1,12 +1,13 @@
 package it.kytech.bowwarfare.commands;
 
+import it.kytech.bowwarfare.Game;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager;
 
-public class ForceStart implements SubCommand {
+public class ForceStart implements ISubCommand {
 
     MessageManager msgmgr = MessageManager.getInstance();
 
@@ -31,18 +32,25 @@ public class ForceStart implements SubCommand {
         if (game == -1) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notingame", player);
             return true;
-        }
-        if (GameManager.getInstance().getGame(game).getActivePlayers() < 2) {
+        }        
+
+        Game g = GameManager.getInstance().getGame(game);
+        
+        if (GameManager.getInstance().getGame(game).getActivePlayers() < g.getGameMode().getMinPlayer()) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notenoughtplayers", player);
             return true;
         }
-
-        //TODO - Restart the game
-        /*Game g = GameManager.getInstance().getGame(game);
-         if (g.getState() != Game.GameState.WAITING && !player.hasPermission(permission())) {
-         MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
-         return true;
-         }*/
+        
+        if (!g.getGameMode().requireVote()) {
+            MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notrequirevote", player);
+            return true;
+        }
+        
+        if (g.getState() != Game.GameState.WAITING) {
+            MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
+            return true;
+        } 
+        g.countdown(seconds);
         msgmgr.sendFMessage(PrefixType.INFO, "game.started", player, "arena-" + game);
 
         return true;

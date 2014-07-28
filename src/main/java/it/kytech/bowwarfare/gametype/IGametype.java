@@ -15,7 +15,7 @@ import org.bukkit.entity.Projectile;
  *
  * @author M2K
  */
-public interface Gametype {
+public interface IGametype {
 
     /**
      * @param player an Player that join the game
@@ -44,6 +44,8 @@ public interface Gametype {
     public boolean onBlockPlaced(Block block, Player p);
 
     public boolean onBlockInteract(Block block, Player p);
+    
+    public boolean onGameStart();
 
     public boolean tryLoadSpawn();
 

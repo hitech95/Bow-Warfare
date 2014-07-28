@@ -9,12 +9,12 @@ package it.kytech.bowwarfare.commands;
  *
  * @author M2K
  */
-import it.kytech.bowwarfare.LobbyManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import org.bukkit.entity.Player;
 
-public class DelWall implements SubCommand {
+public class DelWall implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

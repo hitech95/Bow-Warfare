@@ -1,10 +1,11 @@
 package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.SpawnManager;
+import it.kytech.bowwarfare.manager.EconomyManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.SpawnManager;
 import it.kytech.bowwarfare.util.NameUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class TeamDeathMatch implements Gametype {
+public class TeamDeathMatch implements IGametype {
 
     public static final String NAME = "TDM";
     public static final String LONG_NAME = "Team Death Match";
@@ -136,7 +137,7 @@ public class TeamDeathMatch implements Gametype {
     public boolean onJoin(Player player) {
         Teams t = balanceNewPlayer();
 
-        msgFall(MessageManager.PrefixType.INFO, "game.teams.join", "player-" + player.getName(), "team-" + t.name().toUpperCase(), "teamsplayers-" + ChatColor.RED + redTeam.size() + ChatColor.WHITE + "/" + ChatColor.BLUE + blueTeam.size(), "maxplayers-" + getMaxPlayer());
+        msgFall(MessageManager.PrefixType.INFO, "game.team.join", "player-" + player.getName(), "team-" + t.name().toUpperCase(), "teamsplayers-" + ChatColor.RED + redTeam.size() + ChatColor.WHITE + "/" + ChatColor.BLUE + blueTeam.size(), "maxplayers-" + getMaxPlayer());
 
         player.teleport(getRandomSpawnPoint(t));
 
@@ -245,16 +246,21 @@ public class TeamDeathMatch implements Gametype {
                 final Player pf = p;
 
                 BarAPI.setMessage(p, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.team.winner", "Your Team have Won! "))); //Blank space to fix visual error!
+                EconomyManager.getInstance().executeTask(EconomyManager.win, p);
 
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
-
                     @Override
                     public void run() {
                         BarAPI.removeBar(pf);
                     }
 
                 }, 10 * 20);
+            }
 
+            for (Player p : (getTeam(killer) == Teams.RED) ? blueTeam : redTeam) {
+                if (game.isPlayerActive(p) && !p.equals(killer)) {
+                    EconomyManager.getInstance().executeTask(EconomyManager.loose, p);
+                }
             }
         } else {
             if ((kill % 10) == 0 || kill >= ((Integer) settings.get(SettingsManager.OptionFlag.TDMKILL) - 5)) {
@@ -404,6 +410,11 @@ public class TeamDeathMatch implements Gametype {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public boolean onGameStart() {
+        return false;
     }
 
     @Override

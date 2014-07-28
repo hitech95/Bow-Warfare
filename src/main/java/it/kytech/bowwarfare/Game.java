@@ -1,18 +1,21 @@
 package it.kytech.bowwarfare;
 
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
 import it.kytech.bowwarfare.gametype.FreeForAll;
-import it.kytech.bowwarfare.gametype.Gametype;
+import it.kytech.bowwarfare.gametype.IGametype;
 import it.kytech.bowwarfare.gametype.LastManStanding;
 import it.kytech.bowwarfare.gametype.TeamDeathMatch;
 import it.kytech.bowwarfare.logging.QueueManager;
 import it.kytech.bowwarfare.stats.StatsManager;
-import it.kytech.bowwarfare.util.EconomyManager;
+import it.kytech.bowwarfare.manager.EconomyManager;
 import it.kytech.bowwarfare.util.ItemReader;
-import it.kytech.bowwarfare.util.Kit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -30,7 +33,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.ScoreboardManager;
@@ -60,7 +62,7 @@ public class Game {
     private ArrayList<Player> queue = new ArrayList<Player>();
 
     private ArrayList<Integer> tasks = new ArrayList<Integer>();
-    private ArrayList<Gametype> availableGameTypes = new ArrayList<Gametype>();
+    private ArrayList<IGametype> availableGameTypes = new ArrayList<IGametype>();
 
     private HashMap<Player, Integer> nextSpectator = new HashMap< Player, Integer>();
     private HashMap<SettingsManager.OptionFlag, Object> settings = new HashMap<SettingsManager.OptionFlag, Object>();
@@ -146,7 +148,7 @@ public class Game {
     }
 
     public void addSpawn(String gamemode, Location l, String... args) {
-        Gametype gameMode = getAvailableGameType(gamemode);
+        IGametype gameMode = getAvailableGameType(gamemode);
         if (gameMode != null) {
             gameMode.addSpawn(l, args);
         } else {
@@ -249,7 +251,7 @@ public class Game {
                 return false;
             }
 
-            Gametype currentG = availableGameTypes.get(gametype);
+            IGametype currentG = availableGameTypes.get(gametype);
             if (currentG.getSpawnCount() == 0) {
                 msgmgr.sendFMessage(MessageManager.PrefixType.ERROR, "error.nospawns", p);
                 debug("Arena Without Spawns " + "bw.arena.join." + gameID);
@@ -276,6 +278,7 @@ public class Game {
         }
 
         if (!hasAdded) {
+            
             if (config.getBoolean("enable-player-queue")) {
                 if (!queue.contains(p)) {
                     queue.add(p);
@@ -294,11 +297,11 @@ public class Game {
             clearInv(p);
             restoreInv(p);
         } else {
-
+            
             if (getName() == null) {
-                msgmgr.sendFMessage(PrefixType.ERROR, "game.playerjoining", p, "arenaid-" + gameID);
+                msgmgr.sendFMessage(PrefixType.INFO, "game.playerjoining", p, "arenaid-" + gameID);
             } else {
-                msgmgr.sendFMessage(PrefixType.ERROR, "game.playerjoiningname", p, "arenaname-" + getName());
+                msgmgr.sendFMessage(PrefixType.INFO, "game.playerjoiningname", p, "arenaname-" + getName());
             }
 
             p.setHealth(p.getMaxHealth());
@@ -308,8 +311,7 @@ public class Game {
 
             setGameInventory(p);
 
-            LobbyManager.getInstance().updateWall(gameID);
-            showMenu(p);
+            LobbyManager.getInstance().updateWall(gameID);            
 
             return true;
         }
@@ -381,10 +383,10 @@ public class Game {
                 public void run() {
                     if (count > 0) {
                         if (count % 10 == 0) {
-                            msgFall(PrefixType.INFO, "game.countdown", "t-" + count);
+                            msgFall(PrefixType.INFO, "game.startcountdown", "t-" + count);
                         }
                         if (count < 6) {
-                            msgFall(PrefixType.INFO, "game.countdown", "t-" + count);
+                            msgFall(PrefixType.INFO, "game.startcountdown", "t-" + count);
 
                         }
                         count--;
@@ -432,6 +434,8 @@ public class Game {
 
         state = GameState.INGAME;
         startTime = new Date().getTime();
+
+        availableGameTypes.get(gametype).onGameStart();
 
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gamestarted", "arena-" + gameID);
@@ -552,7 +556,7 @@ public class Game {
                 }
 
                 EconomyManager.getInstance().executeTask(EconomyManager.death, p);
-                
+
                 Bukkit.getServer().getPluginManager().callEvent(pk);
                 setGameInventory(p);
 
@@ -683,7 +687,7 @@ public class Game {
 
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
-        
+
         System.out.println("Clear Spectators");
         clearSpectators();
         endGame();
@@ -752,6 +756,9 @@ public class Game {
         activePlayers.clear();
         inactivePlayers.clear();
         availableGameTypes.clear();
+        
+        vote = 0;
+        voted.clear();
 
         loadAvailableGameModes();
 
@@ -811,7 +818,7 @@ public class Game {
                 pl.showPlayer(p);
             }
         }
-        
+
         restoreInv(p);
         p.setAllowFlight(false);
         p.setFlying(false);
@@ -838,46 +845,7 @@ public class Game {
 
     public HashMap< Player, Integer> getNextSpec() {
         return nextSpectator;
-    }
-
-    public void showMenu(Player p) {
-        GameManager.getInstance().openKitMenu(p);
-        Inventory i = Bukkit.getServer().createInventory(p, 90, ChatColor.RED + "" + ChatColor.BOLD + "Kit Selection");
-
-        int a = 0;
-        int b = 0;
-
-        ArrayList<Kit> kits = GameManager.getInstance().getKits(p);
-        BowWarfare.debug(kits + "");
-        if (kits == null || kits.size() == 0 || !SettingsManager.getInstance().getKits().getBoolean("enabled")) {
-            GameManager.getInstance().leaveKitMenu(p);
-            return;
-        }
-
-        for (Kit k : kits) {
-            ItemStack i1 = k.getIcon();
-            ItemMeta im = i1.getItemMeta();
-
-            debug(k.getName() + " " + i1 + " " + im);
-
-            im.setDisplayName(ChatColor.GOLD + "" + ChatColor.BOLD + k.getName());
-            i1.setItemMeta(im);
-            i.setItem((9 * a) + b, i1);
-            a = 2;
-
-            for (ItemStack s2 : k.getContents()) {
-                if (s2 != null) {
-                    i.setItem((9 * a) + b, s2);
-                    a++;
-                }
-            }
-
-            a = 0;
-            b++;
-        }
-        p.openInventory(i);
-        debug("Showing menu");
-    }
+    }    
 
     public void removeFromQueue(Player p) {
         queue.remove(p);
@@ -1087,12 +1055,12 @@ public class Game {
         return state;
     }
 
-    public Gametype getGameMode() {
+    public IGametype getGameMode() {
         return (gametype < availableGameTypes.size() && gametype > -1) ? availableGameTypes.get(gametype) : null;
     }
 
     public boolean isAvailableGameMode(String s) {
-        for (Gametype g : availableGameTypes) {
+        for (IGametype g : availableGameTypes) {
             if (g.getGametypeName().equalsIgnoreCase(s)) {
                 return true;
             }
@@ -1100,8 +1068,8 @@ public class Game {
         return false;
     }
 
-    public Gametype getAvailableGameType(String s) {
-        for (Gametype g : availableGameTypes) {
+    public IGametype getAvailableGameType(String s) {
+        for (IGametype g : availableGameTypes) {
             if (g.getGametypeName().equalsIgnoreCase(s)) {
                 return g;
             }
@@ -1116,6 +1084,18 @@ public class Game {
             return true;
         }
         return false;
+    }
+
+    public void addTask(int scheduleTask) {
+        tasks.add(scheduleTask);
+    }
+    
+    public void removeTask(int scheduleTask) {
+        tasks.remove((Integer) scheduleTask);
+    }
+    
+    public boolean containsTask(int scheduleTask) {
+        return tasks.contains((Integer) scheduleTask);
     }
 
     public synchronized void setRBPercent(double d) {

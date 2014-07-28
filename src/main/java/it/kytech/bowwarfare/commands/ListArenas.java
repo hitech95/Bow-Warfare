@@ -3,12 +3,12 @@ package it.kytech.bowwarfare.commands;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class ListArenas implements SubCommand {
+public class ListArenas implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

@@ -1,5 +1,6 @@
-package it.kytech.bowwarfare;
+package it.kytech.bowwarfare.manager;
 
+import it.kytech.bowwarfare.manager.SettingsManager;
 import java.util.HashMap;
 import java.util.logging.Logger;
 

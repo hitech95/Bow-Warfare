@@ -2,10 +2,10 @@ package it.kytech.bowwarfare.commands;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class SetLobbySpawn implements SubCommand {
+public class SetLobbySpawn implements ISubCommand {
 
     public boolean onCommand(Player player, String[] args) {
         if (!player.hasPermission(permission()) && !player.isOp()) {

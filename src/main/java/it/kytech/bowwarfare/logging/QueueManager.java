@@ -16,8 +16,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import it.kytech.bowwarfare.BowWarfare;
 
 public class QueueManager {

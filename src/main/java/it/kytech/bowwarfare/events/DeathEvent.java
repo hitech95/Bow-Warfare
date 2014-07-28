@@ -9,7 +9,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Snowball;

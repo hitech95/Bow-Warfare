@@ -2,10 +2,11 @@ package it.kytech.bowwarfare.gametype;
 
 import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.SpawnManager;
+import it.kytech.bowwarfare.manager.EconomyManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.SpawnManager;
 import it.kytech.bowwarfare.util.NameUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class FreeForAll implements Gametype {
+public class FreeForAll implements IGametype {
 
     public static final String NAME = "FFA";
     public static final String LONG_NAME = "Free For All";
@@ -156,10 +157,17 @@ public class FreeForAll implements Gametype {
 
         if (kill >= (Integer) settings.get(SettingsManager.OptionFlag.FFAKILL)) {
             game.playerWin(victim, killer);
+            
             BarAPI.setMessage(killer, buildBossString(SettingsManager.getInstance().getMessageConfig().getString("messages.game.winner", "You are the Winner! "))); //Blank space to fix visual error!
+            EconomyManager.getInstance().executeTask(EconomyManager.win, killer);
+            
+            for(Player p : game.getAllPlayers()){
+                if(game.isPlayerActive(p) && !p.equals(killer)){
+                    EconomyManager.getInstance().executeTask(EconomyManager.loose, killer);
+                }
+            }
 
             Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Bukkit.getServer().getPluginManager().getPlugin("BowWarfare-Reloaded"), new Runnable() {
-
                 @Override
                 public void run() {
                     BarAPI.removeBar(killer);
@@ -283,6 +291,11 @@ public class FreeForAll implements Gametype {
             return true;
         }
         return true;
+    }
+
+    @Override
+    public boolean onGameStart() {
+        return false;
     }
 
     @Override

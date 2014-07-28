@@ -1,7 +1,7 @@
 package it.kytech.bowwarfare.events;
 
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;

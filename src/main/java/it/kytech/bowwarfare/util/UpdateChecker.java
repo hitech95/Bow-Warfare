@@ -13,7 +13,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import it.kytech.bowwarfare.BowWarfare;
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 
 public class UpdateChecker {
 

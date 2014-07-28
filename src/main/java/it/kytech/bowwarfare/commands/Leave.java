@@ -1,11 +1,11 @@
 package it.kytech.bowwarfare.commands;
 
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class Leave implements SubCommand {
+public class Leave implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

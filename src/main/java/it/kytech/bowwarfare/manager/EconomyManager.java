@@ -1,6 +1,5 @@
-package it.kytech.bowwarfare.util;
+package it.kytech.bowwarfare.manager;
 
-import it.kytech.bowwarfare.SettingsManager;
 import it.kytech.bowwarfare.hooks.HookManager;
 import net.milkbowl.vault.economy.Economy;
 

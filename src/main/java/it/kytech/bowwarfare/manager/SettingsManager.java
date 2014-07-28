@@ -1,6 +1,7 @@
-package it.kytech.bowwarfare;
+package it.kytech.bowwarfare.manager;
 
-import it.kytech.bowwarfare.gametype.Gametype;
+import it.kytech.bowwarfare.BowWarfare;
+import it.kytech.bowwarfare.gametype.IGametype;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,13 +27,10 @@ public class SettingsManager {
     private static Plugin p;
     private FileConfiguration spawns;
     private FileConfiguration system;
-    private FileConfiguration kits;
     private FileConfiguration messages;
-    private File f; //spawns
-    private File f2; //system
-    private File f3; //kits
-    private File f4; //messages
-    private static final int KIT_VERSION = 1;
+    private File fileSpawn; //spawns
+    private File fileSystem; //system
+    private File fileMessages; //messages
     private static final int MESSAGE_VERSION = 0;
     private static final int SPAWN_VERSION = 0;
     private static final int SYSTEM_VERSION = 0;
@@ -77,22 +75,18 @@ public class SettingsManager {
         p.getConfig().options().copyDefaults(true);
         p.saveDefaultConfig();
 
-        f = new File(p.getDataFolder(), "spawns.yml");
-        f2 = new File(p.getDataFolder(), "system.yml");
-        f3 = new File(p.getDataFolder(), "kits.yml");
-        f4 = new File(p.getDataFolder(), "messages.yml");
+        fileSpawn = new File(p.getDataFolder(), "spawns.yml");
+        fileSystem = new File(p.getDataFolder(), "system.yml");
+        fileMessages = new File(p.getDataFolder(), "messages.yml");
 
         try {
-            if (!f.exists()) {
-                f.createNewFile();
+            if (!fileSpawn.exists()) {
+                fileSpawn.createNewFile();
             }
-            if (!f2.exists()) {
-                f2.createNewFile();
+            if (!fileSystem.exists()) {
+                fileSystem.createNewFile();
             }
-            if (!f3.exists()) {
-                loadFile("kits.yml");
-            }
-            if (!f4.exists()) {
+            if (!fileMessages.exists()) {
                 loadFile("messages.yml");
             }
 
@@ -105,9 +99,6 @@ public class SettingsManager {
 
         reloadSpawns();
         saveSpawns();
-
-        reloadKits();
-        //saveKits();
 
         reloadMessages();
         saveMessages();
@@ -128,11 +119,7 @@ public class SettingsManager {
 
     public FileConfiguration getSpawns() {
         return spawns;
-    }
-
-    public FileConfiguration getKits() {
-        return kits;
-    }
+    }    
 
     public FileConfiguration getMessageConfig() {
         return messages;
@@ -172,9 +159,9 @@ public class SettingsManager {
     }
 
     public void reloadSpawns() {
-        spawns = YamlConfiguration.loadConfiguration(f);
+        spawns = YamlConfiguration.loadConfiguration(fileSpawn);
         if (spawns.getInt("version", 0) != SPAWN_VERSION) {
-            moveFile(f);
+            moveFile(fileSpawn);
             reloadSpawns();
         }
         spawns.set("version", SPAWN_VERSION);
@@ -182,31 +169,21 @@ public class SettingsManager {
     }
 
     public void reloadSystem() {
-        system = YamlConfiguration.loadConfiguration(f2);
+        system = YamlConfiguration.loadConfiguration(fileSystem);
         if (system.getInt("version", 0) != SYSTEM_VERSION) {
-            moveFile(f2);
+            moveFile(fileSystem);
             reloadSystem();
         }
         system.set("version", SYSTEM_VERSION);
         saveSystemConfig();
     }
 
-    public void reloadKits() {
-        kits = YamlConfiguration.loadConfiguration(f3);
-        if (kits.getInt("version", 0) != KIT_VERSION) {
-            moveFile(f3);
-            loadFile("kits.yml");
-            reloadKits();
-        }
-
-    }
-
     public void reloadMessages() {
-        messages = YamlConfiguration.loadConfiguration(f4);
+        messages = YamlConfiguration.loadConfiguration(fileMessages);
         if (messages.getInt("version", 0) != MESSAGE_VERSION) {
-            moveFile(f4);
+            moveFile(fileMessages);
             loadFile("messages.yml");
-            reloadKits();
+            reloadMessages();
         }
         messages.set("version", MESSAGE_VERSION);
         saveMessages();
@@ -214,7 +191,7 @@ public class SettingsManager {
 
     public void saveSystemConfig() {
         try {
-            system.save(f2);
+            system.save(fileSystem);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -222,29 +199,21 @@ public class SettingsManager {
 
     public void saveSpawns() {
         try {
-            spawns.save(f);
+            spawns.save(fileSpawn);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public void saveKits() {
-        try {
-            kits.save(f3);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    }    
 
     public void saveMessages() {
         try {
-            messages.save(f4);
+            messages.save(fileMessages);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public boolean isSetGameSettings(int gameid, Gametype type) {
+    public boolean isSetGameSettings(int gameid, IGametype type) {
         Set<String> values = system.getConfigurationSection("bw-system.arenas." + gameid + ".flags").getKeys(true);
 
         for (String flag : values.toArray(new String[0])) {

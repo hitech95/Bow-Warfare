@@ -9,13 +9,13 @@ package it.kytech.bowwarfare.commands;
  *
  * @author M2K
  */
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-public class Vote implements SubCommand {
+public class Vote implements ISubCommand {
 
     public boolean onCommand(Player player, String[] args) {
         if (!player.hasPermission(permission()) && !player.isOp()) {

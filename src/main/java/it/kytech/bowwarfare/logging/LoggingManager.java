@@ -17,7 +17,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 
 public class LoggingManager implements Listener {
 

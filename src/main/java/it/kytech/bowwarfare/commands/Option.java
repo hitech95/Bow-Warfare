@@ -5,12 +5,12 @@ import java.util.HashMap;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.SettingsManager.OptionFlag;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.SettingsManager.OptionFlag;
 
-public class Option implements SubCommand {
+public class Option implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

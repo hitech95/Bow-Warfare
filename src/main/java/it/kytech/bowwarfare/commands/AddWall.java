@@ -1,11 +1,11 @@
 package it.kytech.bowwarfare.commands;
 
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.LobbyManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class AddWall implements SubCommand {
+public class AddWall implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

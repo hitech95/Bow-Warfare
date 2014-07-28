@@ -1,12 +1,12 @@
 package it.kytech.bowwarfare.commands;
 
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class Teleport implements SubCommand {
+public class Teleport implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

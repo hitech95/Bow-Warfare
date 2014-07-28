@@ -10,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
+import it.kytech.bowwarfare.manager.GameManager;
 import it.kytech.bowwarfare.Game.GameState;
 
 public class MoveEvent implements Listener {

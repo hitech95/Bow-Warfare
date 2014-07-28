@@ -11,11 +11,11 @@ import java.util.HashMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.util.DatabaseManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.DatabaseManager;
 
 public class StatsManager {
 

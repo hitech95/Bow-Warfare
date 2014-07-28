@@ -4,13 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.logging.QueueManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class Reload implements SubCommand {
+public class Reload implements ISubCommand {
 
     @Override
     public boolean onCommand(final Player player, String[] args) {
@@ -25,7 +25,6 @@ public class Reload implements SubCommand {
 
             }
             if (args[0].equalsIgnoreCase("settings")) {
-                SettingsManager.getInstance().reloadKits();
                 SettingsManager.getInstance().reloadMessages();
                 SettingsManager.getInstance().reloadSpawns();
                 SettingsManager.getInstance().reloadSystem();

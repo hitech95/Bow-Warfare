@@ -1,6 +1,6 @@
 package it.kytech.bowwarfare.hooks;
 
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 import it.kytech.bowwarfare.util.MessageUtil;
 
 import java.util.HashMap;

@@ -7,8 +7,8 @@ import java.util.HashMap;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.SettingsManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
 
 public class PlayerStatsSession {
 

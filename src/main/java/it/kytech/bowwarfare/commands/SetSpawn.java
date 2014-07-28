@@ -6,14 +6,14 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.SpawnManager;
-import it.kytech.bowwarfare.gametype.Gametype;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.SpawnManager;
+import it.kytech.bowwarfare.gametype.IGametype;
 import java.util.Arrays;
 
-public class SetSpawn implements SubCommand {
+public class SetSpawn implements ISubCommand {
 
     HashMap<Integer, Integer> next = new HashMap<Integer, Integer>();
 

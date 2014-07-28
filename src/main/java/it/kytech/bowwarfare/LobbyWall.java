@@ -1,5 +1,7 @@
 package it.kytech.bowwarfare;
 
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
 import java.util.ArrayList;
 import java.util.Collections;
 

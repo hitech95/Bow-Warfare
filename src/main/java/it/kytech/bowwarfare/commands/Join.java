@@ -1,12 +1,12 @@
 package it.kytech.bowwarfare.commands;
 
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 
-public class Join implements SubCommand {
+public class Join implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

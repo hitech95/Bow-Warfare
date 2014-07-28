@@ -1,20 +1,25 @@
 package it.kytech.bowwarfare.gametype;
 
+import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.Game;
 import it.kytech.bowwarfare.Game.GameState;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.SpawnManager;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.SettingsManager.OptionFlag;
+import it.kytech.bowwarfare.manager.SpawnManager;
 import it.kytech.bowwarfare.util.NameUtil;
+import it.kytech.bowwarfare.util.bossbar.BarAPI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
-import it.kytech.bowwarfare.util.bossbar.BarAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
@@ -29,7 +34,7 @@ import org.bukkit.scoreboard.Score;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.ScoreboardManager;
 
-public class LastManStanding implements Gametype {
+public class LastManStanding implements IGametype {
 
     public static final String NAME = "LMS";
     public static final String LONG_NAME = "Last Man Standing";
@@ -57,6 +62,10 @@ public class LastManStanding implements Gametype {
     private ScoreboardManager sbManager = Bukkit.getScoreboardManager();
 
     private Scoreboard scoreBoard = sbManager.getNewScoreboard();
+
+    private int count = 20;
+    private boolean countdownRunning;
+    private int tid = 0;
 
     public LastManStanding(Game g) {
         isTest = false;
@@ -102,9 +111,9 @@ public class LastManStanding implements Gametype {
     }
 
     private void loadDefaultSettings() {
-        settings.put(SettingsManager.OptionFlag.LMSLIFE, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".life"));
-        settings.put(SettingsManager.OptionFlag.LMSMINP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".minp"));
-        settings.put(SettingsManager.OptionFlag.LMSTIME, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".time"));
+        settings.put(OptionFlag.LMSLIFE, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".life"));
+        settings.put(OptionFlag.LMSMINP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".minp"));
+        settings.put(OptionFlag.LMSTIME, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".time"));
 
         saveConfig();
     }
@@ -160,11 +169,10 @@ public class LastManStanding implements Gametype {
                 game.markAsInactive(victim);
                 game.restoreInv(victim);
 
-                //TODO not left arena but loose the match
-                msgFall(MessageManager.PrefixType.INFO, "game.playerloosegame", "player-" + victim.getName());
+                msgFall(MessageManager.PrefixType.INFO, "game.playerloosegame", "victim-" + victim.getName(), "killer-" + killer.getName());
 
                 game.addSpectator(victim);
-                
+
             } else {
                 victim.teleport(getRandomSpawnPoint());
             }
@@ -309,6 +317,81 @@ public class LastManStanding implements Gametype {
     }
 
     @Override
+    public boolean onGameStart() {
+        for (Player player : game.getAllPlayers()) {
+            if (game.isPlayerActive(player)) {
+                BarAPI.setMessage(player, buildBossString(LONG_NAME), (Integer) settings.get(OptionFlag.LMSTIME));
+            }
+        }
+
+        //Run internal countdown
+        countdown((Integer) settings.get(OptionFlag.LMSTIME));
+        return true;
+    }
+
+    /*
+     *
+     * ################################################
+     *
+     * COUNTDOWN
+     *
+     * ################################################
+     *
+     *
+     */
+    public int getCountdownTime() {
+        return count;
+    }
+
+    public void countdown(int time) {        
+        countdownRunning = true;
+        count = time;
+        Bukkit.getScheduler().cancelTask(tid);
+        if(game.containsTask(tid)){
+            game.removeTask(tid);
+        }
+
+        tid = Bukkit.getScheduler().scheduleSyncRepeatingTask((BowWarfare) GameManager.getInstance().getPlugin(), new Runnable() {
+            public void run() {
+                if (count > 0) {
+                    if (count % 60 == 0) {
+                        msgFall(PrefixType.INFO, "game.endcountdown", "t-" + count);
+                        soundFall(Sound.CLICK);
+                    }
+                    if (count < 6) {
+                        msgFall(PrefixType.INFO, "game.endcountdown", "t-" + count);
+                        soundFall(Sound.CLICK);
+                    }
+                    count--;
+                } else {
+                    forceWinAPlayer();
+                    Bukkit.getScheduler().cancelTask(tid);
+                    countdownRunning = false;
+                }
+            }
+        }, 0, 20);
+        
+        game.addTask(tid);
+    }
+
+    private void forceWinAPlayer() {
+
+        Entry<Player, Integer> best = null;
+        Entry<Player, Integer> worst = null;
+
+        for (Entry<Player, Integer> entry : life.entrySet()) {
+            if (best == null || entry.getValue() > best.getValue()) {
+                best = entry;
+            }
+            if (worst == null || entry.getValue() < worst.getValue()) {
+                worst = entry;
+            }
+        }
+
+        game.playerWin(worst.getKey(), best.getKey());
+    }
+
+    @Override
     public boolean isFrozenSpawn() {
         if (game.getState() == Game.GameState.INGAME) {
             return false;
@@ -384,6 +467,12 @@ public class LastManStanding implements Gametype {
     public void msgFall(PrefixType type, String msg, String... vars) {
         for (Player p : game.getAllPlayers()) {
             msgmgr.sendFMessage(type, msg, p, vars);
+        }
+    }
+    
+    public void soundFall(Sound s) {
+        for (Player p : game.getAllPlayers()) {
+            p.playSound(p.getLocation(), s, 10, 1);
         }
     }
 

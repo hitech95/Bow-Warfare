@@ -3,13 +3,13 @@ package it.kytech.bowwarfare.commands;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
-import it.kytech.bowwarfare.GameManager;
-import it.kytech.bowwarfare.LobbyManager;
-import it.kytech.bowwarfare.MessageManager;
-import it.kytech.bowwarfare.SettingsManager;
-import it.kytech.bowwarfare.MessageManager.PrefixType;
+import it.kytech.bowwarfare.manager.GameManager;
+import it.kytech.bowwarfare.manager.LobbyManager;
+import it.kytech.bowwarfare.manager.MessageManager;
+import it.kytech.bowwarfare.manager.SettingsManager;
+import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 
-public class DelArena implements SubCommand {
+public class DelArena implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {

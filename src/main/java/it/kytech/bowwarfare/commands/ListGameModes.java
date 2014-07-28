@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
  *
  * @author M2K
  */
-public class ListGameModes implements SubCommand {
+public class ListGameModes implements ISubCommand {
 
     @Override
     public boolean onCommand(Player player, String[] args) {
