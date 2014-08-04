@@ -5,10 +5,12 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
+import sun.rmi.runtime.Log;
 
 public class DatabaseManager {
 
@@ -40,7 +42,6 @@ public class DatabaseManager {
             return true;
         } catch (ClassNotFoundException e) {
             log.warning("Couldn't start MySQL Driver. Stopping...\n" + e.getMessage());
-
             return false;
         } catch (SQLException e) {
             log.warning("Couldn't connect to MySQL database. Stopping...\n" + e.getMessage());
@@ -50,20 +51,24 @@ public class DatabaseManager {
 
     public PreparedStatement createStatement(String query) {
         int times = 0;
+
         PreparedStatement p = null;
-        try {
-            times++;
-            p = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-        } catch (SQLException e) {
-            if (times == 5) {
-                System.out.println("[BowWarfare][SQL ERROR] ATTEMPTED TO CONNECT TO DATABASE 5 TIMES AND FAILED! CONNECTION LOST.");
-                return null;
+
+        while (times < 5) {
+            try {
+                times++;
+                p = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            } catch (SQLException e) {
+                if (times == 5) {
+                    log.log(Level.SEVERE, "[BowWarfare][SQL ERROR] ATTEMPTED TO CONNECT TO DATABASE 5 TIMES AND FAILED! CONNECTION LOST.");
+                    return null;
+                }
+                connect();
+                continue;
             }
-            connect();
+            return p;
         }
-
-        return p;
-
+        return null;
     }
 
     public Statement createStatement() {
@@ -75,7 +80,7 @@ public class DatabaseManager {
     }
 
     public boolean connect() {
-        //log.info("Connecting to database...");
+        log.log(Level.INFO, "[BowWarfare] Connecting to Database.");
         FileConfiguration c = SettingsManager.getInstance().getConfig();
         String host = c.getString("sql.host", "localhost");
         int port = c.getInt("sql.port", 3306);

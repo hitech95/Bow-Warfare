@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.commands.sub;
 
 /**
  *
  * @author M2K
  */
+import it.kytech.bowwarfare.commands.ISubCommand;
 import it.kytech.bowwarfare.manager.GameManager;
 import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.SettingsManager;

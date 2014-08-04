@@ -1,5 +1,6 @@
 package it.kytech.bowwarfare;
 
+import it.kytech.bowwarfare.commands.CommandHandler;
 import it.kytech.bowwarfare.util.Metrics;
 import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.SettingsManager;
@@ -23,7 +24,7 @@ import it.kytech.bowwarfare.events.*;
 import it.kytech.bowwarfare.hooks.HookManager;
 import it.kytech.bowwarfare.logging.LoggingManager;
 import it.kytech.bowwarfare.logging.QueueManager;
-import it.kytech.bowwarfare.stats.StatsManager;
+import it.kytech.bowwarfare.manager.StatsManager;
 import it.kytech.bowwarfare.manager.DatabaseManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -123,7 +124,7 @@ public class BowWarfare extends JavaPlugin {
                 logger.severe("!!!Failed to connect to the database. Please check the settings and try again!!!");
                 return;
             }
-            
+
             GameManager.getInstance().setup(p);
             LobbyManager.getInstance().setup(p);
 

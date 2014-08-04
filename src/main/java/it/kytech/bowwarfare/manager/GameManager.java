@@ -16,7 +16,6 @@ import org.bukkit.plugin.Plugin;
 import it.kytech.bowwarfare.Game.GameState;
 import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
-import it.kytech.bowwarfare.stats.StatsManager;
 
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
@@ -50,7 +49,7 @@ public class GameManager {
 
     public void reloadGames() {
         LoadGames();
-    }    
+    }
 
     public void LoadGames() {
         FileConfiguration c = SettingsManager.getInstance().getSystemConfig();
@@ -147,7 +146,7 @@ public class GameManager {
 
     public void openKitMenu(Player p) {
         kitsel.add(p);
-    }   
+    }
 
     public int getGameCount() {
         return games.size();
@@ -218,7 +217,7 @@ public class GameManager {
             }
         }
         return null;
-    }    
+    }
 
     public void startGame(int a) {
         getGame(a).startGame();

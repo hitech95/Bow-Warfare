@@ -13,13 +13,7 @@ public class EconomyManager {
     private Economy economy;
     private boolean enabled = false;
 
-    public static double win = 0;
-    public static double loose = 0;
-    public static double kill = 0;
-    public static double death = 0;
-
     private EconomyManager() {
-
     }
 
     public static EconomyManager getInstance() {
@@ -27,24 +21,12 @@ public class EconomyManager {
     }
 
     public void setup() {
-        enabled = setupEconomy();
-
-        if (enabled) {
-            win = SettingsManager.getInstance().getConfig().getDouble("economy.win");
-            loose = SettingsManager.getInstance().getConfig().getDouble("economy.loose");
-            kill = SettingsManager.getInstance().getConfig().getDouble("economy.kill");
-            death = SettingsManager.getInstance().getConfig().getDouble("economy.death");
-        }
-    }
-
-    private boolean setupEconomy() {
         RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
         }
-
-        return (economy != null);
+        enabled = (economy != null);
     }
 
     public Economy getEcon() {

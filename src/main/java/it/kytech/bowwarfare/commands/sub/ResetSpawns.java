@@ -1,5 +1,6 @@
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.commands.sub;
 
+import it.kytech.bowwarfare.commands.ISubCommand;
 import it.kytech.bowwarfare.manager.GameManager;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

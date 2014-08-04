@@ -44,7 +44,7 @@ public interface IGametype {
     public boolean onBlockPlaced(Block block, Player p);
 
     public boolean onBlockInteract(Block block, Player p);
-    
+
     public boolean onGameStart();
 
     public boolean tryLoadSpawn();
@@ -65,7 +65,7 @@ public interface IGametype {
 
     public ArrayList<String> updateSignPlayer();
 
-    public String getGametypeName();   
+    public String getGametypeName();
 
     public boolean requireVote();
 

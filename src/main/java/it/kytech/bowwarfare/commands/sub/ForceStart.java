@@ -1,6 +1,7 @@
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.commands.sub;
 
 import it.kytech.bowwarfare.Game;
+import it.kytech.bowwarfare.commands.ISubCommand;
 import it.kytech.bowwarfare.manager.GameManager;
 import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
@@ -32,24 +33,24 @@ public class ForceStart implements ISubCommand {
         if (game == -1) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notingame", player);
             return true;
-        }        
+        }
 
         Game g = GameManager.getInstance().getGame(game);
-        
+
         if (GameManager.getInstance().getGame(game).getActivePlayers() < g.getGameMode().getMinPlayer()) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notenoughtplayers", player);
             return true;
         }
-        
+
         if (!g.getGameMode().requireVote()) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.notrequirevote", player);
             return true;
         }
-        
+
         if (g.getState() != Game.GameState.WAITING) {
             MessageManager.getInstance().sendFMessage(PrefixType.ERROR, "error.alreadyingame", player);
             return true;
-        } 
+        }
         g.countdown(seconds);
         msgmgr.sendFMessage(PrefixType.INFO, "game.started", player, "arena-" + game);
 

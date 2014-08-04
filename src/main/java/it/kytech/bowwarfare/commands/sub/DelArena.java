@@ -1,8 +1,9 @@
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.commands.sub;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import it.kytech.bowwarfare.Game;
+import it.kytech.bowwarfare.commands.ISubCommand;
 import it.kytech.bowwarfare.manager.GameManager;
 import it.kytech.bowwarfare.manager.LobbyManager;
 import it.kytech.bowwarfare.manager.MessageManager;

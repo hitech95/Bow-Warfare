@@ -1,5 +1,6 @@
 package it.kytech.bowwarfare.hooks;
 
+import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.manager.SettingsManager;
 import it.kytech.bowwarfare.util.MessageUtil;
 
@@ -91,7 +92,7 @@ public class HookManager {
                 }
             }
             if (!flag) {
-                System.out.println("[BowWarfare][HookManager]Condition does not contian a compare operator: " + split);
+                BowWarfare.$("[BowWarfare][HookManager]Condition does not contian a compare operator: " + split);
                 return false;
             }
             try {
@@ -123,7 +124,7 @@ public class HookManager {
                     }
                 }
             } catch (NumberFormatException e) {
-                System.out.println("[Bow Warfare][HookManager]Error parsing value for: " + split);
+                BowWarfare.$("[Bow Warfare][HookManager]Error parsing value for: " + split);
                 return false;
             }
         }

@@ -1,28 +1,29 @@
-package it.kytech.bowwarfare;
+package it.kytech.bowwarfare.commands;
 
+import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
-import it.kytech.bowwarfare.commands.AddWall;
-import it.kytech.bowwarfare.commands.CreateArena;
-import it.kytech.bowwarfare.commands.DelArena;
-import it.kytech.bowwarfare.commands.DelWall;
-import it.kytech.bowwarfare.commands.Disable;
-import it.kytech.bowwarfare.commands.Enable;
-import it.kytech.bowwarfare.commands.ForceStart;
-import it.kytech.bowwarfare.commands.Join;
-import it.kytech.bowwarfare.commands.Leave;
-import it.kytech.bowwarfare.commands.LeaveQueue;
-import it.kytech.bowwarfare.commands.ListArenas;
-import it.kytech.bowwarfare.commands.ListPlayers;
-import it.kytech.bowwarfare.commands.Option;
-import it.kytech.bowwarfare.commands.Reload;
-import it.kytech.bowwarfare.commands.ResetSpawns;
-import it.kytech.bowwarfare.commands.SetLobbySpawn;
-import it.kytech.bowwarfare.commands.SetSpawn;
-import it.kytech.bowwarfare.commands.Spectate;
+import it.kytech.bowwarfare.commands.sub.AddWall;
+import it.kytech.bowwarfare.commands.sub.CreateArena;
+import it.kytech.bowwarfare.commands.sub.DelArena;
+import it.kytech.bowwarfare.commands.sub.DelWall;
+import it.kytech.bowwarfare.commands.sub.Disable;
+import it.kytech.bowwarfare.commands.sub.Enable;
+import it.kytech.bowwarfare.commands.sub.ForceStart;
+import it.kytech.bowwarfare.commands.sub.Join;
+import it.kytech.bowwarfare.commands.sub.Leave;
+import it.kytech.bowwarfare.commands.sub.LeaveQueue;
+import it.kytech.bowwarfare.commands.sub.ListArenas;
+import it.kytech.bowwarfare.commands.sub.ListPlayers;
+import it.kytech.bowwarfare.commands.sub.Option;
+import it.kytech.bowwarfare.commands.sub.Reload;
+import it.kytech.bowwarfare.commands.sub.ResetSpawns;
+import it.kytech.bowwarfare.commands.sub.SetLobbySpawn;
+import it.kytech.bowwarfare.commands.sub.SetSpawn;
+import it.kytech.bowwarfare.commands.sub.Spectate;
 import it.kytech.bowwarfare.commands.ISubCommand;
-import it.kytech.bowwarfare.commands.Teleport;
-import it.kytech.bowwarfare.commands.Vote;
+import it.kytech.bowwarfare.commands.sub.Teleport;
+import it.kytech.bowwarfare.commands.sub.Vote;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -98,7 +99,7 @@ public class CommandHandler implements CommandExecutor, TabCompleter {
         helpinfo.put("lq", 1);
         helpinfo.put("list", 1);
         helpinfo.put("reload", 3);
-         helpinfo.put("vote", 1);
+        helpinfo.put("vote", 1);
     }
 
     @Override

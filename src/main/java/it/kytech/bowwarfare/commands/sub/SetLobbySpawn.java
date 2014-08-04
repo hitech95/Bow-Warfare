@@ -1,29 +1,30 @@
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.commands.sub;
 
+import it.kytech.bowwarfare.commands.ISubCommand;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import it.kytech.bowwarfare.manager.GameManager;
 import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.SettingsManager;
 
-public class CreateArena implements ISubCommand {
+public class SetLobbySpawn implements ISubCommand {
 
-    @Override
     public boolean onCommand(Player player, String[] args) {
         if (!player.hasPermission(permission()) && !player.isOp()) {
             MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.ERROR, "error.nopermission", player);
             return true;
         }
-        GameManager.getInstance().createArenaFromSelection(player);
+        SettingsManager.getInstance().setLobbySpawn(player.getLocation());
+        MessageManager.getInstance().sendFMessage(MessageManager.PrefixType.INFO, "info.lobbyspawn", player);
         return true;
     }
 
     @Override
     public String help(Player p) {
-        return "/bw createarena - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.createarena", "Create a new arena with the current WorldEdit selection");
+        return "/bw setlobbyspawn - " + SettingsManager.getInstance().getMessageConfig().getString("messages.help.setlobbyspawn", "Set the lobby spawnpoint");
     }
 
     @Override
     public String permission() {
-        return "bw.admin.createarena";
+        return "bw.admin.setlobby";
     }
 }

@@ -9,186 +9,186 @@ import it.kytech.bowwarfare.util.bossbar.Util;
 import org.bukkit.Location;
 
 /**
-* This is the FakeDragon class for BarAPI.
-* It is based on the code by SoThatsIt.
-*
+ * This is the FakeDragon class for BarAPI. It is based on the code by
+ * SoThatsIt.
+ * 
 * http://forums.bukkit.org/threads/tutorial-utilizing-the-boss-health-bar.158018/page-5#post-2053705
-*
+ * 
 * @author James Mortemore
-*/
-
+ */
 public class v1_7 extends FakeDragon {
-	private Object dragon;
-	private int id;
 
-	public v1_7(String name, Location loc) {
-		super(name, loc);
-	}
+    private Object dragon;
+    private int id;
 
-	@Override
-	public Object getSpawnPacket() {
-		Class<?> Entity = Util.getCraftClass("Entity");
-		Class<?> EntityLiving = Util.getCraftClass("EntityLiving");
-		Class<?> EntityEnderDragon = Util.getCraftClass("EntityEnderDragon");
-		Object packet = null;
-		try {
-			dragon = EntityEnderDragon.getConstructor(Util.getCraftClass("World")).newInstance(getWorld());
+    public v1_7(String name, Location loc) {
+        super(name, loc);
+    }
 
-			Method setLocation = Util.getMethod(EntityEnderDragon, "setLocation", new Class<?>[] { double.class, double.class, double.class, float.class, float.class });
-			setLocation.invoke(dragon, getX(), getY(), getZ(), getPitch(), getYaw());
+    @Override
+    public Object getSpawnPacket() {
+        Class<?> Entity = Util.getCraftClass("Entity");
+        Class<?> EntityLiving = Util.getCraftClass("EntityLiving");
+        Class<?> EntityEnderDragon = Util.getCraftClass("EntityEnderDragon");
+        Object packet = null;
+        try {
+            dragon = EntityEnderDragon.getConstructor(Util.getCraftClass("World")).newInstance(getWorld());
 
-			Method setInvisible = Util.getMethod(EntityEnderDragon, "setInvisible", new Class<?>[] { boolean.class });
-			setInvisible.invoke(dragon, isVisible());
+            Method setLocation = Util.getMethod(EntityEnderDragon, "setLocation", new Class<?>[]{double.class, double.class, double.class, float.class, float.class});
+            setLocation.invoke(dragon, getX(), getY(), getZ(), getPitch(), getYaw());
 
-			Method setCustomName = Util.getMethod(EntityEnderDragon, "setCustomName", new Class<?>[] { String.class });
-			setCustomName.invoke(dragon, name);
+            Method setInvisible = Util.getMethod(EntityEnderDragon, "setInvisible", new Class<?>[]{boolean.class});
+            setInvisible.invoke(dragon, isVisible());
 
-			Method setHealth = Util.getMethod(EntityEnderDragon, "setHealth", new Class<?>[] { float.class });
-			setHealth.invoke(dragon, health);
+            Method setCustomName = Util.getMethod(EntityEnderDragon, "setCustomName", new Class<?>[]{String.class});
+            setCustomName.invoke(dragon, name);
 
-			Field motX = Util.getField(Entity, "motX");
-			motX.set(dragon, getXvel());
+            Method setHealth = Util.getMethod(EntityEnderDragon, "setHealth", new Class<?>[]{float.class});
+            setHealth.invoke(dragon, health);
 
-			Field motY = Util.getField(Entity, "motX");
-			motY.set(dragon, getYvel());
+            Field motX = Util.getField(Entity, "motX");
+            motX.set(dragon, getXvel());
 
-			Field motZ = Util.getField(Entity, "motX");
-			motZ.set(dragon, getZvel());
+            Field motY = Util.getField(Entity, "motX");
+            motY.set(dragon, getYvel());
 
-			Method getId = Util.getMethod(EntityEnderDragon, "getId", new Class<?>[] {});
-			this.id = (Integer) getId.invoke(dragon);
+            Field motZ = Util.getField(Entity, "motX");
+            motZ.set(dragon, getZvel());
 
-			Class<?> PacketPlayOutSpawnEntityLiving = Util.getCraftClass("PacketPlayOutSpawnEntityLiving");
+            Method getId = Util.getMethod(EntityEnderDragon, "getId", new Class<?>[]{});
+            this.id = (Integer) getId.invoke(dragon);
 
-			packet = PacketPlayOutSpawnEntityLiving.getConstructor(new Class<?>[] { EntityLiving }).newInstance(dragon);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
+            Class<?> PacketPlayOutSpawnEntityLiving = Util.getCraftClass("PacketPlayOutSpawnEntityLiving");
 
-		return packet;
-	}
+            packet = PacketPlayOutSpawnEntityLiving.getConstructor(new Class<?>[]{EntityLiving}).newInstance(dragon);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public Object getDestroyPacket() {
-		Class<?> PacketPlayOutEntityDestroy = Util.getCraftClass("PacketPlayOutEntityDestroy");
+        return packet;
+    }
 
-		Object packet = null;
-		try {
-			packet = PacketPlayOutEntityDestroy.newInstance();
-			Field a = PacketPlayOutEntityDestroy.getDeclaredField("a");
-			a.setAccessible(true);
-			a.set(packet, new int[] { id });
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
+    @Override
+    public Object getDestroyPacket() {
+        Class<?> PacketPlayOutEntityDestroy = Util.getCraftClass("PacketPlayOutEntityDestroy");
 
-		return packet;
-	}
+        Object packet = null;
+        try {
+            packet = PacketPlayOutEntityDestroy.newInstance();
+            Field a = PacketPlayOutEntityDestroy.getDeclaredField("a");
+            a.setAccessible(true);
+            a.set(packet, new int[]{id});
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public Object getMetaPacket(Object watcher) {
-		Class<?> DataWatcher = Util.getCraftClass("DataWatcher");
+        return packet;
+    }
 
-		Class<?> PacketPlayOutEntityMetadata = Util.getCraftClass("PacketPlayOutEntityMetadata");
+    @Override
+    public Object getMetaPacket(Object watcher) {
+        Class<?> DataWatcher = Util.getCraftClass("DataWatcher");
 
-		Object packet = null;
-		try {
-			packet = PacketPlayOutEntityMetadata.getConstructor(new Class<?>[] { int.class, DataWatcher, boolean.class }).newInstance(id, watcher, true);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
+        Class<?> PacketPlayOutEntityMetadata = Util.getCraftClass("PacketPlayOutEntityMetadata");
 
-		return packet;
-	}
+        Object packet = null;
+        try {
+            packet = PacketPlayOutEntityMetadata.getConstructor(new Class<?>[]{int.class, DataWatcher, boolean.class}).newInstance(id, watcher, true);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public Object getTeleportPacket(Location loc) {
-		Class<?> PacketPlayOutEntityTeleport = Util.getCraftClass("PacketPlayOutEntityTeleport");
+        return packet;
+    }
 
-		Object packet = null;
+    @Override
+    public Object getTeleportPacket(Location loc) {
+        Class<?> PacketPlayOutEntityTeleport = Util.getCraftClass("PacketPlayOutEntityTeleport");
 
-		try {
-			packet = PacketPlayOutEntityTeleport.getConstructor(new Class<?>[] { int.class, int.class, int.class, int.class, byte.class, byte.class }).newInstance(this.id, loc.getBlockX() * 32, loc.getBlockY() * 32, loc.getBlockZ() * 32, (byte) ((int) loc.getYaw() * 256 / 360), (byte) ((int) loc.getPitch() * 256 / 360));
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
+        Object packet = null;
 
-		return packet;
-	}
+        try {
+            packet = PacketPlayOutEntityTeleport.getConstructor(new Class<?>[]{int.class, int.class, int.class, int.class, byte.class, byte.class}).newInstance(this.id, loc.getBlockX() * 32, loc.getBlockY() * 32, loc.getBlockZ() * 32, (byte) ((int) loc.getYaw() * 256 / 360), (byte) ((int) loc.getPitch() * 256 / 360));
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
-	@Override
-	public Object getWatcher() {
-		Class<?> Entity = Util.getCraftClass("Entity");
-		Class<?> DataWatcher = Util.getCraftClass("DataWatcher");
+        return packet;
+    }
 
-		Object watcher = null;
-		try {
-			watcher = DataWatcher.getConstructor(new Class<?>[] { Entity }).newInstance(dragon);
-			Method a = Util.getMethod(DataWatcher, "a", new Class<?>[] { int.class, Object.class });
+    @Override
+    public Object getWatcher() {
+        Class<?> Entity = Util.getCraftClass("Entity");
+        Class<?> DataWatcher = Util.getCraftClass("DataWatcher");
 
-			a.invoke(watcher, 0, isVisible() ? (byte) 0 : (byte) 0x20);
-			a.invoke(watcher, 6, (Float) health);
-			a.invoke(watcher, 7, (Integer) 0);
-			a.invoke(watcher, 8, (Byte) (byte) 0);
-			a.invoke(watcher, 10, name);
-			a.invoke(watcher, 11, (Byte) (byte) 1);
-		} catch (IllegalArgumentException e) {
+        Object watcher = null;
+        try {
+            watcher = DataWatcher.getConstructor(new Class<?>[]{Entity}).newInstance(dragon);
+            Method a = Util.getMethod(DataWatcher, "a", new Class<?>[]{int.class, Object.class});
 
-			e.printStackTrace();
-		} catch (SecurityException e) {
+            a.invoke(watcher, 0, isVisible() ? (byte) 0 : (byte) 0x20);
+            a.invoke(watcher, 6, (Float) health);
+            a.invoke(watcher, 7, (Integer) 0);
+            a.invoke(watcher, 8, (Byte) (byte) 0);
+            a.invoke(watcher, 10, name);
+            a.invoke(watcher, 11, (Byte) (byte) 1);
+        } catch (IllegalArgumentException e) {
 
-			e.printStackTrace();
-		} catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
 
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
 
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
 
-			e.printStackTrace();
-		} catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
 
-			e.printStackTrace();
-		}
-		return watcher;
-	}
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+
+            e.printStackTrace();
+        }
+        return watcher;
+    }
 }

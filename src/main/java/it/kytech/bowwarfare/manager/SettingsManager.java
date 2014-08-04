@@ -119,7 +119,7 @@ public class SettingsManager {
 
     public FileConfiguration getSpawns() {
         return spawns;
-    }    
+    }
 
     public FileConfiguration getMessageConfig() {
         return messages;
@@ -203,7 +203,7 @@ public class SettingsManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }    
+    }
 
     public void saveMessages() {
         try {
@@ -217,11 +217,11 @@ public class SettingsManager {
         Set<String> values = system.getConfigurationSection("bw-system.arenas." + gameid + ".flags").getKeys(true);
 
         for (String flag : values.toArray(new String[0])) {
-            if(flag.contains(type.getGametypeName().toLowerCase())){
+            if (flag.contains(type.getGametypeName().toLowerCase())) {
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -277,7 +277,7 @@ public class SettingsManager {
 
     public void loadFile(String file) {
         File t = new File(p.getDataFolder(), file);
-        System.out.println("Writing new file: " + t.getName());
+        BowWarfare.$("Writing new file: " + t.getName());
 
         try {
             t.createNewFile();

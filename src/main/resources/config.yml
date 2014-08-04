@@ -90,8 +90,8 @@ rollback:
 #SQL server. These settings will
 #be used for  the online webstats
 #Prefix is what all tables used for 
-#Bow Warfare will be
-#prefixed with. This should stay the same
+#Bow Warfare will be prefixed with.
+#This should stay the same
 #for most cases.
 sql:
   host: 'localhost'
@@ -106,17 +106,10 @@ sql:
 ######################  Economy ###########################
 ###########################################################
 
-#Can be written both negative and positive values​​.
-#the money you win is a win singiolo player in case of winning.
-#Similarly loose is the price that each player will have to pay.
-#kill is the price that will be given to the player who makes a kill.
-#death is similar to kill, it's the price to pay when you are killed.
+#Enable or disable economy,
+#prices are calculated on points (see Stats section).
 economy:
   enabled: false
-  win: 5
-  loose: -1
-  kill: 1
-  death: 0
   
   
 ###########################################################
@@ -129,16 +122,17 @@ economy:
 
 stats:
   enabled: false
-  webserver:
-    enabled: false
-    port: 8080
+
   points:
     kill: 10
     win: 100
+    loose: -20
     position: 7
+    price: 1
     killstreak:
       base: 10
       multiplier: 2
+
   killstreak:
     level1: '&e{player}&7 got a Double Kill!'
     level2: '&e{player}&9 got a Multi Kill!'

@@ -36,7 +36,7 @@ public class FileCache {
         try {
             scan = new Scanner(f);
         } catch (Exception e) {
-            System.out.println("Bow Warfare webstats - Could not load page: " + pagename + "    " + f.getAbsolutePath());
+            BowWarfare.$("Bow Warfare webstats - Could not load page: " + pagename + "    " + f.getAbsolutePath());
         }
         String data = "";
 

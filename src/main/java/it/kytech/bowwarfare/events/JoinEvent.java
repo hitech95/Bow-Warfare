@@ -1,5 +1,6 @@
 package it.kytech.bowwarfare.events;
 
+import it.kytech.bowwarfare.BowWarfare;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -34,7 +35,7 @@ public class JoinEvent implements Listener {
         if ((p.isOp() || p.hasPermission("bw.system.updatenotify")) && SettingsManager.getInstance().getConfig().getBoolean("check-for-update", true)) {
             Bukkit.getServer().getScheduler().scheduleAsyncDelayedTask(plugin, new Runnable() {
                 public void run() {
-                    System.out.println("[BW] Checking for updates");
+                    BowWarfare.$("[BW] Checking for updates");
                     new UpdateChecker().check(p, plugin);
                 }
             }, 60L);

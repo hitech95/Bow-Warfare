@@ -8,12 +8,12 @@ import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
 import it.kytech.bowwarfare.api.PlayerJoinArenaEvent;
 import it.kytech.bowwarfare.api.PlayerKilledEvent;
 import it.kytech.bowwarfare.api.PlayerLeaveArenaEvent;
-import it.kytech.bowwarfare.gametype.FreeForAll;
+import it.kytech.bowwarfare.gametype.type.FreeForAll;
 import it.kytech.bowwarfare.gametype.IGametype;
-import it.kytech.bowwarfare.gametype.LastManStanding;
-import it.kytech.bowwarfare.gametype.TeamDeathMatch;
+import it.kytech.bowwarfare.gametype.type.LastManStanding;
+import it.kytech.bowwarfare.gametype.type.TeamDeathMatch;
 import it.kytech.bowwarfare.logging.QueueManager;
-import it.kytech.bowwarfare.stats.StatsManager;
+import it.kytech.bowwarfare.manager.StatsManager;
 import it.kytech.bowwarfare.manager.EconomyManager;
 import it.kytech.bowwarfare.util.ItemReader;
 import java.util.ArrayList;
@@ -278,7 +278,7 @@ public class Game {
         }
 
         if (!hasAdded) {
-            
+
             if (config.getBoolean("enable-player-queue")) {
                 if (!queue.contains(p)) {
                     queue.add(p);
@@ -297,7 +297,7 @@ public class Game {
             clearInv(p);
             restoreInv(p);
         } else {
-            
+
             if (getName() == null) {
                 msgmgr.sendFMessage(PrefixType.INFO, "game.playerjoining", p, "arenaid-" + gameID);
             } else {
@@ -311,7 +311,7 @@ public class Game {
 
             setGameInventory(p);
 
-            LobbyManager.getInstance().updateWall(gameID);            
+            LobbyManager.getInstance().updateWall(gameID);
 
             return true;
         }
@@ -523,7 +523,7 @@ public class Game {
                     return;
                 }
 
-                sm.playerDied(p, activePlayers.size(), gameID, new Date().getTime() - startTime);
+                sm.playerDied(p, gameID);
 
                 switch (p.getLastDamageCause().getCause()) {
                     case ENTITY_ATTACK:
@@ -533,7 +533,7 @@ public class Game {
                                     "killer-" + ((killer != null) ? ((BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName()) : "Unknown"),
                                     "item-" + ((killer != null) ? ItemReader.getFriendlyItemName(killer.getItemInHand().getType()) : "Unknown Item"));
                             if (killer != null && p != null && activePlayers.contains(killer)) {
-                                sm.addKill(killer, p, gameID);
+                                sm.addKill(killer, gameID);
                             }
                             pk = new PlayerKilledEvent(p, this, killer, p.getLastDamageCause().getCause());
                         } else {
@@ -548,14 +548,11 @@ public class Game {
                                 "player-" + (BowWarfare.auth.contains(p.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + p.getName(),
                                 "killer-" + ((killer != null) ? ((BowWarfare.auth.contains(killer.getName()) ? ChatColor.DARK_RED + "" + ChatColor.BOLD : "") + killer.getName()) : "Unknown"));
                         if (killer != null && p != null && activePlayers.contains(killer)) {
-                            sm.addKill(killer, p, gameID);
+                            sm.addKill(killer, gameID);
                         }
                         pk = new PlayerKilledEvent(p, this, (killer != null) ? killer : null, p.getLastDamageCause().getCause());
-                        EconomyManager.getInstance().executeTask(EconomyManager.kill, killer);
                         break;
                 }
-
-                EconomyManager.getInstance().executeTask(EconomyManager.death, p);
 
                 Bukkit.getServer().getPluginManager().callEvent(pk);
                 setGameInventory(p);
@@ -607,7 +604,9 @@ public class Game {
         BarAPI.removeBar(p);
         p.setScoreboard(sbManager.getNewScoreboard());
 
-        sm.removePlayer(p, gameID);
+        if (state != GameState.INGAME) {
+            sm.removePlayer(p, gameID);
+        }
 
         activePlayers.remove(p);
         inactivePlayers.remove(p);
@@ -651,7 +650,7 @@ public class Game {
      *
      */
     public void playerWin(Player victim, Player win) {
-        if (GameState.DISABLED == state) {
+        if (state == GameState.DISABLED) {
             return;
         }
 
@@ -661,13 +660,12 @@ public class Game {
             win.getName(), "", "Won the ", "Bow Warfare!"
         }, gameID);
 
-        sm.playerWin(win, gameID, new Date().getTime() - startTime);
-        sm.saveGame(gameID, win, getActivePlayers() + getInactivePlayers(), new Date().getTime() - startTime);
+        sm.playerWin(win, gameID);
+        sm.saveGame(gameID, win, new Date().getTime() - startTime);
 
         state = GameState.FINISHING;
 
         for (Player acP : activePlayers) {
-            System.out.println("Restore Player" + acP.getName());
 
             acP.teleport(SettingsManager.getInstance().getLobbySpawn());
 
@@ -688,10 +686,8 @@ public class Game {
         LobbyManager.getInstance().updateWall(gameID);
         MessageManager.getInstance().broadcastFMessage(PrefixType.INFO, "broadcast.gameend", "arena-" + gameID);
 
-        System.out.println("Clear Spectators");
         clearSpectators();
         endGame();
-        System.out.println("Call END GAME");
     }
 
     /*
@@ -756,7 +752,7 @@ public class Game {
         activePlayers.clear();
         inactivePlayers.clear();
         availableGameTypes.clear();
-        
+
         vote = 0;
         voted.clear();
 
@@ -835,7 +831,6 @@ public class Game {
 
     public void clearSpectators() {
         while (spectators.size() > 0) {
-            System.out.println("Remove Spectator:" + spectators.get(0).getName());
             removeSpectator(spectators.get(0));
         }
 
@@ -845,7 +840,7 @@ public class Game {
 
     public HashMap< Player, Integer> getNextSpec() {
         return nextSpectator;
-    }    
+    }
 
     public void removeFromQueue(Player p) {
         queue.remove(p);
@@ -1089,11 +1084,11 @@ public class Game {
     public void addTask(int scheduleTask) {
         tasks.add(scheduleTask);
     }
-    
+
     public void removeTask(int scheduleTask) {
         tasks.remove((Integer) scheduleTask);
     }
-    
+
     public boolean containsTask(int scheduleTask) {
         return tasks.contains((Integer) scheduleTask);
     }
