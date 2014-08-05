@@ -54,7 +54,7 @@ public abstract class DummyGametype implements IGametype {
         }
     }
 
-    private void loadDefaultSettings() {
+    protected void loadDefaultSettings() {
     }
 
     protected void saveConfig() {

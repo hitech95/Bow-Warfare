@@ -1,6 +1,8 @@
 package it.kytech.bowwarfare.manager;
 
+import it.kytech.bowwarfare.BowWarfare;
 import it.kytech.bowwarfare.hooks.HookManager;
+import java.util.logging.Level;
 import net.milkbowl.vault.economy.Economy;
 
 import org.bukkit.Bukkit;
@@ -21,10 +23,16 @@ public class EconomyManager {
     }
 
     public void setup() {
-        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
 
-        if (economyProvider != null) {
-            economy = economyProvider.getProvider();
+        try {
+            RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.economy.Economy.class);
+
+            if (economyProvider != null) {
+                economy = economyProvider.getProvider();
+            }
+        } catch (Exception e) {
+            economy = null;
+            BowWarfare.$(Level.WARNING, "Vault not found, Economy is OFF!");
         }
         enabled = (economy != null);
     }

@@ -755,13 +755,17 @@ public class Game {
 
         vote = 0;
         voted.clear();
+        
+        gametype = -1;
 
-        loadAvailableGameModes();
+        if (!disabled) {
+            loadAvailableGameModes();
 
-        if (settings.get(SettingsManager.OptionFlag.GAMETYPE) != null) {
-            setAnGamemode();
-        } else {
-            gametype = -1;
+            if (settings.get(SettingsManager.OptionFlag.GAMETYPE) != null) {
+                setAnGamemode();
+            } else {
+                gametype = -1;
+            }
         }
 
         state = GameState.RESETING;

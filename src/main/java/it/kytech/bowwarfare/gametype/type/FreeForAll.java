@@ -56,6 +56,7 @@ public class FreeForAll extends DummyGametype {
         }
     }
 
+    @Override
     protected void loadDefaultSettings() {
         settings.put(SettingsManager.OptionFlag.FFAMAXP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".maxp"));
         settings.put(SettingsManager.OptionFlag.FFAKILL, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".kill"));

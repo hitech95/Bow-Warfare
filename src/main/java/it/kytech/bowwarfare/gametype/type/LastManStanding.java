@@ -76,7 +76,8 @@ public class LastManStanding extends DummyGametype {
         }
     }   
 
-    private void loadDefaultSettings() {
+    @Override
+    protected void loadDefaultSettings() {
         settings.put(OptionFlag.LMSLIFE, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".life"));
         settings.put(OptionFlag.LMSMINP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".minp"));
         settings.put(OptionFlag.LMSTIME, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".time"));

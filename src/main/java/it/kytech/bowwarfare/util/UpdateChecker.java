@@ -35,7 +35,7 @@ public class UpdateChecker {
             data += "&" + URLEncoder.encode("port", "UTF-8") + "=" + URLEncoder.encode("" + port, "UTF-8");
             data += "&" + URLEncoder.encode("a", "UTF-8") + "=" + URLEncoder.encode("" + arenas, "UTF-8");
 
-            URL url = new URL("http://kytech.it/plugins/BowWarfare/updatecheck.php");
+            URL url = new URL("http://kytech.it/minecraft/plugins/BowWarfare/updatecheck.php");
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());

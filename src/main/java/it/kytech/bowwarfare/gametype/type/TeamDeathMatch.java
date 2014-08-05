@@ -91,7 +91,8 @@ public class TeamDeathMatch extends DummyGametype {
         }
     }    
 
-    private void loadDefaultSettings() {
+    @Override
+    protected void loadDefaultSettings() {
         settings.put(SettingsManager.OptionFlag.TDMMAXP, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".maxp"));
         settings.put(SettingsManager.OptionFlag.TDMKILL, SettingsManager.getInstance().getConfig().getInt("limits." + NAME + ".kill"));
 

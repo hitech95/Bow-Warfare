@@ -107,7 +107,7 @@ sql:
 ###########################################################
 
 #Enable or disable economy,
-#prices are calculated on points (see Stats section).
+#Prices are calculated on points (see Stats section).
 economy:
   enabled: false
   

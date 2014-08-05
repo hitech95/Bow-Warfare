@@ -3,11 +3,7 @@ package it.kytech.bowwarfare.manager;
 import it.kytech.bowwarfare.PlayerStatsSession;
 import com.google.common.collect.Lists;
 import it.kytech.bowwarfare.BowWarfare;
-import it.kytech.bowwarfare.manager.DatabaseManager;
-import it.kytech.bowwarfare.manager.GameManager;
-import it.kytech.bowwarfare.manager.MessageManager;
 import it.kytech.bowwarfare.manager.MessageManager.PrefixType;
-import it.kytech.bowwarfare.manager.SettingsManager;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -51,22 +47,24 @@ public class StatsManager {
         }
 
         try {
+
             DatabaseMetaData dbm = dbman.getMysqlConnection().getMetaData();
 
-            PreparedStatement player = dbman.createStatement(
-                    " CREATE TABLE " + SettingsManager.getSqlPrefix() + "`roundstats` ("
+            PreparedStatement round = dbman.createStatement(
+                    " CREATE TABLE `" + SettingsManager.getSqlPrefix() + "roundstats` ("
                     + "`id` int(11) NOT NULL AUTO_INCREMENT,"
                     + "`arena` int(11) NOT NULL,"
-                    + "`winner` varchar(32) NOT NULL,"
+                    + "`winner` varchar(36) NOT NULL,"
                     + "`time` date NOT NULL,"
                     + "PRIMARY KEY (`id`)"
                     + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
             );
 
-            PreparedStatement round = dbman.createStatement(
-                    " CREATE TABLE " + SettingsManager.getSqlPrefix() + "`playerstats` ("
+            PreparedStatement player = dbman.createStatement(
+                    " CREATE TABLE `" + SettingsManager.getSqlPrefix() + "playerstats` ("
                     + "`id` int(11) NOT NULL AUTO_INCREMENT,"
                     + "`round` int(11) NOT NULL,"
+                    + "`player` varchar(36) NOT NULL,"
                     + "`arenaId` int(11) NOT NULL,"
                     + "`point` int(11) NOT NULL,"
                     + "`kills` int(11) NOT NULL,"
@@ -77,9 +75,9 @@ public class StatsManager {
                     + "`k4` int(11) NOT NULL,"
                     + "`k5` int(11) NOT NULL,"
                     + "PRIMARY KEY (`id`),"
-                    + "KEY `round` (`round`)"
-                    + "ADD FOREIGN KEY (`round`) REFERENCES `roundstats` (`id`);"
-                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 "
+                    + "KEY `round` (`round`),"
+                    + "FOREIGN KEY (`round`) REFERENCES `" + SettingsManager.getSqlPrefix() + "roundstats` (`id`)"
+                    + ") ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
             );
 
             ResultSet roundTable = dbm.getTables(null, null, SettingsManager.getSqlPrefix() + "roundstats", null);
@@ -92,7 +90,8 @@ public class StatsManager {
                 player.execute();
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            enabled = false;
+            BowWarfare.$(Level.SEVERE, e.getLocalizedMessage());
         }
     }
 
@@ -162,16 +161,17 @@ public class StatsManager {
                 ArrayList<Integer> killStreak = new ArrayList(s.getKillStreak());
 
                 addSQL("INSERT INTO " + SettingsManager.getSqlPrefix() + "playerstats VALUES("
-                        + "NULL, "
-                        + lastID + ", "
-                        + arenaid + ", "
-                        + s.calcPoints() + ", "
-                        + s.kills + ", "
-                        + s.death + ", "
-                        + killStreak.get(0) + ", "
-                        + killStreak.get(1) + ", "
-                        + killStreak.get(2) + ", "
-                        + killStreak.get(3) + ", "
+                        + "NULL,"
+                        + lastID + ","
+                        + "'" + s.player.getUniqueId() + "',"
+                        + arenaid + ","
+                        + s.calcPoints() + ","
+                        + s.kills + ","
+                        + s.death + ","
+                        + killStreak.get(0) + ","
+                        + killStreak.get(1) + ","
+                        + killStreak.get(2) + ","
+                        + killStreak.get(3) + ","
                         + killStreak.get(4)
                         + ")");
             }
