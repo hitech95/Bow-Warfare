@@ -1,0 +1,3 @@
+rootProject.name = 'BowWarfare'
+include ':bukkit'
+include ':sponge'
