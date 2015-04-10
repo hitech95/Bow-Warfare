@@ -1,0 +1,13 @@
+group = "it.kytech.bowwarfare"
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
