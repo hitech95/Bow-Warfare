@@ -37,7 +37,7 @@ public interface IArena {
 
     boolean containsPlayer(Player player);
 
-    //boolean containsBlock(BlockLoc block); // TODO BlockLoc don't exist?
+    boolean isInside(Location location);
 
     Location firstCorner();
 
