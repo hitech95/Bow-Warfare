@@ -17,10 +17,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.game;
+
+import it.kytech.bowwarfare.api.score.IScore;
+import org.spongepowered.api.entity.player.Player;
 
 /**
  * Created by M2K on 10/04/2015.
  */
-public class PlayerJoin {
+public interface IGameSession {
+
+    IGameSession getSnapshot();
+
+    IArena getArena();
+
+    IGameMode getGameMode();
+
+    Player[] getPlayers();
+
+    int getPlayerCount();
+
+    Player[] getPlayers(ITeam team);
+
+    ITeam[] getTeams();
+
+    int getTeamCount();
+
+    ITeam getTeamBySlug(String slug);
+
+    ITeam getTeamByPlayer(Player player);
+
+    IScore getScore();
+
+    IScore getScore(Player player);
+
+    IScore getScore(ITeam team);
+
 }

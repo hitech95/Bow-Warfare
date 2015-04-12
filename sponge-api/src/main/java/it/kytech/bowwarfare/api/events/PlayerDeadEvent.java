@@ -17,10 +17,36 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.manager;
+package it.kytech.bowwarfare.api.events;
+
+import it.kytech.bowwarfare.api.game.IGameSession;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.event.AbstractEvent;
 
 /**
  * Created by M2K on 10/04/2015.
  */
-public class ArenaManager {
+public class PlayerDeadEvent extends AbstractEvent {
+
+    private Player deadPlayer;
+    private Player killerPlayer;
+    private IGameSession game;
+
+    public PlayerDeadEvent(Player deadPlayer, Player killerPlayer, IGameSession game) {
+        this.deadPlayer = deadPlayer;
+        this.killerPlayer = killerPlayer;
+        this.game = game;
+    }
+
+    public Player getPlayer() {
+        return deadPlayer;
+    }
+
+    public Player getKiller() {
+        return killerPlayer;
+    }
+
+    public IGameSession getGame() {
+        return game;
+    }
 }

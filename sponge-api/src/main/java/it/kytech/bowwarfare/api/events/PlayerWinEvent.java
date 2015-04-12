@@ -19,8 +19,27 @@
  */
 package it.kytech.bowwarfare.api.events;
 
+import it.kytech.bowwarfare.api.game.IGameSession;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.event.AbstractEvent;
+
 /**
  * Created by M2K on 10/04/2015.
  */
-public class PlayerKillStreak {
+public class PlayerWinEvent extends AbstractEvent {
+    private Player player;
+    private IGameSession game;
+
+    public PlayerWinEvent(Player player, IGameSession game) {
+        this.player = player;
+        this.game = game;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public IGameSession getGame() {
+        return game;
+    }
 }

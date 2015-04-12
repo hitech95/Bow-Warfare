@@ -17,10 +17,29 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.game;
+
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.world.Location;
 
 /**
- * Created by M2K on 10/04/2015.
+ * Created by M2K on 12/04/2015.
  */
-public class TeamLose {
+public interface IArena {
+
+    int getID();
+
+    String getName();
+
+    String getDescription();
+
+    String[] getAuthors();
+
+    boolean containsPlayer(Player player);
+
+    //boolean containsBlock(BlockLoc block); // TODO BlockLoc don't exist?
+
+    Location firstCorner();
+
+    Location secondCorner();
 }

@@ -1,6 +1,7 @@
 // Apply plugins
 apply plugin: 'java' // Support for Java
 apply plugin: 'maven' // Maven integration
+apply plugin: 'idea' // Idea integration
 apply plugin: 'license' // Automatic license headers
 
 version = '1.8.0-1.0'
@@ -42,7 +43,7 @@ jar {
 
 // Include LICENSE.txt in all jars
 processResources {
-    from new File(rootProject.getProjectDir(), "LICENSE.txt")
+    from new File(rootProject.getProjectDir(), "LICENSE")
 }
 
 // Configure license headers
@@ -52,7 +53,7 @@ license {
     ext.url = rootProject.authorUrl
     ext.year = rootProject.inceptionYear
 
-    header rootProject.file('HEADER.txt')
+    header rootProject.file('HEADER')
 
     mapping {
         java = 'JAVADOC_STYLE'

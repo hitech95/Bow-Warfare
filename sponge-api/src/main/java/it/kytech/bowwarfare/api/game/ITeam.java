@@ -17,10 +17,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.game;
+
+import org.spongepowered.api.text.format.TextColor;
 
 /**
- * Created by M2K on 10/04/2015.
+ * This is a Team, you can access the Name and other parm of the team
  */
-public class GameStart {
+public interface ITeam {
+
+    String getName();
+
+    String getSlug();
+
+    String getDescription();
+
+    TextColor getColor();
 }

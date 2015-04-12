@@ -17,32 +17,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.score;
 
-import it.kytech.bowwarfare.api.IGameSession;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.AbstractEvent;
+import java.util.HashMap;
 
 /**
- * This is fired when someone capture a flag
+ * Created by M2K on 12/04/2015.
  */
-public class FlagCaptured extends AbstractEvent {
+public interface IScore {
 
-    private Player flagHolder;
-    private IGameSession game;
+    int getScore(String key);
 
-    public FlagCaptured(Player flagHolder, IGameSession game) {
-        this.flagHolder = flagHolder;
-        this.game = game;
-    }
-
-    public Player getPlayerHolder() {
-        return flagHolder;
-    }
-
-    public IGameSession getGame() {
-        return game;
-    }
-
-
+    HashMap getScoreData();
 }

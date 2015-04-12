@@ -19,8 +19,30 @@
  */
 package it.kytech.bowwarfare.api.events;
 
+import it.kytech.bowwarfare.api.game.IGameSession;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.event.AbstractEvent;
+
 /**
- * Created by M2K on 10/04/2015.
+ * This is fired when someone capture a flag
  */
-public class TeamWin {
+public class FlagCapturedEvent extends AbstractEvent {
+
+    private Player flagHolder;
+    private IGameSession game;
+
+    public FlagCapturedEvent(Player flagHolder, IGameSession game) {
+        this.flagHolder = flagHolder;
+        this.game = game;
+    }
+
+    public Player getPlayer() {
+        return flagHolder;
+    }
+
+    public IGameSession getGame() {
+        return game;
+    }
+
+
 }
