@@ -17,15 +17,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.reference;
+package it.kytech.bowwarfare.api.events;
+
+import it.kytech.bowwarfare.api.IGameSession;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.event.AbstractEvent;
 
 /**
- * Created by M2K on 10/04/2015.
+ * This is fired when someone capture a flag
  */
-public class Reference {
-    public static final String MOD_ID = "bowwarfare";
-    public static final String MOD_NAME = "Bow Warfare";
-    public static final String MOD_VERSION = "1.8.0-1.0";
+public class FlagCaptured extends AbstractEvent {
 
-    public static final String[] MOD_AUTHORS = {"hitech95"};
+    private Player flagHolder;
+    private IGameSession game;
+
+    public FlagCaptured(Player flagHolder, IGameSession game) {
+        this.flagHolder = flagHolder;
+        this.game = game;
+    }
+
+    public Player getPlayerHolder() {
+        return flagHolder;
+    }
+
+    public IGameSession getGame() {
+        return game;
+    }
+
+
 }
