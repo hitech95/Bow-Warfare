@@ -32,23 +32,27 @@ import org.spongepowered.api.util.command.source.CommandBlockSource;
 import org.spongepowered.api.util.command.source.ConsoleSource;
 import org.spongepowered.api.util.command.spec.CommandExecutor;
 
-import java.util.HashMap;
-
 /**
  * Created by Hitech95 on 25/06/2015.
  */
 public class Help implements CommandExecutor {
 
-    private HashMap<String, Integer> helpinfo;
+    //private HashMap<String, Integer> helpinfo;
+    private boolean isSub;
 
     public Help() {
-        helpinfo = new HashMap<String, Integer>();
-        loadHelpInfo();
+        this(false);
+    }
+
+    public Help(boolean isSub) {
+        this.isSub = isSub;
+        //helpinfo = new HashMap<String, Integer>();
+        //loadHelpInfo();
     }
 
     private void loadHelpInfo() {
-        helpinfo.put("join", 1);
-        helpinfo.put("vote", 1);
+        //helpinfo.put("join", 1);
+        //helpinfo.put("vote", 1);
     }
 
     @Override
@@ -61,28 +65,29 @@ public class Help implements CommandExecutor {
             return CommandResult.success();
         }
 
-        if (!args.<String>getOne("help").equals(Optional.<String>absent()) &&
-                !args.<String>getOne("level").equals(Optional.<String>absent())) {
+        if (isSub || !args.<String>getOne("help").equals(Optional.<String>absent())) {
+            if (!args.<String>getOne("level").equals(Optional.<String>absent())) {
 
-            String command = args.<String>getOne("help").get().toLowerCase();
-            String level = args.<String>getOne("level").get().toLowerCase();
+                String command = (isSub) ? "help" : args.<String>getOne("help").get().toLowerCase();
+                String level = args.<String>getOne("level").get().toLowerCase();
 
-            if (command.equals("help")) {
-                switch (level) {
-                    case "player":
-                        help(src, 1);
-                        break;
-                    case "staff":
-                        help(src, 2);
-                        break;
-                    case "admin":
-                        help(src, 3);
-                        break;
-                    default:
-                        src.sendMessage(Texts.builder("\"" + level + "\" is not a valid page! Valid pages are [player], [staff], [admin].").color(TextColors.GOLD).build());
+                if (command.equals("help")) {
+                    switch (level) {
+                        case "player":
+                            help(src, 1);
+                            break;
+                        case "staff":
+                            help(src, 2);
+                            break;
+                        case "admin":
+                            help(src, 3);
+                            break;
+                        default:
+                            src.sendMessage(Texts.builder("\"" + level + "\" is not a valid page! Valid pages are [player], [staff], [admin].").color(TextColors.GOLD).build());
+                    }
                 }
+                return CommandResult.success();
             }
-            return CommandResult.success();
         }
         src.sendMessage(Texts.builder(Reference.MOD_NAME + " Version: " + Reference.MOD_VERSION).color(TextColors.DARK_RED).build());
         src.sendMessage(Texts.builder("Type /bw help <player | staff | admin> for command information").color(TextColors.DARK_RED).build());

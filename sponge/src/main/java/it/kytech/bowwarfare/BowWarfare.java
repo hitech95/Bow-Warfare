@@ -192,17 +192,19 @@ public class BowWarfare {
                 .executor(new Reload())
                 .build());
 
+        subcommands.put(Arrays.asList("help"), CommandSpec.builder()
+                .permission(Permission.Admin.RELOAD_SETTINGS)
+                .description(Texts.of("Help you to use BW commands"))
+                .arguments(
+                        GenericArguments.choices(Texts.of("level"),
+                                ImmutableMap.of("admin", "admin", "player", "player", "staff", "staff"))
+                )
+                .executor(new Help(true))
+                .build());
+
         CommandSpec bowCommand = CommandSpec.builder()
                 .description(Texts.of("BowWarfare Command"))
                 .permission(Permission.COMMAND)
-                .arguments(
-                        GenericArguments.optional(GenericArguments.choices(Texts.of("help"),
-                                        ImmutableMap.of("help", "help"))
-                        ),
-                        GenericArguments.firstParsing(GenericArguments.choices(Texts.of("level"),
-                                        ImmutableMap.of("admin", "admin", "player", "player", "staff", "staff"))
-                        )
-                )
                 .children(subcommands)
                 .executor(new Help())
                 .build();
