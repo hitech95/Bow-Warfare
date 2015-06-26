@@ -13,11 +13,13 @@ Changelog
 ----
  - NONE 
  
-Available GameType
+GameType
 ----
  - Free For All (FFA)
  - Team Death Match (TDM)
  - Last Man Stand (LMS)
+ - Zombie (ZMB)
+ - Capture The Flag (CTF)
 
 Working
 ----
@@ -30,12 +32,19 @@ Bugs
 Working on
 ----
  - APIs
+ - Configuration Loaders
+ - Commands
 
 To Do
 ----
  - All
 
+How to contribute
+----
+To help you have to respect the conventions of Java, I asked to comment on the code so it's more understandable.
+I also asks to test it, so you avoid misunderstandings and delays.
+To integrate a change you can make a PR on github.
+
 License
 ----
-
-See LICENSE
+See the LICENSE file
