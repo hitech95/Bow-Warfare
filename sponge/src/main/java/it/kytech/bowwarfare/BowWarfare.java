@@ -1,19 +1,19 @@
 /**
  * This file is part of BowWarfare
- * <p>
+ *
  * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- * <p>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p>
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@ package it.kytech.bowwarfare;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
-import it.kytech.bowwarfare.commands.Help;
+import it.kytech.bowwarfare.commands.*;
 import it.kytech.bowwarfare.configuration.PluginConfiguration;
 import it.kytech.bowwarfare.reference.Permission;
 import it.kytech.bowwarfare.reference.Reference;
@@ -41,6 +41,9 @@ import org.spongepowered.api.util.command.args.GenericArguments;
 import org.spongepowered.api.util.command.spec.CommandSpec;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 
 /**
@@ -75,18 +78,143 @@ public class BowWarfare {
     @Subscribe
     public void Initalization(InitializationEvent event) {
 
+        HashMap<List<String>, CommandSpec> subcommands = new HashMap<>();
+
+        //User level commands
+        subcommands.put(Arrays.asList("vote"), CommandSpec.builder()
+                .permission(Permission.User.JOIN_LOBBY)
+                .description(Texts.of("Vote to start the game."))
+                .extendedDescription(Texts.of("Some game modes require a vote."))
+                .executor(new Vote())
+                .build());
+
+        subcommands.put(Arrays.asList("leave"), CommandSpec.builder()
+                .permission(Permission.User.JOIN_LOBBY)
+                .description(Texts.of("Leave the current game."))
+                .extendedDescription(Texts.of("Leave the current game and return to the hub or leave the queue."))
+                .executor(new Leave())
+                .build());
+
+        subcommands.put(Arrays.asList("join"), CommandSpec.builder()
+                .permission(Permission.User.JOIN_LOBBY)
+                .description(Texts.of("Join a game."))
+                .extendedDescription(Texts.of("If you specify the arena you will join directly!"))
+                .arguments(
+                        GenericArguments.optional(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new Join())
+                .build());
+
+        subcommands.put(Arrays.asList("spectate"), CommandSpec.builder()
+                .permission(Permission.User.JOIN_LOBBY)
+                .description(Texts.of("Become a spectator."))
+                .extendedDescription(Texts.of("Look the matches, you have to specify the arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new Spectate())
+                .build());
+
+        //Staff level commands
+        subcommands.put(Arrays.asList("enableArena"), CommandSpec.builder()
+                .permission(Permission.Staff.ENABLE_ARENA)
+                .description(Texts.of("Enable the specified arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new EnableArena())
+                .build());
+
+        subcommands.put(Arrays.asList("disableArena"), CommandSpec.builder()
+                .permission(Permission.Staff.DISABLE_ARENA)
+                .description(Texts.of("Disable the specified arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new DisableArena())
+                .build());
+
+        //Admin level commands
+        subcommands.put(Arrays.asList("start"), CommandSpec.builder()
+                .permission(Permission.Admin.ADD_LOBBY_WALL)
+                .description(Texts.of("Start a game."))
+                .extendedDescription(Texts.of("You must be in the game, or enter the arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new ForceStart())
+                .build());
+
+        subcommands.put(Arrays.asList("setLobby", "setlobbyspawn"), CommandSpec.builder()
+                .permission(Permission.Admin.SET_LOBBY_SPAWN)
+                .description(Texts.of("Read your inbox"))
+                .extendedDescription(Texts.of("Displays the server mails you received."))
+                .executor(new SetLobby()) //TODO add the correct Handler
+                .build());
+
+        subcommands.put(Arrays.asList("addWall"), CommandSpec.builder()
+                .permission(Permission.Admin.ADD_LOBBY_WALL)
+                .description(Texts.of("Add a world for the specified arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new AddWall())
+                .build());
+
+        subcommands.put(Arrays.asList("createArena"), CommandSpec.builder()
+                .permission(Permission.Admin.CREATE_ARENA)
+                .description(Texts.of("Read your inbox"))
+                .extendedDescription(Texts.of("Displays the server mails you received."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new CreateArena())
+                .build());
+
+        subcommands.put(Arrays.asList("deleteAarena"), CommandSpec.builder()
+                .permission(Permission.Admin.DELETE_ARENA)
+                .description(Texts.of("Delete the specified arena."))
+                .arguments(
+                        GenericArguments.onlyOne(GenericArguments.string(Texts.of("arena-slug")))
+                )
+                .executor(new DeleteArena())
+                .build());
+
+        subcommands.put(Arrays.asList("reload"), CommandSpec.builder()
+                .permission(Permission.Admin.RELOAD_SETTINGS)
+                .description(Texts.of("Reload the configuration"))
+                .extendedDescription(Texts.of("Displays the server mails you received."))
+                .arguments(
+                        GenericArguments.choices(Texts.of("type"),
+                                ImmutableMap.of("arena", "arena", "game", "game", "setting", "setting")
+                        )
+                )
+                .executor(new Reload())
+                .build());
 
         CommandSpec bowCommand = CommandSpec.builder()
                 .description(Texts.of("BowWarfare Command"))
                 .permission(Permission.COMMAND)
                 .arguments(
-                        GenericArguments.optional(GenericArguments.string(Texts.of("help"))),
-                        GenericArguments.optional(GenericArguments.choices(Texts.of("level"), ImmutableMap.of("admin", "player", "staff", "list")))
+                        GenericArguments.optional(GenericArguments.choices(Texts.of("help"),
+                                        ImmutableMap.of("help", "help"))
+                        ),
+                        GenericArguments.firstParsing(GenericArguments.choices(Texts.of("level"),
+                                        ImmutableMap.of("admin", "admin", "player", "player", "staff", "staff"))
+                        )
                 )
+                .children(subcommands)
                 .executor(new Help())
                 .build();
 
+        /*CommandSpec hubCommand = CommandSpec.builder()
+                .description(Texts.of("Go to the BowWarfare Hub"))
+                .permission(Permission.COMMAND)
+                .executor(new Leave())
+                .build();*/
+
         game.getCommandDispatcher().register(this, bowCommand, "bowwarfare", "bw");
+        //game.getCommandDispatcher().register(this, hubCommand, "/hub", "/spawn");
         logHelper.log("Init of BowWarfare");
     }
 

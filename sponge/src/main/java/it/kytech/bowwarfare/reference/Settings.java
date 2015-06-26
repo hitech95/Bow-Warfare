@@ -24,7 +24,7 @@ package it.kytech.bowwarfare.reference;
  */
 public class Settings {
     public static final boolean SHARED_CONFIG = false;
-
+    public static final String DATABASE_FOLDER = "db";
     public static final String ARENA_FOLDER = "arenas";
     public static final String ARENA_CONFIG = "data.conf";
 }
