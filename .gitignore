@@ -51,6 +51,7 @@ dependency-reduced-pom.xml
 .idea
 .project
 .settings
+.gradle
 build
 dist
 nbproject
