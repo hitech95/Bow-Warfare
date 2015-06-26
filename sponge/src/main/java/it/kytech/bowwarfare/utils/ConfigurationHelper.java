@@ -19,38 +19,27 @@
  */
 package it.kytech.bowwarfare.utils;
 
-import com.google.inject.Inject;
-import it.kytech.bowwarfare.reference.Settings;
-import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.spongepowered.api.service.config.DefaultConfig;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Created by M2K on 10/04/2015.
  */
 public class ConfigurationHelper {
 
-    private static ConfigurationHelper instance;
-
-    @Inject
-    @DefaultConfig(sharedRoot = Settings.SHARED_CONFIG)
-    private File defaultConfig;
-
-    @Inject
-    @DefaultConfig(sharedRoot = Settings.SHARED_CONFIG)
-    private ConfigurationLoader<CommentedConfigurationNode> configManager;
-
-    public static ConfigurationHelper getInstance() {
-        if (instance == null) {
-            instance = new ConfigurationHelper();
+    public static ConfigurationLoader getLoader(File config) throws IOException {
+        if (!config.exists()) {
+            config.getParentFile().mkdirs();
+            config.createNewFile();
         }
-
-        return instance;
+        return HoconConfigurationLoader.builder().setFile(config).build();
     }
 
-    public boolean isDebug() {
-        return true; //TODO read config from file
+    public static ConfigurationLoader getLoader(URL config) throws IOException {
+        return HoconConfigurationLoader.builder().setURL(config).build();
     }
 }

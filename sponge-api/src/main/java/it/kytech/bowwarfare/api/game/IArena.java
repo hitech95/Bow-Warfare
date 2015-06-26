@@ -21,6 +21,7 @@ package it.kytech.bowwarfare.api.game;
 
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.world.Location;
+import org.spongepowered.api.world.World;
 
 /**
  * Created by M2K on 12/04/2015.
@@ -28,6 +29,8 @@ import org.spongepowered.api.world.Location;
 public interface IArena {
 
     int getID();
+
+    String getSlug();
 
     String getName();
 
@@ -39,7 +42,9 @@ public interface IArena {
 
     boolean isInside(Location location);
 
-    Location firstCorner();
+    World getWorld();
 
-    Location secondCorner();
+    Location getFirstCorner();
+
+    Location getSsecondCorner();
 }

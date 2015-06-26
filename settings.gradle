@@ -1,3 +1,4 @@
 rootProject.name = 'BowWarfare'
-include 'sponge'
 include 'sponge-api'
+include 'sponge'
+

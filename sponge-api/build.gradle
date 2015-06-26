@@ -3,22 +3,15 @@ apply plugin: 'java' // Support for Java
 apply plugin: 'maven' // Maven integration
 apply plugin: 'idea' // Idea integration
 apply plugin: 'license' // Automatic license headers
+apply plugin: 'com.github.johnrengelman.shadow' // JarShadow
 
+// Maven group
+group = 'it.kytech.bowwarfare.sponge'
 version = '1.0-SNAPSHOT'
 
 // Set compatibility
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
-
-// Maven group
-group = 'it.kytech.bowwarfare.sponge'
-
-
-// Add a new dependency configuration
-configurations {
-    provided
-    compile.extendsFrom provided
-}
 
 repositories {
     maven {
@@ -28,22 +21,31 @@ repositories {
 }
 
 dependencies {
-    provided "org.spongepowered:spongeapi:1.1-SNAPSHOT"
+    compile "org.spongepowered:spongeapi:2.1-SNAPSHOT"
 }
 
-// Make the jar task contain all dependencies except for the provided configuration in the final output
-jar {
-    dependsOn configurations.runtime
-    from {
-        (configurations.runtime - configurations.provided).collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
+defaultTasks 'clean', 'licenseFormat', 'build', 'shadowJar'
+
+//Add a new dependency configuration
+configurations {
+    shadow
+    compile {
+        extendsFrom shadow
     }
 }
 
 // Include LICENSE.txt in all jars
 processResources {
     from new File(rootProject.getProjectDir(), "LICENSE")
+}
+
+// Make the jar task contain all dependencies except for the provided configuration in the final output
+shadowJar {
+    configurations = [project.configurations.shadow]
+    dependencies {
+        exclude dependency('org.spongepowered:spongeapi')
+    }
+    classifier = ''
 }
 
 // Configure license headers
@@ -60,7 +62,15 @@ license {
     }
 }
 
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.java
+    from sourceSets.main.resources
+    classifier = ''
+}
+
 // Define compiled jar, sources jar and javadoc jar as Maven artifacts
 artifacts {
-    archives jar
+    archives shadowJar
+    archives sourceJar
 }

@@ -1,3 +1,11 @@
+group = "it.kytech.bowwarfare"
+
+// Extended project information. Edit these values!
+ext.projectName = 'BowWarfare'
+ext.author = 'hitech95'
+ext.authorUrl = 'https://github.com/hitech95'
+ext.inceptionYear = '2015'
+
 buildscript {
     repositories {
         mavenCentral()
@@ -6,6 +14,7 @@ buildscript {
 
     dependencies {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
     }
 }
 
@@ -14,11 +23,3 @@ allprojects {
         mavenCentral()
     }
 }
-
-group = "it.kytech.bowwarfare"
-
-// Extended project information. Edit these values!
-ext.projectName = 'BowWarfare'
-ext.author = 'hitech95'
-ext.authorUrl = 'https://github.com/hitech95'
-ext.inceptionYear = '2015'

@@ -19,7 +19,7 @@
  */
 package it.kytech.bowwarfare.utils;
 
-import com.google.inject.Inject;
+import com.google.common.base.Optional;
 import org.slf4j.Logger;
 
 /**
@@ -27,25 +27,29 @@ import org.slf4j.Logger;
  */
 public class LogHelper {
 
-    public static Logger logger;
+    public static LogHelper instance;
+    private Logger logger;
+    private boolean isDebug;
 
-    private static LogHelper instance;
+    private LogHelper(Logger logger, boolean isDebug) {
+        this.logger = logger;
+        this.isDebug = isDebug;
+    }
 
-    public static LogHelper getInstance() {
-        if (instance == null) {
-            instance = new LogHelper();
+    public static LogHelper setup(Logger logger, boolean debug) throws IllegalStateException {
+        if (instance != null) {
+            throw new IllegalStateException("This class has already been initialized!");
         }
-
+        instance = new LogHelper(logger, debug);
         return instance;
     }
 
-    public org.slf4j.Logger getLogger() {
-        return logger;
+    public static Optional<LogHelper> getInstance() {
+        return (instance == null) ? Optional.<LogHelper>absent() : Optional.of(instance);
     }
 
-    @Inject
-    private void setLogger(org.slf4j.Logger logger) {
-        logger = logger;
+    public Logger getLogger() {
+        return logger;
     }
 
     public void log(String msg) {
@@ -61,8 +65,13 @@ public class LogHelper {
     }
 
     public void debug(String msg) {
-        if (ConfigurationHelper.getInstance().isDebug()) {
-            logger.debug(msg);
+        if (isDebug) {
+            logger.debug("DEBUG: " + msg);
         }
+    }
+
+    public void setDebug(boolean value) {
+        isDebug = value;
+        logger.info("Changed, DEBUG Mode: " + isDebug);
     }
 }
