@@ -149,7 +149,7 @@ public class BowWarfare {
                 .permission(Permission.Admin.SET_LOBBY_SPAWN)
                 .description(Texts.of("Read your inbox"))
                 .extendedDescription(Texts.of("Displays the server mails you received."))
-                .executor(new SetLobby()) //TODO add the correct Handler
+                .executor(new SetLobby())
                 .build());
 
         subcommands.put(Arrays.asList("addWall"), CommandSpec.builder()
