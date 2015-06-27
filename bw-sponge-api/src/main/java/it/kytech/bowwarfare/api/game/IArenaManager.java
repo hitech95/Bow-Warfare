@@ -19,8 +19,18 @@
  */
 package it.kytech.bowwarfare.api.game;
 
+import java.util.List;
+
 /**
  * Created by M2K on 10/04/2015.
  */
 public interface IArenaManager {
+
+    public List<IArena> listArenas();
+
+    public List<IArena> listArenas(boolean onlyEnabled);
+
+    public IArena getArena(String slug);
+
+    public boolean createArena(IArena arena);
 }

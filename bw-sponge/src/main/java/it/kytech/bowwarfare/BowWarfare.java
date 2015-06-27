@@ -1,19 +1,19 @@
 /**
  * This file is part of BowWarfare
- *
+ * <p/>
  * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,8 +21,11 @@ package it.kytech.bowwarfare;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
+import it.kytech.bowwarfare.api.game.IArenaManager;
 import it.kytech.bowwarfare.commands.*;
+import it.kytech.bowwarfare.configuration.ArenaConfiguration;
 import it.kytech.bowwarfare.configuration.PluginConfiguration;
+import it.kytech.bowwarfare.game.manager.ArenaManager;
 import it.kytech.bowwarfare.reference.Permission;
 import it.kytech.bowwarfare.reference.Reference;
 import it.kytech.bowwarfare.reference.Settings;
@@ -35,6 +38,7 @@ import org.spongepowered.api.event.state.PreInitializationEvent;
 import org.spongepowered.api.event.state.ServerStartedEvent;
 import org.spongepowered.api.event.state.ServerStoppingEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.service.ProviderExistsException;
 import org.spongepowered.api.service.config.DefaultConfig;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.util.command.args.GenericArguments;
@@ -59,6 +63,7 @@ public class BowWarfare {
     public Logger logger;
     public LogHelper logHelper;
     public PluginConfiguration configuration;
+    public ArenaConfiguration arenaConfiguration;
     @Inject
     @DefaultConfig(sharedRoot = Settings.SHARED_CONFIG)
     private File defaultConfigFile;
@@ -69,7 +74,11 @@ public class BowWarfare {
     @Subscribe
     public void preinit(PreInitializationEvent event) {
         logHelper = LogHelper.setup(logger, true);
+        logHelper.debug("Log Helper loaded!");
+
         configuration = new PluginConfiguration(defaultConfigFile);
+        logHelper.debug("Plugin Configuration loaded!");
+
         logHelper.setDebug(configuration.isDebug());
 
         logHelper.log("Pre-Init of BowWarfare");
@@ -209,14 +218,22 @@ public class BowWarfare {
                 .executor(new Help())
                 .build();
 
-        /*CommandSpec hubCommand = CommandSpec.builder()
-                .description(Texts.of("Go to the BowWarfare Hub"))
-                .permission(Permission.COMMAND)
-                .executor(new Leave())
-                .build();*/
-
         game.getCommandDispatcher().register(this, bowCommand, "bowwarfare", "bw");
-        //game.getCommandDispatcher().register(this, hubCommand, "/hub", "/spawn");
+        logHelper.debug("Commands Registered!");
+
+        arenaConfiguration = new ArenaConfiguration(defaultConfigDir);
+        logHelper.debug("Loaded Arena Configuration!");
+
+        ArenaManager arenaManager = new ArenaManager(game, arenaConfiguration);
+        logHelper.debug("Loaded Arena Manager!");
+
+        try {
+            game.getServiceManager().setProvider(this, IArenaManager.class, arenaManager);
+            logHelper.debug("Added the ArenaManager to Services");
+        } catch (ProviderExistsException e) {
+            e.printStackTrace();
+        }
+
         logHelper.log("Init of BowWarfare");
     }
 

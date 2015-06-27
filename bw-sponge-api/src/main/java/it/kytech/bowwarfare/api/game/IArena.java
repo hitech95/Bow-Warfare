@@ -42,6 +42,8 @@ public interface IArena {
 
     boolean isInside(Location location);
 
+    boolean isEnabled();
+
     World getWorld();
 
     Location getFirstCorner();

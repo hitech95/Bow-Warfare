@@ -1,25 +1,24 @@
 /**
  * This file is part of BowWarfare
- *
+ * <p/>
  * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- *
+ * <p/>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.kytech.bowwarfare.commands;
 
-import com.google.common.base.Optional;
 import it.kytech.bowwarfare.reference.Reference;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
@@ -58,39 +57,42 @@ public class Help implements CommandExecutor {
     @Override
     public CommandResult execute(CommandSource src, CommandContext args) throws CommandException {
         if (src instanceof ConsoleSource) {
-            src.sendMessage(Texts.of("Hello GLaDOS! But only in-game players can use BowWafare's commands!"));
-            return CommandResult.success();
+            throw new CommandException(Texts.builder("Hello GLaDOS! But only in-game players can use BowWafare's commands!")
+                    .color(TextColors.DARK_RED).build());
         } else if (src instanceof CommandBlockSource) {
-            src.sendMessage(Texts.builder("Hi Companion Cube! But you cant send commands to me! <3").color(TextColors.DARK_RED).build());
-            return CommandResult.success();
+            throw new CommandException(Texts.builder("Hi Companion Cube! But you cant send commands to me! <3")
+                    .color(TextColors.DARK_RED).build());
         }
 
-        if (isSub || !args.<String>getOne("help").equals(Optional.<String>absent())) {
-            if (!args.<String>getOne("level").equals(Optional.<String>absent())) {
+        if ((isSub || args.<String>getOne("help").isPresent()) && !args.<String>getOne("level").isPresent()) {
 
-                String command = (isSub) ? "help" : args.<String>getOne("help").get().toLowerCase();
-                String level = args.<String>getOne("level").get().toLowerCase();
+            String command = (isSub) ? "help" : args.<String>getOne("help").get().toLowerCase();
+            String level = args.<String>getOne("level").get().toLowerCase();
 
-                if (command.equals("help")) {
-                    switch (level) {
-                        case "player":
-                            help(src, 1);
-                            break;
-                        case "staff":
-                            help(src, 2);
-                            break;
-                        case "admin":
-                            help(src, 3);
-                            break;
-                        default:
-                            src.sendMessage(Texts.builder("\"" + level + "\" is not a valid page! Valid pages are [player], [staff], [admin].").color(TextColors.GOLD).build());
-                    }
+            if (command.equals("help")) {
+                switch (level) {
+                    case "player":
+                        help(src, 1);
+                        break;
+                    case "staff":
+                        help(src, 2);
+                        break;
+                    case "admin":
+                        help(src, 3);
+                        break;
+                    default:
+                        src.sendMessage(Texts.builder(
+                                "\"" + level + "\" is not a valid page! Valid pages are [player], [staff], [admin]."
+                        ).color(TextColors.GOLD).build());
                 }
-                return CommandResult.success();
             }
+            return CommandResult.success();
+
         }
-        src.sendMessage(Texts.builder(Reference.MOD_NAME + " Version: " + Reference.MOD_VERSION).color(TextColors.DARK_RED).build());
-        src.sendMessage(Texts.builder("Type /bw help <player | staff | admin> for command information").color(TextColors.DARK_RED).build());
+        src.sendMessage(Texts.builder(Reference.MOD_NAME + " Version: " + Reference.MOD_VERSION)
+                .color(TextColors.DARK_RED).build());
+        src.sendMessage(Texts.builder("Type /bw help <player | staff | admin> for command information"
+        ).color(TextColors.DARK_RED).build());
 
         return CommandResult.success();
     }
