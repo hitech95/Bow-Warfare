@@ -17,10 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.configuration;
 
 /**
- * Created by Hitech95 on 25/06/2015.
+ * Created by Hitech95 on 27/06/2015.
  */
-public class ListArenas {
+public class LobbyConfiguration {
 }

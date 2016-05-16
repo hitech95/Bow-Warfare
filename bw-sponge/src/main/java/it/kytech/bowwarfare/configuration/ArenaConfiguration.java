@@ -1,19 +1,19 @@
 /**
  * This file is part of BowWarfare
- * <p/>
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ *
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,6 +30,7 @@ import ninja.leaping.configurate.loader.ConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Created by Hitech95 on 24/06/2015.
@@ -40,8 +41,8 @@ public class ArenaConfiguration {
     ConfigurationLoader arenasLoader;
     ConfigurationNode arenasNode;
 
-    public ArenaConfiguration(File basePath) {
-        this.basePath = new File(basePath, Settings.ARENA_FOLDER);
+    public ArenaConfiguration(Path basePathIn) {
+        this.basePath = new File(basePathIn.toFile(), Settings.ARENA_FOLDER);
         File arenasConfig = new File(this.basePath, Settings.ARENA_CONFIG);
 
         try {
@@ -52,7 +53,7 @@ public class ArenaConfiguration {
                 arenasConfig.createNewFile();
             }
 
-            arenasLoader = ConfigurationHelper.getLoader(arenasConfig);
+            arenasLoader = ConfigurationHelper.getLoader(arenasConfig.toPath());
             arenasNode = arenasLoader.createEmptyNode(ConfigurationOptions.defaults()).getNode("arenas");
 
         } catch (IOException e) {
@@ -61,14 +62,14 @@ public class ArenaConfiguration {
     }
 
     public String[] listArenas() {
-        return null; //TODO
+        return new String[0]; //TODO
     }
 
     public ArenaSettings loadArena(String slug) {
         File arenaConfig = new File(basePath, slug + File.separator + Settings.ARENA_CONFIG);
 
         try {
-            ConfigurationLoader loader = ConfigurationHelper.getLoader(arenaConfig);
+            ConfigurationLoader loader = ConfigurationHelper.getLoader(arenaConfig.toPath());
             ConfigurationNode arenaNode = loader.createEmptyNode(ConfigurationOptions.defaults()).getNode("data");
             return new ArenaSettings(arenaNode);
         } catch (IOException e) {
@@ -84,7 +85,7 @@ public class ArenaConfiguration {
     public boolean storeArena(IArena arena) {
         File arenaConfig = new File(basePath, Settings.ARENA_CONFIG + File.separator + arena.getSlug());
         try {
-            ConfigurationLoader loader = ConfigurationHelper.getLoader(arenaConfig);
+            ConfigurationLoader loader = ConfigurationHelper.getLoader(arenaConfig.toPath());
             ConfigurationNode arenaNode = loader.createEmptyNode(ConfigurationOptions.defaults()).getNode("data");
             new ArenaSettings(arena);
             loader.save(arenaNode);

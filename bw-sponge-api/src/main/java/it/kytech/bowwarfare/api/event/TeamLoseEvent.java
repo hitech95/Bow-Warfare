@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,20 +17,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.game;
+package it.kytech.bowwarfare.api.event;
 
-import java.util.List;
+import it.kytech.bowwarfare.api.game.IGameSession;
+import it.kytech.bowwarfare.api.game.ITeam;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.Cause;
 
 /**
  * Created by M2K on 10/04/2015.
  */
-public interface IArenaManager {
+public class TeamLoseEvent implements Event {
 
-    public List<IArena> listArenas();
+    private ITeam team;
+    private IGameSession game;
+    private Cause cause;
 
-    public List<IArena> listArenas(boolean onlyEnabled);
+    public TeamLoseEvent(ITeam team, IGameSession game, Cause cause) {
+        this.team = team;
+        this.game = game;
+        this.cause = cause;
+    }
 
-    public IArena getArena(String slug);
+    public ITeam getTeam() {
+        return team;
+    }
 
-    public boolean createArena(IArena arena);
+    public IGameSession getGame() {
+        return game;
+    }
+
+    @Override
+    public Cause getCause() {
+        return cause;
+    }
 }

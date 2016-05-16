@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,29 +17,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
-
-import it.kytech.bowwarfare.api.game.IGameSession;
-import it.kytech.bowwarfare.api.game.ITeam;
-import org.spongepowered.api.event.AbstractEvent;
+package it.kytech.bowwarfare.api;
 
 /**
- * Created by M2K on 10/04/2015.
+ * Created by Hitech95 on 15/05/2016.
  */
-public class TeamWinEvent extends AbstractEvent {
-    private ITeam team;
-    private IGameSession game;
+public class Reference {
+    public static final String MOD_ID = "it.kytech.bowwarfare.api";
+    public static final String MOD_NAME = "Bow Warfare APIs";
+    public static final String MOD_VERSION = "1.8.0-1.0";
 
-    public TeamWinEvent(ITeam team, IGameSession game) {
-        this.team = team;
-        this.game = game;
-    }
-
-    public ITeam getTeam() {
-        return team;
-    }
-
-    public IGameSession getGame() {
-        return game;
-    }
+    public static final String[] MOD_AUTHORS = {"hitech95"};
 }

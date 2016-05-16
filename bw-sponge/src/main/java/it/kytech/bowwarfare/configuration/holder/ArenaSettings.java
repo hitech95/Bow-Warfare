@@ -1,25 +1,24 @@
 /**
  * This file is part of BowWarfare
- * <p/>
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ *
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.kytech.bowwarfare.configuration.holder;
 
-import com.google.common.base.Functions;
 import it.kytech.bowwarfare.api.game.IArena;
 import ninja.leaping.configurate.ConfigurationNode;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
@@ -29,6 +28,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Created by Hitech95 on 24/06/2015.
@@ -108,7 +108,17 @@ public class ArenaSettings implements IDynHolder {
         z2 = sqlNode.getNode("second-z").getInt();
         name = sqlNode.getNode("name").getString();
         description = sqlNode.getNode("description").getString();
-        List<String> authorsList = sqlNode.getNode("authors").getList(Functions.toStringFunction());
+        List<String> authorsList = sqlNode.getNode("authors").getList(
+                new Function<Object, String>() {
+                    @Override
+                    public String apply(Object obj) {
+                        if (obj == null) {
+                            throw new NullPointerException();
+                        }
+                        return obj.toString();
+                    }
+                }
+        );
         authors = authorsList.toArray(new String[authorsList.size()]);
     }
 

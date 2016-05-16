@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,35 +17,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.event;
 
 import it.kytech.bowwarfare.api.game.IGameSession;
-import it.kytech.bowwarfare.api.score.IScore;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.Cause;
 
 /**
- * Created by M2K on 10/04/2015.
+ * This is fired when someone capture a flag
  */
-public class PlayerKillStreakEvent extends AbstractEvent {
+public class FlagCapturedEvent implements Event {
 
-    private Player player;
+    private Player flagHolder;
     private IGameSession game;
+    private Cause cause;
 
-    PlayerKillStreakEvent(Player player, IGameSession game) {
-        this.player = player;
+
+    public FlagCapturedEvent(Player flagHolder, IGameSession game, Cause cause) {
+        this.flagHolder = flagHolder;
         this.game = game;
+        this.cause = cause;
     }
 
     public Player getPlayer() {
-        return player;
+        return flagHolder;
     }
 
     public IGameSession getGame() {
         return game;
     }
 
-    public IScore getScore() {
-        return game.getScore(player);
+
+    @Override
+    public Cause getCause() {
+        return cause;
     }
 }

@@ -1,19 +1,19 @@
 /**
  * This file is part of BowWarfare
- * <p/>
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ *
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -29,8 +29,8 @@ import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  * Created by Hitech95 on 24/06/2015.
@@ -41,7 +41,7 @@ public class PluginConfiguration {
     ConfigurationLoader<CommentedConfigurationNode> loader;
     CommentedConfigurationNode configNode;
 
-    public PluginConfiguration(File config) {
+    public PluginConfiguration(Path config) {
         logger = LogHelper.getInstance().get();
         int configRev = 0;
         try {
@@ -55,6 +55,7 @@ public class PluginConfiguration {
             configRev = 0;
         }
 
+        //TODO - Smart way to update config files
         if (configRev != DefaultPluginSettings.CONFIG_REVISION) {
             logger.logWarn("Loading default config. Version detected: " + configRev);
             loadDefaultConfigValues();

@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify

@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,12 +20,14 @@
 package it.kytech.bowwarfare.api.game;
 
 import it.kytech.bowwarfare.api.score.IScore;
-import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.entity.living.player.Player;
 
 /**
  * Created by M2K on 10/04/2015.
  */
 public interface IGameSession {
+
+    GameState getGameState();
 
     IGameSession getSnapshot();
 

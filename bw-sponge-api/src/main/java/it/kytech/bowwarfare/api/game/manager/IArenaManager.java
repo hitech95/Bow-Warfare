@@ -17,10 +17,22 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.commands;
+package it.kytech.bowwarfare.api.game.manager;
+
+import it.kytech.bowwarfare.api.game.IArena;
+
+import java.util.List;
 
 /**
- * Created by Hitech95 on 25/06/2015.
+ * Created by M2K on 10/04/2015.
  */
-public class ListArenas {
+public interface IArenaManager {
+
+    public List<IArena> listArenas();
+
+    public List<IArena> listArenas(boolean onlyEnabled);
+
+    public IArena getArena(String slug);
+
+    public boolean createArena(IArena arena);
 }

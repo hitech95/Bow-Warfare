@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,30 +17,38 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
+package it.kytech.bowwarfare.api.event;
 
+import it.kytech.bowwarfare.api.game.GameState;
 import it.kytech.bowwarfare.api.game.IGameSession;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.event.Event;
+import org.spongepowered.api.event.cause.Cause;
 
 /**
  * Created by M2K on 10/04/2015.
  */
-public class PlayerLeaveEvent extends AbstractEvent {
+public class GameStateChangeEvent implements Event {
 
-    private Player player;
+    private GameState state;
     private IGameSession game;
+    private Cause cause;
 
-    public PlayerLeaveEvent(Player player, IGameSession game) {
-        this.player = player;
+    public GameStateChangeEvent(GameState state, IGameSession game, Cause cause) {
+        this.state = state;
         this.game = game;
+        this.cause = cause;
     }
 
-    public Player getPlayer() {
-        return player;
+    public GameState getState() {
+        return state;
     }
 
     public IGameSession getGame() {
         return game;
+    }
+
+    @Override
+    public Cause getCause() {
+        return cause;
     }
 }

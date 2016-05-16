@@ -1,26 +1,27 @@
 /**
  * This file is part of BowWarfare
- * <p/>
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ *
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
- * <p/>
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * <p/>
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * <p/>
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.kytech.bowwarfare.game.manager;
 
+import it.kytech.bowwarfare.api.exception.WorldExistException;
 import it.kytech.bowwarfare.api.game.IArena;
-import it.kytech.bowwarfare.api.game.IArenaManager;
+import it.kytech.bowwarfare.api.game.manager.IArenaManager;
 import it.kytech.bowwarfare.configuration.ArenaConfiguration;
 import it.kytech.bowwarfare.game.Arena;
 import org.spongepowered.api.Game;
@@ -41,7 +42,11 @@ public class ArenaManager implements IArenaManager {
         arenas = new ArrayList<IArena>();
 
         for (String slug : config.listArenas()) {
-            arenas.add(new Arena(game.getServer(), config.loadArena(slug)));
+            try {
+                arenas.add(new Arena(game.getServer(), config.loadArena(slug)));
+            }catch (WorldExistException e){
+                //TODO - Manage World loading Exception
+            }
         }
     }
 

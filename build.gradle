@@ -4,22 +4,143 @@ group = "it.kytech.bowwarfare"
 ext.projectName = 'BowWarfare'
 ext.author = 'hitech95'
 ext.authorUrl = 'https://github.com/hitech95'
-ext.inceptionYear = '2015'
+ext.inceptionYear = '2016'
 
 buildscript {
     repositories {
         mavenCentral()
+
         jcenter()
+
+        maven {
+            name 'Gradle maven repo'
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
         classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0'
         classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.1'
+        classpath "gradle.plugin.net.ellune:blossom:1.0.0"
     }
 }
 
 allprojects {
     repositories {
         mavenCentral()
+
+        jcenter()
+
+        maven {
+            name 'Sponge maven repo'
+            url 'http://repo.spongepowered.org/maven'
+        }
+    }
+}
+
+// Everything in the subprojects closure is automatically applied to all subprojects.
+subprojects {
+    // Apply plugins
+    apply plugin: 'java' // Support for Java
+    apply plugin: 'maven' // Maven integration
+    apply plugin: 'license' // Automatic license headers
+    apply plugin: 'idea' // Helper plugin for IDE
+    apply plugin: 'com.github.johnrengelman.shadow' // JarShadow
+
+    // Set compatibility
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    // Maven group
+    group = 'it.kytech.sponge'
+
+    // Configure license headers
+    license {
+        ext.name = rootProject.projectName
+        ext.author = rootProject.author
+        ext.url = rootProject.authorUrl
+        ext.year = rootProject.inceptionYear
+        exclude "**/*.info"
+        exclude "**/*.html"
+        exclude "assets/**"
+        header new File(rootProject.getProjectDir(), "HEADER")
+        sourceSets = project.sourceSets
+        ignoreFailures false
+        strictCheck true
+        mapping {
+            java = 'JAVADOC_STYLE'
+        }
+    }
+
+    // Set Maven repositories to check for dependencies
+    repositories {
+        maven {
+            name = 'sonatype-nexus'
+            url = 'https://oss.sonatype.org/content/groups/public/'
+        }
+    }
+
+    // Add a new dependency configuration
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
+
+    // Make the jar task contain all dependencies except for the provided configuration in the final output
+    jar {
+        dependsOn configurations.runtime
+        from {
+            (configurations.runtime - configurations.provided).collect {
+                it.isDirectory() ? it : zipTree(it)
+            }
+        }
+    }
+
+    // Task to generate source jar
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = "sources"
+        from sourceSets.main.allSource
+    }
+
+    // Task to generate javadoc jar
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = "javadoc"
+        from javadoc.destinationDir
+    }
+
+    // Include LICENSE in all jars
+    processResources {
+        from new File(rootProject.getProjectDir(), "LICENSE")
+    }
+
+    // Define compiled jar, sources jar and javadoc jar as Maven artifacts
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    // Add custom jar tasks to build task
+    build.dependsOn(licenseFormat)
+    build.dependsOn(sourcesJar)
+    build.dependsOn(javadocJar)
+
+    // Equivalent to mvn install for your latest artifacts
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                // mavenUrl has to be set in your {userfolder}/.gradle/gradle.properties file
+                // Example file content:
+                // mavenUrl=file:///C://mvn-repo/
+                if (project.hasProperty("mavenUrl")) {
+                    repository(url: mavenUrl)
+                }
+                pom {
+                    groupId = project.group
+                    artifactId = project.name
+                    version = project.version
+                }
+            }
+        }
     }
 }

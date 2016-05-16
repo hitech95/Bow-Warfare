@@ -1,7 +1,7 @@
 /**
  * This file is part of BowWarfare
  *
- * Copyright (c) 2015 hitech95 <https://github.com/hitech95>
+ * Copyright (c) 2016 hitech95 <https://github.com/hitech95>
  * Copyright (c) contributors
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,31 +17,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.kytech.bowwarfare.api.events;
-
-import it.kytech.bowwarfare.api.game.IGameSession;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.AbstractEvent;
+package it.kytech.bowwarfare.api.game;
 
 /**
- * Created by M2K on 10/04/2015.
+ * Created by Hitech95 on 15/05/2016.
  */
-public class PlayerJoinEvent extends AbstractEvent {
-
-    private Player player;
-    private IGameSession game;
-
-    public PlayerJoinEvent(Player player, IGameSession game) {
-        this.player = player;
-        this.game = game;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public IGameSession getGame() {
-        return game;
-    }
+public enum GameState {
 }
-
